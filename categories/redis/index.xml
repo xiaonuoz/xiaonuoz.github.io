@@ -1,0 +1,1761 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>redis on 笑傩</title>
+        <link>https://xiaonuoz.github.io/categories/redis/</link>
+        <description>Recent content in redis on 笑傩</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Wed, 10 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaonuoz.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Redis入门</title>
+        <link>https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/</link>
+        <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/</guid>
+        <description>&lt;p&gt;Redis,远程字典服务，是由C语言开发的一个开源的&lt;strong&gt;高性能键值对数据库&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;set key value &lt;/code&gt;添加修改数据,&lt;code&gt;get/del key&lt;/code&gt; 获取删除数据。操作时返回 &lt;code&gt;(integer) 1&lt;/code&gt; 则是操作成功，0则是失败&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;redis为每个独立的redis服务提供了16个数据库，编号从0到15。每个数据库之间的数据相互独立，且数据库大小是动态扩容。通过 &lt;code&gt;select [0-15]&lt;/code&gt; 来切换到其他数据库中。默认是在0号数据库。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;move key db&lt;/code&gt; 将当前库的某个key移动到其他库中，&lt;strong&gt;当前库必须要有这个key且对方库必须不能存在这个key，两者任意一个条件不满足都会移动失败。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;dbsize&lt;/code&gt; 可以查看当前库存在多少个key。&lt;code&gt;flushdb &lt;/code&gt;清空当前库的key &lt;code&gt;flushall&lt;/code&gt; 清空所有key&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;数据类型&#34;&gt;数据类型&lt;/h2&gt;
+&lt;h3 id=&#34;string&#34;&gt;string&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3.png&#34;
+	width=&#34;1120&#34;
+	height=&#34;197&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;568&#34;
+		data-flex-basis=&#34;1364px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20.png&#34;
+	width=&#34;1006&#34;
+	height=&#34;201&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;500&#34;
+		data-flex-basis=&#34;1201px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;在setex之后再使用setex会刷新时效性为新设置的秒数值&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;1068&#34;
+	height=&#34;496&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;215&#34;
+		data-flex-basis=&#34;516px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;hash&#34;&gt;hash&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8.png&#34;
+	width=&#34;1291&#34;
+	height=&#34;457&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;282&#34;
+		data-flex-basis=&#34;677px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2.png&#34;
+	width=&#34;1008&#34;
+	height=&#34;391&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;257&#34;
+		data-flex-basis=&#34;618px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-7.png&#34;
+	width=&#34;1092&#34;
+	height=&#34;395&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-7_hu4e178d8c3127f5078695244b287868d9_86700_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-7_hu4e178d8c3127f5078695244b287868d9_86700_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;276&#34;
+		data-flex-basis=&#34;663px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hsetnx key field value&lt;/code&gt; 设置field的值，如果原本存在则不设置，不存在才进行set&lt;/p&gt;
+&lt;h3 id=&#34;list&#34;&gt;list&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8.png&#34;
+	width=&#34;1291&#34;
+	height=&#34;457&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;282&#34;
+		data-flex-basis=&#34;677px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;stop为-1就表示最后一个数据，lindex表示查看某个索引的值，查最后一个也可以使用-1&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;读取只有lrange，这说明读索引依然是从左往右读取，因此如果是lpush那它是从最后一个往前插入数据；rpush则是从第一个开始往后添加数据&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;lpop表示移出list中左边的一个值，rpop则是右边出一个。根据索引都是从第一条往后读，lpop是从第一个开始往下进行移出，rpop是从最后一个往前移出&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21.png&#34;
+	width=&#34;1109&#34;
+	height=&#34;290&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;382&#34;
+		data-flex-basis=&#34;917px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;并且它可以同时等待多个list，某个list有就取，全没有才进行等待。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;lrem key count value &lt;/code&gt;移除指定数据，count表示移除几个，因为值等于value的可能会有多个&lt;/p&gt;
+&lt;h3 id=&#34;set&#34;&gt;set&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;set类型不允许值数据重复，如果添加的数据在set中已经存在一份，则会添加失败。[因为添加相同的数据是没有意义的]。可以根据这个去重特性做权限控制或者网站访问统计&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image.png&#34;
+	width=&#34;807&#34;
+	height=&#34;270&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image_huf60be562b40b463deed29464241d7ce3_57494_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image_huf60be562b40b463deed29464241d7ce3_57494_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;298&#34;
+		data-flex-basis=&#34;717px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-5.png&#34;
+	width=&#34;894&#34;
+	height=&#34;283&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-5_hu57c008cde00713426d705e1dd3c31e71_69316_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-5_hu57c008cde00713426d705e1dd3c31e71_69316_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;315&#34;
+		data-flex-basis=&#34;758px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;1068&#34;
+	height=&#34;496&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;215&#34;
+		data-flex-basis=&#34;516px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;sorted_set&#34;&gt;sorted_set&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-4.png&#34;
+	width=&#34;1291&#34;
+	height=&#34;577&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-4_hue3f527443be8208981aa97995c082e08_291030_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-4_hue3f527443be8208981aa97995c082e08_291030_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;223&#34;
+		data-flex-basis=&#34;536px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;1260&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;306&#34;
+		data-flex-basis=&#34;735px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;zremrangebyrank是根据索引删除，且索引来自于zrange显示的顺序。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-12.png&#34;
+	width=&#34;1624&#34;
+	height=&#34;455&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-12_hufe5113c32507e080f0b0a76c2132d580_232456_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-12_hufe5113c32507e080f0b0a76c2132d580_232456_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;356&#34;
+		data-flex-basis=&#34;856px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-1.png&#34;
+	width=&#34;1301&#34;
+	height=&#34;349&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-1_hucbad342a6491fdfc091c549d8120795e_132802_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-1_hucbad342a6491fdfc091c549d8120795e_132802_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;372&#34;
+		data-flex-basis=&#34;894px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;sorted_set底层存储依然是基于set结构的，因此数据不能重复，重复添加一个相同的数据，它的值会添加失败，但是如果新增时附带的score值不同，它的score值将被反复覆盖，保留最后一次修改的结果。&lt;/p&gt;
+&lt;h2 id=&#34;key通用操作&#34;&gt;key通用操作&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8.png&#34;
+	width=&#34;1291&#34;
+	height=&#34;457&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;282&#34;
+		data-flex-basis=&#34;677px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2.png&#34;
+	width=&#34;1008&#34;
+	height=&#34;391&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;257&#34;
+		data-flex-basis=&#34;618px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;linux安装redis&#34;&gt;Linux安装redis&lt;/h2&gt;
+&lt;p&gt;下载安装一条龙&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;weget https://download.redis.io/releases/redis-6.2.3.tar.gz
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tar -zxvf ...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cd redis
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make install
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;服务器的redis通常会启动多个，因此启动根据配置文件进行启动&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cp redis.conf redis-6379.conf
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;vim redis-6379.conf
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;//需要修改的字段有
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;bind 绑定的ip
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;port 启动的端口号
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;daemonize yes  以守护进程的方式启动，而不是前端启动
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;logfile &amp;#34;redis-6379.log&amp;#34;   日志的文件名
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;dir /user/local/src/redis/data    日志的路径名
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;最后以配置文件方式启动
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;redis-server redis-6379.conf
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;连接则是redis-cli -p PORT -h HOST 
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1007&#34;
+	height=&#34;437&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;553px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;持久化优先使用aof&#34;&gt;持久化(优先使用AOF)&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1377&#34;
+	height=&#34;755&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;182&#34;
+		data-flex-basis=&#34;437px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;官方推荐两个方法同时使用&lt;/p&gt;
+&lt;h3 id=&#34;rdb&#34;&gt;RDB&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image.png&#34;
+	width=&#34;807&#34;
+	height=&#34;270&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image_huf60be562b40b463deed29464241d7ce3_57494_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image_huf60be562b40b463deed29464241d7ce3_57494_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;298&#34;
+		data-flex-basis=&#34;717px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;如果出现意外情况导致redis崩溃消失，在下次启动时，redis会自动加载这个dump.rdb文件进行数据恢复，不需要人为操作恢复&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;要注意的是 save指令的执行会阻塞当前redis服务器(执行完才能进行后续的set等命令)，直到当前rdb过程完成为止，有可能造成长时间阻塞，&lt;strong&gt;线上环境不建议使用。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;可以使用bgsave来替代save，它会生成一个Linux子进程，而不占用redis的进程&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;bgsave命令是针对save阻塞问题做的优化。redis内部所有涉及到reb操作都建议采用bgsave的方式。save命令可以放弃使用了&lt;/p&gt;
+&lt;p&gt;但是不能说每次程序调用set方法就由程序发送bgsave方法，&lt;strong&gt;可以设置自动执行来让服务器自己进行保存&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2.png&#34;
+	width=&#34;1008&#34;
+	height=&#34;391&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;257&#34;
+		data-flex-basis=&#34;618px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;发生变化包括修改原有key的value，新增key，删除key&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1377&#34;
+	height=&#34;755&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;182&#34;
+		data-flex-basis=&#34;437px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;aof&#34;&gt;AOF&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-1.png&#34;
+	width=&#34;1301&#34;
+	height=&#34;349&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-1_hucbad342a6491fdfc091c549d8120795e_132802_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-1_hucbad342a6491fdfc091c549d8120795e_132802_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;372&#34;
+		data-flex-basis=&#34;894px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;最后根据策略将AOF缓存的写记录数据存放到 .aof文件中&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-7.png&#34;
+	width=&#34;1092&#34;
+	height=&#34;395&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-7_hu4e178d8c3127f5078695244b287868d9_86700_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-7_hu4e178d8c3127f5078695244b287868d9_86700_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;276&#34;
+		data-flex-basis=&#34;663px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2.png&#34;
+	width=&#34;1008&#34;
+	height=&#34;391&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;257&#34;
+		data-flex-basis=&#34;618px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;**&lt;code&gt;bgrewriteaof&lt;/code&gt; 手动后台重写，逻辑和bgsave相似。**要注意的是对一个数据修改删除之后,重写完这个数据的操作会消失，因为它在redis中已经被删除了&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;1260&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;306&#34;
+		data-flex-basis=&#34;735px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;在这两种重写条件中选择一种即可，而size的单位是字节，即linux输入ls -l显示的大小值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20.png&#34;
+	width=&#34;1006&#34;
+	height=&#34;201&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;500&#34;
+		data-flex-basis=&#34;1201px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;事务&#34;&gt;事务&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22.png&#34;
+	width=&#34;1022&#34;
+	height=&#34;543&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;188&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21.png&#34;
+	width=&#34;1109&#34;
+	height=&#34;290&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;382&#34;
+		data-flex-basis=&#34;917px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;事务的工作流程&#34;&gt;事务的工作流程&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;1260&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;306&#34;
+		data-flex-basis=&#34;735px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20.png&#34;
+	width=&#34;1006&#34;
+	height=&#34;201&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;500&#34;
+		data-flex-basis=&#34;1201px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;锁&#34;&gt;锁&lt;/h3&gt;
+&lt;h3 id=&#34;watch锁乐观锁通过监听一个字段是否改变来确定后面的事务是否失败&#34;&gt;watch锁（乐观锁，通过监听一个字段是否改变来确定后面的事务是否失败）&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1377&#34;
+	height=&#34;755&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;182&#34;
+		data-flex-basis=&#34;437px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;终止执行是直接discard。之前的执行语句都得重写进行&lt;/p&gt;
+&lt;p&gt;watch和mysql的锁有点区别，watch定义在开启事务之前，且watch key和事务中的字段没关系。比如对name进行watch，然后开启事务后set的是 age，假如在没有执行exec前另一个服务器对name字段的值进行了改变，&lt;strong&gt;它是可以成功改变name的值的&lt;/strong&gt;。而此时执行exec就会失败，不存在阻塞的情况。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;只有当watch的对象没有改变时，后面的事务才能成功执行。watch的key改变与否影响着下一个事务的执行，但key的值和事务中的操作值没有关系。watch定义在事务开始之前，和mysql完全不相同&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;setnx-锁悲观锁通过设置一个锁来确定之后代码是否执行&#34;&gt;setnx 锁（悲观锁，通过设置一个锁来确定之后代码是否执行）&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;它依然不会阻塞，且value值可以任意，假如在会话1中 &lt;code&gt;setnx lock-age 1 &lt;/code&gt;,此时会话1可以 &lt;code&gt;set age 3&lt;/code&gt; ,但会话2也可以 &lt;code&gt;set age 3&lt;/code&gt; ,**这个锁不会对age字段进行加锁。**它只会对 &lt;code&gt;lock-age &lt;/code&gt;加锁，如果会话2再加一次 &lt;code&gt;set lock-age 1&lt;/code&gt; 就会发生失败，因为程序中每次都要使用一次lock-age ，如果失败则意味着有其他地方加锁了。&lt;strong&gt;解锁则是删除这个锁，&lt;code&gt;del lock-age &lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;但是经常会出现加锁却忘记解锁的情况，就需要使用 &lt;code&gt;expire lock-key second &lt;/code&gt;来给锁加个生存周期。这个指令只能添加生存周期，因此加生存周期之前要使用setnx进行加锁&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;删除策略&#34;&gt;删除策略&lt;/h2&gt;
+&lt;h3 id=&#34;过期数据&#34;&gt;过期数据&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;过期数据一般不会立即删除，它会根据删除策略来延迟删除。过期数据的底层就是开辟了一个空间来存key的内存指针和过期时间，如果到了这个时间点才根据策略进行删除。而开辟的这个空间的结构是hash类型，一个failed一个value,failed存key的内存指针，value存它的过期时间&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;redis会在内存占用和CPU占用之间寻找一个平衡，顾此失彼都会造成整体redis性能的下降，甚至引发服务器宕机或内存泄漏&lt;/p&gt;
+&lt;h3 id=&#34;删除策略-1&#34;&gt;删除策略&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;1260&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;306&#34;
+		data-flex-basis=&#34;735px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;拿时间换空间&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;拿空间换时间（图片写错了）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24.png&#34;
+	width=&#34;1524&#34;
+	height=&#34;769&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;198&#34;
+		data-flex-basis=&#34;475px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;折中方案，server.hz通过info server 查看hz&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;逐出算法&#34;&gt;逐出算法&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17.png&#34;
+	width=&#34;2165&#34;
+	height=&#34;992&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;218&#34;
+		data-flex-basis=&#34;523px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;前四个是操作过期数据，后三个操作全部数据，最后一个都不处理&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;redisconf配置部分介绍&#34;&gt;redis.conf配置部分介绍&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-13.png&#34;
+	width=&#34;691&#34;
+	height=&#34;404&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-13_hub03db1af66ef13313c5cebd167228b61_80363_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-13_hub03db1af66ef13313c5cebd167228b61_80363_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;171&#34;
+		data-flex-basis=&#34;410px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;高级数据类型&#34;&gt;高级数据类型&lt;/h2&gt;
+&lt;h3 id=&#34;bitmaps针对状态统计&#34;&gt;Bitmaps(针对状态统计)&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;Bitmaps本身不是一种数据结构， 实际上它就是字符串，但是它可以对字符串的位进行操作**。Bitmaps并不是实际的数据类型，而是定义在String类型上的一个面向字节操作的集合。**
+Bitmaps单独提供了一套命令， 所以在Redis中使用Bitmaps和使用字符串的方法不太相同。可以把Bitmaps想象成一个以位为单位的数组， 数组的每个单元只能存储0和1， 数组的下标在Bitmaps中叫做偏移量。&lt;/p&gt;
+&lt;p&gt;bitmaps通常作用在统计用户访问量，&lt;strong&gt;因为一个用户只有访问和未访问两种状态，为此存储用户的uid会极大的浪费redis的内存。那么以1表示访问，以0表示未访问，而bitmaps的下标索引则代表这个用户的uid，则可以缩减所需内存。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;假设现在有20个用户，userid=0， 5， 11， 15， 19的用户对网站进行了访问， 那么当前Bitmaps初始化结果如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;那么设置id为5的bit为1则是 &lt;code&gt;setbit testkey 4 1 &lt;/code&gt;设置索引为4的bit为1，取则是 &lt;code&gt;getbit testkey 4&lt;/code&gt;，返回的0和1则是代表是否被点播，而4之前的值都会被0填充。而取不存在的位，如 &lt;code&gt;getbit testkey 10&lt;/code&gt; 也是能取到的，它被填充为了0&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;很多应用的用户id以一个指定数字（例如10000） 开头， 直接将用户id和Bitmaps的偏移量对应势必会造成一定的浪费， 通常的做法是每次做setbit操作时将用户id减去这个指定数字(之前的10000)。
+在第一次初始化Bitmaps时， 假如偏移量非常大， 那么整个初始化过程执行会比较慢， 可能会造成Redis的阻塞&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8.png&#34;
+	width=&#34;1291&#34;
+	height=&#34;457&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;282&#34;
+		data-flex-basis=&#34;677px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;bitpos key targetBit&lt;/code&gt;  返回第一个值为targetBit(0/1)的偏移量&lt;/p&gt;
+&lt;h3 id=&#34;hyperloglog-基数统计专用于统计不重复的数据的数量&#34;&gt;HyperLogLog (基数统计，专用于统计不重复的数据的数量)&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3.png&#34;
+	width=&#34;1120&#34;
+	height=&#34;197&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;568&#34;
+		data-flex-basis=&#34;1364px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1007&#34;
+	height=&#34;437&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;553px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;geo-地理定位计算只能计算水平位置的距离&#34;&gt;GEO (地理定位计算,只能计算水平位置的距离)&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-10.png&#34;
+	width=&#34;1050&#34;
+	height=&#34;435&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-10_huef1da5d0b37166517db76f98132f6294_121460_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-10_huef1da5d0b37166517db76f98132f6294_121460_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;241&#34;
+		data-flex-basis=&#34;579px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8.png&#34;
+	width=&#34;1291&#34;
+	height=&#34;457&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;282&#34;
+		data-flex-basis=&#34;677px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;主从复制读写分离&#34;&gt;主从复制(读写分离)&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1007&#34;
+	height=&#34;437&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;553px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-18.png&#34;
+	width=&#34;1096&#34;
+	height=&#34;463&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-18_huf28539295af3a9a705d7eb5545766739_162516_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-18_huf28539295af3a9a705d7eb5545766739_162516_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;236&#34;
+		data-flex-basis=&#34;568px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;1260&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;306&#34;
+		data-flex-basis=&#34;735px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;只需要在从机使用slaveof 主机ip 主机port 就可以开始连接了，然后看下主机和从机是否有同步数据成功的日志即可。同步成功后从机只能进行get读的操作，写会失败，且每次主机set一次，从机就可以get到最新的数据&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;也可以在启动从机时  在redis-cli后加 &amp;ndash;slaveof 127.0.0.1 6379&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;但是最常用的还是修改配置文件的方法：	在从机的redis.conf中加 &lt;code&gt;slaveof 主机ip 主机port&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1007&#34;
+	height=&#34;437&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;553px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;slaveof no one &lt;/code&gt; 从机发送命令，断开主从连接&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21.png&#34;
+	width=&#34;1109&#34;
+	height=&#34;290&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;382&#34;
+		data-flex-basis=&#34;917px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;全量复制指的是从发psync2指令那一刻开始主机原来的所有数据，而部分数据则是进行rdb过程中所有的数据，后面发送的指令已经属于命令传播阶段了&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;1260&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;306&#34;
+		data-flex-basis=&#34;735px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1007&#34;
+	height=&#34;437&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;553px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;命令传播阶段会因为短时间的网络中断 开启  部分复制&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;1068&#34;
+	height=&#34;496&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;215&#34;
+		data-flex-basis=&#34;516px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;如slave重连master时，如果运行id和上次不同，就需要判断是否是同一台机器，如果不是就得进行全量复制了。运行id主要用于识别对方身份&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24.png&#34;
+	width=&#34;1524&#34;
+	height=&#34;769&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;198&#34;
+		data-flex-basis=&#34;475px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;1068&#34;
+	height=&#34;496&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;215&#34;
+		data-flex-basis=&#34;516px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;数据同步阶段：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21.png&#34;
+	width=&#34;1109&#34;
+	height=&#34;290&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;382&#34;
+		data-flex-basis=&#34;917px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;蓝色的runid和offset是全量复制时主发给从的  主机runid和offset，红色也是主机的runid和offset[当前的偏移量]。offset如果不在缓冲区就说明被挤出去了，就得重新全量复制&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;命令传播阶段：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;1260&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;306&#34;
+		data-flex-basis=&#34;735px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;master的复制缓冲区会暂存传播的命令和偏移量。如果从机发来的偏移量和主机记录的偏移量不同则可以知道主机更新了哪些数据[&lt;strong&gt;即使两者连接断开&lt;/strong&gt;]，&lt;strong&gt;如果从机发来的偏移量不在主机的复制缓冲区中，则意味着数据过早，已经被挤出缓存区了，只能重新进行全量复制。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;1260&#34;
+	height=&#34;411&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;306&#34;
+		data-flex-basis=&#34;735px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;lag项大于1就说明曾经slave掉过&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-18.png&#34;
+	width=&#34;1096&#34;
+	height=&#34;463&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-18_huf28539295af3a9a705d7eb5545766739_162516_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-18_huf28539295af3a9a705d7eb5545766739_162516_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;236&#34;
+		data-flex-basis=&#34;568px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;常见问题：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;1068&#34;
+	height=&#34;496&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;215&#34;
+		data-flex-basis=&#34;516px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1007&#34;
+	height=&#34;437&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;553px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;哨兵&#34;&gt;哨兵&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3.png&#34;
+	width=&#34;1120&#34;
+	height=&#34;197&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;568&#34;
+		data-flex-basis=&#34;1364px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-13.png&#34;
+	width=&#34;691&#34;
+	height=&#34;404&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-13_hub03db1af66ef13313c5cebd167228b61_80363_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-13_hub03db1af66ef13313c5cebd167228b61_80363_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;171&#34;
+		data-flex-basis=&#34;410px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;配置文件&#34;&gt;配置文件&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1007&#34;
+	height=&#34;437&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;553px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;启动顺序为先启动主节点，再从节点，然后再启动哨兵&lt;/p&gt;
+&lt;h3 id=&#34;工作原理&#34;&gt;工作原理&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;sentinel会先向master和slave要信息，要完以后建立一个cmd连接。而sentinel之间会组件一个频道，在里面发布订阅信息，如当master记录了第一个sentinel的信息时，第二个sentinel再发info给master就会发现，它会加入那个频道并将自己的信息发布进去。这样新增哨兵就会快速同步给其他原有哨兵。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17.png&#34;
+	width=&#34;2165&#34;
+	height=&#34;992&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;218&#34;
+		data-flex-basis=&#34;523px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17.png&#34;
+	width=&#34;2165&#34;
+	height=&#34;992&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;218&#34;
+		data-flex-basis=&#34;523px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;当确认主机挂了以后，哨兵会进行选举来确定谁去选新的主机。而每个哨兵都是竞选者也是投票者。具体原理百度即可。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;1068&#34;
+	height=&#34;496&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;215&#34;
+		data-flex-basis=&#34;516px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;当未来原master重新连接上了，它也依然是从机。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;集群&#34;&gt;集群&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;1184&#34;
+	height=&#34;754&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;而每一个区域，36-41那部分则是一个个的存储槽，每个计算机中都记录了所有机器的槽的位置。当key访问一台机器没找到时，则会让key去对应槽的机器上寻找。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;然而槽的总数是不会发生变化的，每次新增一个节点就只是将当前所有机器中的槽拆出来部分给新的节点&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;配置文件-1&#34;&gt;配置文件&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;线上的时候，节点服务响应超时时间一般设置为30-60s之间&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;而作为集群启动后，redis-cli就需要加 -c 来专门作为集群方式操作，不加c操作key就必须去对应槽的机器中才能操作&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;而如果运行过程中如果从机挂了，对应的主机会进行记录（一主对一从时），如果主机挂了，从机会作为新的主机继续运行。而原来的master再上线就只能作为从机运行了。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24.png&#34;
+	width=&#34;1524&#34;
+	height=&#34;769&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;198&#34;
+		data-flex-basis=&#34;475px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;监控指标&#34;&gt;监控指标&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24.png&#34;
+	width=&#34;1524&#34;
+	height=&#34;769&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;198&#34;
+		data-flex-basis=&#34;475px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;1180&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;814&#34;
+	height=&#34;186&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;437&#34;
+		data-flex-basis=&#34;1050px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23.png&#34;
+	width=&#34;1811&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8.png&#34;
+	width=&#34;1291&#34;
+	height=&#34;457&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;282&#34;
+		data-flex-basis=&#34;677px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21.png&#34;
+	width=&#34;1109&#34;
+	height=&#34;290&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;382&#34;
+		data-flex-basis=&#34;917px&#34;
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

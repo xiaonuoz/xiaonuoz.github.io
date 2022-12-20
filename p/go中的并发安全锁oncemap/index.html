@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在Go代码中可能会存在多个 goroutine同时操作一个资源（临界区），这种情况会发生 竞态问题（数据竞态）。类比现实生活中的例子有十字路口被'>
+<title>go中的并发安全锁oncemap</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='go中的并发安全锁oncemap'>
+<meta property='og:description' content='在Go代码中可能会存在多个 goroutine同时操作一个资源（临界区），这种情况会发生 竞态问题（数据竞态）。类比现实生活中的例子有十字路口被'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-11-10T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-11-10T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="go中的并发安全锁oncemap">
+<meta name="twitter:description" content="在Go代码中可能会存在多个 goroutine同时操作一个资源（临界区），这种情况会发生 竞态问题（数据竞态）。类比现实生活中的例子有十字路口被">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#互斥锁">互斥锁</a></li>
+        <li><a href="#读写互斥锁">读写互斥锁</a></li>
+        <li><a href="#syncwaitgroup">sync.WaitGroup</a></li>
+        <li><a href="#synconce">sync.Once</a>
+          <ol>
+            <li><a href="#加载配置文件示例">加载配置文件示例</a></li>
+          </ol>
+        </li>
+        <li><a href="#syncmap">sync.Map</a></li>
+        <li><a href="#原子操作">原子操作</a>
+          <ol>
+            <li><a href="#atomic包">atomic包</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/">go中的并发安全锁oncemap</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 10, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>在Go代码中可能会存在多个 <code>goroutine</code>同时操作一个资源（临界区），这种情况会发生 <code>竞态问题</code>（数据竞态）。类比现实生活中的例子有十字路口被各个方向的的汽车竞争；还有火车上的卫生间被车厢里的人竞争。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">x</span> <span class="kt">int64</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">add</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">50000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">add</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">add</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的代码中我们开启了两个 <code>goroutine</code>去累加变量x的值，这两个 <code>goroutine</code>在访问和修改 <code>x</code>变量的时候就会存在数据竞争，导致最后的结果与期待的不符(小于十万)。</p>
+<h3 id="互斥锁">互斥锁</h3>
+<p>互斥锁是一种常用的控制共享资源访问的方法，它能够保证同时只有一个 <code>goroutine</code>可以访问共享资源。Go语言中使用 <code>sync</code>包的 <code>Mutex</code>类型来实现互斥锁。 使用互斥锁来修复上面代码的问题：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">x</span> <span class="kt">int64</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">lock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">add</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">5000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span> <span class="c1">// 加锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span> <span class="c1">// 解锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">add</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">add</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用互斥锁能够保证同一时间有且只有一个 <code>goroutine</code>进入临界区，其他的 <code>goroutine</code>则在等待锁；当互斥锁释放后，等待的 <code>goroutine</code>才可以获取锁进入临界区，<strong>多个 <code>goroutine</code>同时等待一个锁时，唤醒的策略是随机的。</strong></p>
+<p><strong>Mutex是一个结构体类型，如果要作为参数时一定要使用指针成为引用传递，不然传递的就是副本，是另一个锁了</strong></p>
+<h3 id="读写互斥锁">读写互斥锁</h3>
+<p>互斥锁的本质是当一个goroutine访问的时候，其他goroutine都不能访问。这样在资源同步，避免竞争的同时也<strong>降低了程序的并发性能。程序由原来的并行执行变成了串行执行。</strong></p>
+<p><strong>互斥锁是完全互斥的，但是有很多实际的场景下是读多写少的</strong>，当我们并发的去读取一个资源不涉及资源修改的时候是没有必要加互斥锁的，这种场景下使用读写锁是更好的一种选择。读写锁在Go语言中使用 <code>sync</code>包中的 <code>RWMutex</code>类型。<strong>(读的时候如果什么锁都不加，可能读取的资源是修改前的资源)</strong></p>
+<p>**读写锁可以让多个读操作并发，同时读取，但是对于写操作是完全互斥的。**也就是说，当一个goroutine进行写操作的时候，其他goroutine既不能进行读操作，也不能进行写操作。当一个goroutine进行读操作的时候，其他goroutine也可以进行读操作，但是任何一个goroutine都不能进行写操作。<strong>处于读锁定状态，那么针对它的写锁定操作将永远不会成功，且相应的goroutine也会被一直阻塞，直到读锁解锁。因为它们是互斥的。</strong></p>
+<p>读写锁示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">x</span>      <span class="kt">int64</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span>     <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">lock</span>   <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">rwlock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">write</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// lock.Lock()   // 加互斥锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">rwlock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span> <span class="c1">// 加写锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span> <span class="c1">// 假设读操作耗时10毫秒
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">rwlock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>                   <span class="c1">// 解写锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// lock.Unlock()                     // 解互斥锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">read</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// lock.Lock()                  // 加互斥锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">rwlock</span><span class="p">.</span><span class="nf">RLock</span><span class="p">()</span>               <span class="c1">// 加读锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span> <span class="c1">// 假设读操作耗时1毫秒
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">rwlock</span><span class="p">.</span><span class="nf">RUnlock</span><span class="p">()</span>             <span class="c1">// 解读锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// lock.Unlock()                // 解互斥锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">write</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">end</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">end</span><span class="p">.</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">start</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>需要注意的是读写锁非常适合读多写少的场景，如果读和写的操作差别不大，读写锁的优势就发挥不出来。</strong></p>
+<h3 id="syncwaitgroup">sync.WaitGroup</h3>
+<p>在代码中生硬的使用 <code>time.Sleep</code>肯定是不合适的，Go语言中可以使用 <code>sync.WaitGroup</code>来实现并发任务的同步。 <code>sync.WaitGroup</code>有以下几个方法：</p>
+<p><img src="/p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/media/image.png"
+	width="800"
+	height="151"
+	srcset="/p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/media/image_hu59390b2d6af69ed4b7ab19972304428d_12144_480x0_resize_box_3.png 480w, /p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/media/image_hu59390b2d6af69ed4b7ab19972304428d_12144_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="529"
+		data-flex-basis="1271px"
+	
+></p>
+<p><code>sync.WaitGroup</code>内部维护着一个计数器，计数器的值可以增加和减少。例如当我们启动了N 个并发任务时，就将计数器值增加N。每个任务完成时通过调用Done()方法将计数器减1。通过调用Wait()来等待并发任务执行完，当计数器值为0时，表示所有并发任务已经完成。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">hello</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Hello Goroutine!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">hello</span><span class="p">()</span> <span class="c1">// 启动另外一个goroutine去执行hello函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>  <span class="c1">//等待子协程完成才继续运行下面的代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;main goroutine done!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>需要注意 <code>sync.WaitGroup</code>是一个结构体，传递的时候要传递指针。</strong></p>
+<h3 id="synconce">sync.Once</h3>
+<p>在编程的很多场景下我们需要确保某些操作在高并发的场景下只执行一次，例如只加载一次配置文件、只关闭一次通道等。</p>
+<p>Go语言中的 <code>sync</code>包中提供了一个针对只执行一次场景的解决方案–<code>sync.Once</code>。</p>
+<p><code>sync.Once</code>只有一个 <code>Do</code>方法，其签名如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="o">*</span><span class="nx">Once</span><span class="p">)</span> <span class="nf">Do</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><em>备注：如果要执行的函数 <code>f</code>需要传递参数就需要搭配闭包来使用。因为once方法使用是十分苛刻的，它的参数只能是无参函数，因此如果要用在关闭一次通道时，就需要用 <code>func (){close(ch1)}</code></em></p>
+<h4 id="加载配置文件示例">加载配置文件示例</h4>
+<p>延迟一个开销很大的初始化操作到真正用到它的时候再执行是一个很好的实践。<strong>因为预先初始化一个变量（比如在init函数中完成初始化）会增加程序的启动耗时</strong>，而且有可能实际执行过程中这个变量没有用上，那么这个初始化操作就不是必须要做的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">icons</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">image</span><span class="p">.</span><span class="nx">Image</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">loadIcons</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">icons</span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">image</span><span class="p">.</span><span class="nx">Image</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;left&#34;</span><span class="p">:</span>  <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;left.png&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;up&#34;</span><span class="p">:</span>    <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;up.png&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;right&#34;</span><span class="p">:</span> <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;right.png&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;down&#34;</span><span class="p">:</span>  <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;down.png&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Icon 被多个goroutine调用时不是并发安全的
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 可能同时有多个goroutine都判断其为nil，都进行了一次初始化操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Icon</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">image</span><span class="p">.</span><span class="nx">Image</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">icons</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">loadIcons</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">icons</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>多个 <code>goroutine</code>并发调用Icon函数时不是并发安全的，<strong>现代的编译器和CPU可能会在保证每个 <code>goroutine</code>都满足串行一致的基础上自由地重排访问内存的顺序</strong>。loadIcons函数可能会被重排为以下结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">loadIcons</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">icons</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">image</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">icons</span><span class="p">[</span><span class="s">&#34;left&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;left.png&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">icons</span><span class="p">[</span><span class="s">&#34;up&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;up.png&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">icons</span><span class="p">[</span><span class="s">&#34;right&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;right.png&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">icons</span><span class="p">[</span><span class="s">&#34;down&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;down.png&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在这种情况下就会出现即使判断了 <code>icons</code>不是nil也不意味着变量初始化完成了（第一个goroutine刚进行完make操作第二个goroutine就进行了判断，此时icons不是nil，但是它并没有进行赋值）。考虑到这种情况，我们能想到的办法就是添加互斥锁，保证初始化 <code>icons</code>的时候不会被其他的 <code>goroutine</code>操作，但是这样做又会引发性能问题。因此可以使用once来只加一次锁。</p>
+<p>once是一个结构体，它有两个成员，一个互斥锁和一个标志位，当第一个goroutine执行once时，标志位为false，那么它就对其加互斥锁，此时其他goroutine只能等待第一个goroutine解锁，once执行完后标志位变为true并解锁，然后后面的goroutine进来判断，此时标志位是true，就不会执行once了。这就实现了多个协程只运行一次once</p>
+<p>使用 <code>sync.Once</code>改造的示例代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">icons</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">image</span><span class="p">.</span><span class="nx">Image</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">loadIconsOnce</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Once</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">loadIcons</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">icons</span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">image</span><span class="p">.</span><span class="nx">Image</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;left&#34;</span><span class="p">:</span>  <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;left.png&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;up&#34;</span><span class="p">:</span>    <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;up.png&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;right&#34;</span><span class="p">:</span> <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;right.png&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;down&#34;</span><span class="p">:</span>  <span class="nf">loadIcon</span><span class="p">(</span><span class="s">&#34;down.png&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Icon 是并发安全的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Icon</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">image</span><span class="p">.</span><span class="nx">Image</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">loadIconsOnce</span><span class="p">.</span><span class="nf">Do</span><span class="p">(</span><span class="nx">loadIcons</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">icons</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="syncmap">sync.Map</h3>
+<p>Go语言中内置的map不是并发安全的。开启少量几个 <code>goroutine</code>进行并发读写的时候可能没什么问题，当并发多了之后（超过20次后）执行上面的代码就会报 <code>fatal error: concurrent map writes</code>错误。</p>
+<p>像这种场景下就需要为map加锁来保证并发的安全性了，Go语言的 <code>sync</code>包中提供了一个开箱即用的并发安全版map–<code>sync.Map</code>。**开箱即用表示不用像内置的map一样使用make函数初始化就能直接使用。**同时 <code>sync.Map</code>内置了诸如 <code>Store</code>、<code>Load</code>、<code>LoadOrStore</code>、<code>Delete</code>、<code>Range</code>等操作方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">m</span> <span class="p">=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Map</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">20</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">key</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">m</span><span class="p">.</span><span class="nf">Store</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nf">Load</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;k=:%v,v:=%v\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="原子操作">原子操作</h3>
+<p>代码中的加锁操作因为涉及内核态的上下文切换会比较耗时、代价比较高。<strong>针对基本数据类型我们还可以使用原子操作来保证并发安全</strong>，因为原子操作是Go语言提供的方法，它在用户态就可以完成，**因此性能比加锁操作更好。**Go语言中原子操作由内置的标准库 <code>sync/atomic</code>提供。</p>
+<h4 id="atomic包">atomic包</h4>
+<p><img src="/p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/media/image-1.png"
+	width="800"
+	height="827"
+	srcset="/p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/media/image-1_hu7c6ca31d903755ef67884b900fa3a4df_91828_480x0_resize_box_3.png 480w, /p/go%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%94%81oncemap/media/image-1_hu7c6ca31d903755ef67884b900fa3a4df_91828_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="96"
+		data-flex-basis="232px"
+	
+></p>
+<p>比较并交换操作是比较addr和old的值是否相等，如果相等返回true，并将new的值赋值给addr</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">x</span> <span class="kt">int64</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>atomic</code>包提供了底层的原子级内存操作，对于同步算法的实现很有用。<strong>这些函数必须谨慎地保证正确使用。除了某些特殊的底层应用，使用通道或者sync包的函数/类型实现同步更好。</strong></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

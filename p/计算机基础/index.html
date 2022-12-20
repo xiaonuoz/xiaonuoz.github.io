@@ -1,0 +1,3207 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='时间复杂度 算法的时间复杂度是T(n), T是time，它与问题规模n的大小有关，且可以事先预估时间。因为时间复杂度的函数在n规模大时，其颇为复'>
+<title>计算机基础</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='计算机基础'>
+<meta property='og:description' content='时间复杂度 算法的时间复杂度是T(n), T是time，它与问题规模n的大小有关，且可以事先预估时间。因为时间复杂度的函数在n规模大时，其颇为复'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-03-15T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-03-15T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="计算机基础">
+<meta name="twitter:description" content="时间复杂度 算法的时间复杂度是T(n), T是time，它与问题规模n的大小有关，且可以事先预估时间。因为时间复杂度的函数在n规模大时，其颇为复">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#集合">集合</a></li>
+    <li><a href="#线性结构">线性结构</a></li>
+    <li><a href="#树形结构">树形结构</a></li>
+    <li><a href="#图状结构">图状结构</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#顺序存储">顺序存储</a></li>
+    <li><a href="#链式存储">链式存储</a>
+      <ol>
+        <li><a href="#单链表">单链表</a></li>
+      </ol>
+    </li>
+    <li><a href="#索引存储">索引存储</a></li>
+    <li><a href="#散列存储">散列存储</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#使用顺序表实现队列">使用顺序表实现队列</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#二叉树">二叉树</a>
+      <ol>
+        <li><a href="#二叉树的先中后序遍历">二叉树的先中后序遍历</a></li>
+        <li><a href="#二叉树的层序遍历">二叉树的层序遍历</a></li>
+        <li><a href="#线索二叉树">线索二叉树</a></li>
+      </ol>
+    </li>
+    <li><a href="#树的存储结构">树的存储结构</a></li>
+    <li><a href="#森林和二叉树的转换">森林和二叉树的转换</a></li>
+    <li><a href="#二叉排序树">二叉排序树</a></li>
+    <li><a href="#平衡二叉树">平衡二叉树</a>
+      <ol>
+        <li><a href="#ll和rr">LL和RR</a></li>
+      </ol>
+    </li>
+    <li><a href="#哈夫曼编码">哈夫曼编码</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#最小生成树">最小生成树</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#快速排序">快速排序</a></li>
+    <li><a href="#各种排序方法的综合比较">各种排序方法的综合比较</a>
+      <ol>
+        <li><a href="#时间性能">时间性能</a></li>
+        <li><a href="#空间性能">空间性能</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#短作业优先">短作业优先</a></li>
+    <li><a href="#优先级调度算法">优先级调度算法</a></li>
+    <li><a href="#多级反馈队列调度算法">多级反馈队列调度算法</a></li>
+    <li><a href="#pv">PV</a>
+      <ol>
+        <li><a href="#苹果问题多生产者多消费者">苹果问题（多生产者多消费者）</a></li>
+        <li><a href="#吸烟者问题一生产者多消费者生产不同类型的消息">吸烟者问题（一生产者多消费者生产不同类型的消息）</a></li>
+        <li><a href="#读者问题写者互斥读者可同时读取">读者问题（写者互斥，读者可同时读取）</a></li>
+        <li><a href="#哲学家问题进程需要同时持有多个临界资源且每个进程互斥">哲学家问题（进程需要同时持有多个临界资源且每个进程互斥）</a></li>
+        <li><a href="#管程">管程</a></li>
+      </ol>
+    </li>
+    <li><a href="#死锁">死锁</a>
+      <ol>
+        <li><a href="#银行家算法">银行家算法</a></li>
+        <li><a href="#死锁的检测">死锁的检测</a></li>
+        <li><a href="#死锁的解除">死锁的解除</a></li>
+      </ol>
+    </li>
+    <li><a href="#内存知识">内存知识</a>
+      <ol>
+        <li><a href="#基本分页存储管理">基本分页存储管理</a></li>
+        <li><a href="#快表">快表</a></li>
+        <li><a href="#基本分段存储管理方式">基本分段存储管理方式</a></li>
+        <li><a href="#段页式管理方式分页和分段经典折中">段页式管理方式（分页和分段经典折中）</a></li>
+        <li><a href="#虚拟内存目前计算机主流设计方案">虚拟内存（目前计算机主流设计方案）</a>
+          <ol>
+            <li><a href="#请求分页管理方式">请求分页管理方式</a></li>
+            <li><a href="#页面置换算法">页面置换算法</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#文件管理">文件管理</a>
+      <ol>
+        <li><a href="#索引顺序文件">索引顺序文件</a></li>
+        <li><a href="#目录结构">目录结构</a></li>
+        <li><a href="#文件分配方式-索引分配">文件分配方式-索引分配</a></li>
+        <li><a href="#磁盘调度算法">磁盘调度算法</a></li>
+      </ol>
+    </li>
+    <li><a href="#io相关知识">I/O相关知识</a>
+      <ol>
+        <li><a href="#dma">DMA</a></li>
+        <li><a href="#通道控制方式">通道控制方式</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" >
+                计算机基础
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 15, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-5.png"
+	width="1063"
+	height="672"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-5_huca1b7dc9976d1dc994bfbdea1fcee320_282442_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-5_huca1b7dc9976d1dc994bfbdea1fcee320_282442_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="158"
+		data-flex-basis="379px"
+	
+></p>
+<h1 id="时间复杂度">时间复杂度</h1>
+<p>算法的时间复杂度是T(n), T是time，它与问题规模n的大小有关，且可以事先预估时间。因为时间复杂度的函数在n规模大时，其颇为复杂，**因此在问题规模足够大时，可以忽略表达式中的低阶部分，**即只保留时间开销表达式最高阶的那部分，如T(n)=n的三次方+n的二次方+99999，只需要保留n的三次方即可。经典的抓大放小</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36.png"
+	width="1358"
+	height="763"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="427px"
+	
+></p>
+<p>甚至可以去掉系数，如3n简化为n，因为3000和9000依然是一个数量级的，但是n和n的平方相差的数量级就极大。</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36.png"
+	width="1358"
+	height="763"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="427px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-11.png"
+	width="1691"
+	height="1113"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-11_hu1a97bfd95d573b25b52e0d5431594ac9_738118_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-11_hu1a97bfd95d573b25b52e0d5431594ac9_738118_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="151"
+		data-flex-basis="364px"
+	
+></p>
+<p><strong>结论：</strong></p>
+<ul>
+<li><strong>顺序执行的代码只会影响常数列，可以忽略；</strong></li>
+<li><strong>只需要挑循环中的一个基本操作，分析它的执行次数与n的关系即可。如循环3000次而代码执行了3000次则为n，执行9000次为3n，再省略常数项依然是n；</strong></li>
+<li><strong>如果有多层嵌套循环，只需关注最深层循环循环了几次 ;如循环3000次而代码执行了 3000的平方 的话，则时间复杂度函数是O(n的平方)</strong></li>
+</ul>
+<p>即函数是   循环次数与最深层代码循环的关系，如3000对9000则是3n; 3000对9000000则是n的平方</p>
+<p><strong>算法的性能问题只有在n很大的时候才会暴露出来</strong></p>
+<h1 id="空间复杂度">空间复杂度</h1>
+<p>和时间复杂度一样，都是分析所占空间大小和问题规模的关系</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19.png"
+	width="1322"
+	height="658"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-18.png"
+	width="1993"
+	height="911"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-18_hu3074189a45a31e98618aae292ac40b49_671478_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-18_hu3074189a45a31e98618aae292ac40b49_671478_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="525px"
+	
+></p>
+<p>和时间复杂度类似，只需要关注和问题规模相关的变量即可。即当n变为无穷时，对应的变量的内存消耗是否会跟着改变</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37.png"
+	width="2202"
+	height="1257"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<h1 id="数据的逻辑结构">数据的逻辑结构</h1>
+<h2 id="集合">集合</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1.png"
+	width="650"
+	height="420"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="154"
+		data-flex-basis="371px"
+	
+></p>
+<h2 id="线性结构">线性结构</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1.png"
+	width="650"
+	height="420"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="154"
+		data-flex-basis="371px"
+	
+></p>
+<h2 id="树形结构">树形结构</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-27.png"
+	width="373"
+	height="530"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-27_hudd66945227d2ed77a02a2da10cbfeb36_118222_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-27_hudd66945227d2ed77a02a2da10cbfeb36_118222_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="70"
+		data-flex-basis="168px"
+	
+></p>
+<h2 id="图状结构">图状结构</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image.png"
+	width="524"
+	height="516"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image_huf153e496075a238bfe6218dbfeb98e0e_124469_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image_huf153e496075a238bfe6218dbfeb98e0e_124469_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="101"
+		data-flex-basis="243px"
+	
+></p>
+<h1 id="数据的存储结构">数据的存储结构</h1>
+<h2 id="顺序存储">顺序存储</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37.png"
+	width="2202"
+	height="1257"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<h2 id="链式存储">链式存储</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36.png"
+	width="1358"
+	height="763"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="427px"
+	
+></p>
+<p>每个元素在存储自己的数据元素的同时还会额外存储下一个元素的指针，以便指向下一个元素</p>
+<h3 id="单链表">单链表</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<p>带头节点的头节点不存储数据，但是会存储下一个节点的指针。仅仅是之后实现基本操作时更方便些，可以实现如果要在最开头插入一个节点，修改头节点的next和新增节点的next即可</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20.png"
+	width="1355"
+	height="758"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="429px"
+	
+></p>
+<p>下面是带头节点的情况，这种是最常使用的。头节点设为第0个。如果不带头节点则最开始的判断可以让其在0时进行赋值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type LNode struct {
+</span></span><span class="line"><span class="cl">	data string
+</span></span><span class="line"><span class="cl">	next *LNode
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	L := new(LNode)
+</span></span><span class="line"><span class="cl">	// 在某个节点后插
+</span></span><span class="line"><span class="cl">	insertList(L, 1, &#34;abc&#34;)
+</span></span><span class="line"><span class="cl">	insertList(L, 2, &#34;def&#34;)
+</span></span><span class="line"><span class="cl">	// 在某个节点前插(两个next则是在2节点之前，从0头节点开始计数)
+</span></span><span class="line"><span class="cl">	insertListTwo(L.next.next, &#34;obg&#34;)
+</span></span><span class="line"><span class="cl">	// 删除某个节点
+</span></span><span class="line"><span class="cl">	deleteList(L, 3)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		// 先运行一次L=L.next是去除头指针，头指针是没有数据的
+</span></span><span class="line"><span class="cl">		L = L.next
+</span></span><span class="line"><span class="cl">		if L == nil {
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		fmt.Println(L.data)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func insertList(LinkList *LNode, i int, data string) {
+</span></span><span class="line"><span class="cl">	if i &lt; 0 {
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	var p *LNode
+</span></span><span class="line"><span class="cl">	p = LinkList
+</span></span><span class="line"><span class="cl">	j := 0 // j表示当前所在节点，最开始是0即头节点，通过if向下循环到需要操作的节点
+</span></span><span class="line"><span class="cl">	// 当i为1表示在1节点插入数据，不会走此循环，即将头节点的next给了p 1节点,头节点换存p节点的指针
+</span></span><span class="line"><span class="cl">	for k := 0; k &lt; i; k++ {
+</span></span><span class="line"><span class="cl">		if p != nil &amp;&amp; j &lt; i-1 {
+</span></span><span class="line"><span class="cl">			p = p.next
+</span></span><span class="line"><span class="cl">			j++
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	S := new(LNode)
+</span></span><span class="line"><span class="cl">	S.data = data
+</span></span><span class="line"><span class="cl">	S.next = p.next
+</span></span><span class="line"><span class="cl">	p.next = S
+</span></span><span class="line"><span class="cl">	return
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func insertListTwo(LinkList *LNode, data string) {
+</span></span><span class="line"><span class="cl">	if LinkList == nil {
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	S := new(LNode)
+</span></span><span class="line"><span class="cl">	S.data = data
+</span></span><span class="line"><span class="cl">	S.data, LinkList.data = LinkList.data, S.data
+</span></span><span class="line"><span class="cl">	S.next = LinkList.next
+</span></span><span class="line"><span class="cl">	LinkList.next = S
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func deleteList(LinkList *LNode, i int) {
+</span></span><span class="line"><span class="cl">	if i &lt; 0 {
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	var p *LNode
+</span></span><span class="line"><span class="cl">	p = LinkList
+</span></span><span class="line"><span class="cl">	j := 0
+</span></span><span class="line"><span class="cl">	for k := 0; k &lt; i; k++ {
+</span></span><span class="line"><span class="cl">		if p != nil &amp;&amp; j &lt; i-1 {
+</span></span><span class="line"><span class="cl">			p = p.next
+</span></span><span class="line"><span class="cl">			j++
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	if p == nil {
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	if p.next == nil { // 第i-1个节点已经是nil了，则无法删除第i个节点
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	q := p.next     // 删除节点则是i-1的q节点的下一个 next
+</span></span><span class="line"><span class="cl">	p.next = q.next // 将删除节点的下一个节点赋值给p,则为上一个节点
+</span></span><span class="line"><span class="cl">	// 释放q
+</span></span><span class="line"><span class="cl">	q = nil
+</span></span><span class="line"><span class="cl">	return
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>尾插法建立单链表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	var x string
+</span></span><span class="line"><span class="cl">	L := new(LNode)
+</span></span><span class="line"><span class="cl">	r := L
+</span></span><span class="line"><span class="cl">	fmt.Scanln(&amp;x)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		if x != &#34;9999&#34; {
+</span></span><span class="line"><span class="cl">			s := new(LNode)
+</span></span><span class="line"><span class="cl">			s.data = x
+</span></span><span class="line"><span class="cl">			r.next = s
+</span></span><span class="line"><span class="cl">			// 让r的指针永远指向最后一个元素。
+</span></span><span class="line"><span class="cl">			r = s
+</span></span><span class="line"><span class="cl">			fmt.Scanln(&amp;x)
+</span></span><span class="line"><span class="cl">		} else {
+</span></span><span class="line"><span class="cl">			// 这里将r.next变为nil是避免野指针的情况发生，即不为空有可能会指向内存中未知的指针中的数据[在C中会发生，但在go中用new初始化时会将结构体中的数据都进行零值初始化。但是加上是一个好习惯]
+</span></span><span class="line"><span class="cl">			r.next = nil
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		fmt.Println(L, L.next)
+</span></span><span class="line"><span class="cl">		if L.next == nil {
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		L = L.next
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>单链表的逆置</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	p := T.next
+</span></span><span class="line"><span class="cl">	// 在此处将T进行断链，非常重要的一步。
+</span></span><span class="line"><span class="cl">	T.next = nil
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		if p == nil {
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		// 存储p的下一个节点
+</span></span><span class="line"><span class="cl">		k := p.next
+</span></span><span class="line"><span class="cl">		// T.next最开始是nil，即指向虚无，第二次循环时T的next已经是原来的p1了，即p2.next=p1,再将T头指针的next指向p,现在就是头-p2-p1
+</span></span><span class="line"><span class="cl">		// 再次循环，此时k存储的是p3,p是p2，将p2的next存储为T.next即p2-p1
+</span></span><span class="line"><span class="cl">		// 下面两句就是非常常规的头插法代码
+</span></span><span class="line"><span class="cl">		p.next = T.next
+</span></span><span class="line"><span class="cl">		T.next = p
+</span></span><span class="line"><span class="cl">		p = k
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>双链表就是每个节点存了前一个和后一个的指针、循环单/双链表则是最后一个节点又指向了头指针</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<h2 id="索引存储">索引存储</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-9.png"
+	width="1158"
+	height="526"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-9_huf42968e158c538b2aa504c896d0f7bcd_246324_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-9_huf42968e158c538b2aa504c896d0f7bcd_246324_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="220"
+		data-flex-basis="528px"
+	
+></p>
+<h2 id="散列存储">散列存储</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1.png"
+	width="650"
+	height="420"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="154"
+		data-flex-basis="371px"
+	
+></p>
+<h1 id="数据结构的三要素">数据结构的三要素</h1>
+<ul>
+<li>逻辑结构</li>
+<li>物理结构(存储结构)</li>
+<li>数据的运算</li>
+</ul>
+<p>在声明定义阶段需要声明数据的逻辑结构和对其的运算方法(创建销毁和curd)。而在初始化时则可根据实际情况选择一种存储结构进行初始化，只有这三个条件都满足。才算实现了数据结构</p>
+<h1 id="栈stack">栈（Stack）</h1>
+<p>栈是<strong>只允许在一端[表尾]进行插入或删除操作</strong>的特殊线性表</p>
+<p>操作分为入栈和出栈，对应线性表的插入和删除</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+>空栈：栈中没有任何数据</p>
+<p>共享栈指两个栈共享同一片空间，只出现在顺序表实现的栈中，两个栈一个从栈顶往下写，另一个从栈底往上写</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p>如果使用链表进行初始化栈，它是用头插法在头节点之后进行插入数据和删除数据的，因为链表从头节点向后指，<strong>如果想符合后进先出的原则就必须使用头插法，尾插法在每次插入和删除新数据时都需要循环一遍节点，严重影响了性能，头插法的时间复杂度就是O(1)</strong></p>
+<p>不带头链表也如此，在最前头进行插入即可。头即为栈顶</p>
+<h1 id="队列queue">队列（Queue）</h1>
+<p>队列是只允许<strong>在一端进行插入，在另一端删除</strong>的特殊线性表</p>
+<p>操作分为入队和出队，对应线性表的增加和删除</p>
+<p>它符合先进先出原则，只能在队头进行出队，在队尾进行入队</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<h2 id="使用顺序表实现队列">使用顺序表实现队列</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-25.png"
+	width="2249"
+	height="1233"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-25_huc56274dea4a329e46967bd8aec1a9728_1670193_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-25_huc56274dea4a329e46967bd8aec1a9728_1670193_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="437px"
+	
+></p>
+<p><strong>front存储的是队头元素的下标。而rear存储的是队尾可以插入元素的下标，即当前队尾元素的下一个元素。初始化时就让rear和front都指向0</strong></p>
+<p>**队尾指针指向下一个可以插入数据的节点，**因此当数组9下标插完后应指向10，通过取余重新指向了0，如果此时0是有数据的则会符合对头等于队尾的判断，表示为空队列，为了避免判断重合则可以牺牲一个存储单元，在当他为9时则进行判断是否已满，如果不相等则说明0下标的元素已经被取走，可以继续存储，从而形成了一个环状的逻辑。判断是在存储之前进行，因此判断0下标是否相等时是往9下标插入数据[放弃了一个存储单元]。</p>
+<p>因为顺序表静态数组是固定一个大小的，因此就需要通过循环队列取模的方式来将有限变为无线，逻辑上扩大了存储范围</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37.png"
+	width="2202"
+	height="1257"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17.png"
+	width="1175"
+	height="588"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="199"
+		data-flex-basis="479px"
+	
+></p>
+<p>计算元素个数则可以用 (rear+MaxSize-front) %MaxSize   用队尾加数组总量再减去队头指针  最后取余。<strong>要注意的是rear指的是队尾指针的下一个可插入的元素，而不是当前元素</strong></p>
+<p>存满就是MaxSize-1 ，因为舍弃了一个数据单元</p>
+<p>使用单链表实现队列则是定义队尾和队头的指针即可，初始化时头尾都指向头节点，如果是不带头节点的话则头尾都指向null</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-2.png"
+	width="976"
+	height="368"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-2_hu6a4d8f65fcb62d6678dfa69a6f3f8327_182460_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-2_hu6a4d8f65fcb62d6678dfa69a6f3f8327_182460_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="265"
+		data-flex-basis="636px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<h1 id="中缀表达式前缀表达式后缀表达式">中缀表达式、前缀表达式、后缀表达式</h1>
+<p>因为计算机是顺序读取，因此在日常中常见的中缀表达式对于计算机来说是无法处理的（要判断括号），将其转换成前缀或后缀表达式才可以理解（直接从头到尾挨个计算就可以了）。因此编译程序就会将中缀转成计算机可以理解的表达式，然后通过机器指令传给计算机计算</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-6.png"
+	width="1175"
+	height="364"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-6_hu3bf0c7b5ceff275152e12f7443ab4860_198329_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-6_hu3bf0c7b5ceff275152e12f7443ab4860_198329_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="322"
+		data-flex-basis="774px"
+	
+></p>
+<p>后缀表达式可以根据左优先原则，只要左边的运算符能先计算，就优先算左边的</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1.png"
+	width="650"
+	height="420"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="154"
+		data-flex-basis="371px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8.png"
+	width="1267"
+	height="247"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8_huc0146cfb3d20c63a79694cf498367e2c_207183_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8_huc0146cfb3d20c63a79694cf498367e2c_207183_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="512"
+		data-flex-basis="1231px"
+	
+></p>
+<p>要注意的是： 先出栈的是“右操作数”，若表达式合法，则最后栈中只会留下一个元素，即最终结果</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<h1 id="kmp算法">KMP算法</h1>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23.png"
+	width="1193"
+	height="386"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="309"
+		data-flex-basis="741px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19.png"
+	width="1322"
+	height="658"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="482px"
+	
+></p>
+<p>next[2]时，S只能为1，因此无论串的长度内容多复杂，它的S的最长相等前后缀长度都是为0，因此next[2]永远确定是为1的</p>
+<p>next[1]=0时，会让主串和模式串的i,j都往后移动一位，重新开始匹配，因为第一位都对不上了，就只能都后移重新匹配</p>
+<p>如果不会经常出现字串和模式串部分匹配问题，使用KMP算法的意义并不大。</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1.png"
+	width="650"
+	height="420"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-1_hu9f6e0409e72cd67ed915d17952eed4ea_175327_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="154"
+		data-flex-basis="371px"
+	
+></p>
+<h1 id="树">树</h1>
+<p>树是从上往下的，因此树的结点路径只能从上往下计算，路径长度则是经过了几条边</p>
+<p>结点的度指的是有几个子节点。树的度则是指每个节点的度的最大值，最大值则等于树的度</p>
+<p>树分有序树和无序树，如果同一层结点的左右位置反映某些逻辑关系则是有序树，反之是无序树</p>
+<p>子节点及子节点向后的节点也可以合并称之为子树，如A节点有三棵子树。B及下面所有，C及下面所有等</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10.png"
+	width="1260"
+	height="496"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10_hue7981f8e39959ed39dd576e0f2f93000_323775_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10_hue7981f8e39959ed39dd576e0f2f93000_323775_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="254"
+		data-flex-basis="609px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<p><strong>完全二叉树如果某个节点只有一个度，那么它的子节点一定是左子节点</strong></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31.png"
+	width="1337"
+	height="769"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31_hua10c4c16372f15864db52d97bd0e7b6d_420479_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31_hua10c4c16372f15864db52d97bd0e7b6d_420479_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="173"
+		data-flex-basis="417px"
+	
+></p>
+<p>因此设计平衡排序二叉树尽量的宽，高度尽量低</p>
+<h2 id="二叉树">二叉树</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-13.png"
+	width="1403"
+	height="706"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-13_huc9250f4e66433e828809b6d9008226eb_498911_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-13_huc9250f4e66433e828809b6d9008226eb_498911_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="476px"
+	
+></p>
+<p><strong>n个节点只需要n-1个指针就能连接，剩余了n+1个空指针</strong></p>
+<p>如果经常要查询对应节点的父节点就需要使用三叉链表，多存储一个指针来存父节点的指针</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8.png"
+	width="1267"
+	height="247"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8_huc0146cfb3d20c63a79694cf498367e2c_207183_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8_huc0146cfb3d20c63a79694cf498367e2c_207183_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="512"
+		data-flex-basis="1231px"
+	
+></p>
+<h3 id="二叉树的先中后序遍历">二叉树的先中后序遍历</h3>
+<p>采用分支节点逐层展开发</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29.png"
+	width="1402"
+	height="567"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29_hua11616da6cfd634961cf14a092428448_249282_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29_hua11616da6cfd634961cf14a092428448_249282_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="593px"
+	
+></p>
+<h3 id="二叉树的层序遍历">二叉树的层序遍历</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10.png"
+	width="1260"
+	height="496"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10_hue7981f8e39959ed39dd576e0f2f93000_323775_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10_hue7981f8e39959ed39dd576e0f2f93000_323775_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="254"
+		data-flex-basis="609px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-30.png"
+	width="1317"
+	height="527"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-30_huc4d85297b3cd9aef6a27709c784d0b5a_427003_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-30_huc4d85297b3cd9aef6a27709c784d0b5a_427003_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="249"
+		data-flex-basis="599px"
+	
+></p>
+<p>如果要通过序列推算出二叉树的形状，一定是  前/后/层级+<strong>中级</strong>两个才能共同确定出一个树的形状。胡乱搭配是无法推算出的</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10.png"
+	width="1260"
+	height="496"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10_hue7981f8e39959ed39dd576e0f2f93000_323775_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10_hue7981f8e39959ed39dd576e0f2f93000_323775_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="254"
+		data-flex-basis="609px"
+	
+></p>
+<h3 id="线索二叉树">线索二叉树</h3>
+<p>二叉树找前驱和找后继必须要重新遍历一次才行，因此将**空闲的左孩子指针和右孩子指针[空链域]**充当为前驱和后继，并设置一个tag标志就可以实现线索二叉树</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<h2 id="树的存储结构">树的存储结构</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<h2 id="森林和二叉树的转换">森林和二叉树的转换</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-14.png"
+	width="1341"
+	height="732"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-14_hu295f0d6db6491003c9e3a35dcd13eb06_451705_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-14_hu295f0d6db6491003c9e3a35dcd13eb06_451705_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<h2 id="二叉排序树">二叉排序树</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31.png"
+	width="1337"
+	height="769"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31_hua10c4c16372f15864db52d97bd0e7b6d_420479_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31_hua10c4c16372f15864db52d97bd0e7b6d_420479_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="173"
+		data-flex-basis="417px"
+	
+></p>
+<p>二叉排序树的查找效率很大程度上取决于树的高度</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<h2 id="平衡二叉树">平衡二叉树</h2>
+<h3 id="ll和rr">LL和RR</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17.png"
+	width="1175"
+	height="588"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="199"
+		data-flex-basis="479px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20.png"
+	width="1355"
+	height="758"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="429px"
+	
+></p>
+<p>总共有四种情况，记住左孩子只能右上旋，右孩子左上旋即可。</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32.png"
+	width="1368"
+	height="700"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32_hudde2039b45c0c0e774ed1f159cd85a98_373520_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32_hudde2039b45c0c0e774ed1f159cd85a98_373520_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="469px"
+	
+></p>
+<p>一定要注意的是，在A结点的B孩子的子树上插入节点，并不意味着子树原先就是叶子节点，它可能是分支</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32.png"
+	width="1368"
+	height="700"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32_hudde2039b45c0c0e774ed1f159cd85a98_373520_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32_hudde2039b45c0c0e774ed1f159cd85a98_373520_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="469px"
+	
+></p>
+<p><strong>在第一次出现大于1的地方，这个节点和它下面的节点组成最小不平衡子树。</strong></p>
+<h2 id="哈夫曼编码">哈夫曼编码</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-3.png"
+	width="1127"
+	height="123"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-3_hu51e9246d3a933ab3920e62557c79d669_94360_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-3_hu51e9246d3a933ab3920e62557c79d669_94360_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="916"
+		data-flex-basis="2199px"
+	
+></p>
+<h1 id="图">图</h1>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23.png"
+	width="1193"
+	height="386"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="309"
+		data-flex-basis="741px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<h2 id="最小生成树">最小生成树</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19.png"
+	width="1322"
+	height="658"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8.png"
+	width="1267"
+	height="247"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8_huc0146cfb3d20c63a79694cf498367e2c_207183_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-8_huc0146cfb3d20c63a79694cf498367e2c_207183_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="512"
+		data-flex-basis="1231px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23.png"
+	width="1193"
+	height="386"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="309"
+		data-flex-basis="741px"
+	
+></p>
+<p><strong>在P城和矿场连通后，此时从渔村到P城已经有路线了，因此P到渔村的直线边即使权值最小也不能进行连接</strong></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10.png"
+	width="1260"
+	height="496"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10_hue7981f8e39959ed39dd576e0f2f93000_323775_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-10_hue7981f8e39959ed39dd576e0f2f93000_323775_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="254"
+		data-flex-basis="609px"
+	
+></p>
+<h1 id="排序">排序</h1>
+<h2 id="快速排序">快速排序</h2>
+<p>快速排序算法是所有内部排序算法中平均性能最优的排序算法</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38.png"
+	width="1449"
+	height="797"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38_hue0f776873b70df5f2b6c4602baecc0aa_985754_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38_hue0f776873b70df5f2b6c4602baecc0aa_985754_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="436px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-39.png"
+	width="1473"
+	height="379"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-39_hu76204cdb4fc1a971ba81e65f19a88007_280833_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-39_hu76204cdb4fc1a971ba81e65f19a88007_280833_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="388"
+		data-flex-basis="932px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28.png"
+	width="1410"
+	height="691"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28_hu74ff3138103eb31b3ba25fd7aadd38a8_454271_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28_hu74ff3138103eb31b3ba25fd7aadd38a8_454271_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="489px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	translate := [10]int{4, 78, 37, 49, 22, 77, 31, 57, 27, 19}
+</span></span><span class="line"><span class="cl">	QuickSort(&amp;translate, 0, 9)
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;arr:=&#34;, translate)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 用第一个元素作为基准划分为左右两部分,low左指针，high右指针
+</span></span><span class="line"><span class="cl">// 这个方法可以让基准左边的都小于基准，右边的都大于基准，但是不能保证左边和右边是有序的，它们仅仅是都大于或小于基准
+</span></span><span class="line"><span class="cl">// 紧接着通过阶乘的方式缩短范围，直至缩短到low和high不满足条件位置(low&gt;=high)
+</span></span><span class="line"><span class="cl">func partition(translate *[10]int, low int, high int) int {
+</span></span><span class="line"><span class="cl">	pivot := translate[low]
+</span></span><span class="line"><span class="cl">	// if low &gt;= high 跳出循环
+</span></span><span class="line"><span class="cl">	for low &lt; high {
+</span></span><span class="line"><span class="cl">		// 比较右指针的数据是否比pivot大，大则继续往前移动
+</span></span><span class="line"><span class="cl">		for low &lt; high &amp;&amp; translate[high] &gt;= pivot {
+</span></span><span class="line"><span class="cl">			high = high - 1
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		// 原先的基准被pivot暂存，因此可以覆盖
+</span></span><span class="line"><span class="cl">		translate[low] = translate[high]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		// 比较左指针的数据是否比pivot小，小则继续往前移动
+</span></span><span class="line"><span class="cl">		for low &lt; high &amp;&amp; translate[low] &lt;= pivot {
+</span></span><span class="line"><span class="cl">			low = low + 1
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		// high的数据放在了原基准的位置，可以覆盖
+</span></span><span class="line"><span class="cl">		translate[high] = translate[low]
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	translate[low] = pivot
+</span></span><span class="line"><span class="cl">	// 返回存放基准的最终位置
+</span></span><span class="line"><span class="cl">	return low
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 快速排序
+</span></span><span class="line"><span class="cl">func QuickSort(translate *[10]int, low int, high int) {
+</span></span><span class="line"><span class="cl">	if low &lt; high {
+</span></span><span class="line"><span class="cl">		// 划分
+</span></span><span class="line"><span class="cl">		pivotpos := partition(translate, low, high)
+</span></span><span class="line"><span class="cl">		QuickSort(translate, low, pivotpos-1)
+</span></span><span class="line"><span class="cl">		QuickSort(translate, pivotpos+1, high)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="各种排序方法的综合比较">各种排序方法的综合比较</h2>
+<h3 id="时间性能">时间性能</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28.png"
+	width="1410"
+	height="691"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28_hu74ff3138103eb31b3ba25fd7aadd38a8_454271_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28_hu74ff3138103eb31b3ba25fd7aadd38a8_454271_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="489px"
+	
+></p>
+<h3 id="空间性能">空间性能</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32.png"
+	width="1368"
+	height="700"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32_hudde2039b45c0c0e774ed1f159cd85a98_373520_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32_hudde2039b45c0c0e774ed1f159cd85a98_373520_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="469px"
+	
+></p>
+<h1 id="操作系统小结">操作系统小结</h1>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29.png"
+	width="1402"
+	height="567"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29_hua11616da6cfd634961cf14a092428448_249282_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29_hua11616da6cfd634961cf14a092428448_249282_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="593px"
+	
+></p>
+<p>进程相关的原语有 创建原语、撤销原语、阻塞原语、唤醒原语、切换原语</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36.png"
+	width="1358"
+	height="763"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="427px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29.png"
+	width="1402"
+	height="567"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29_hua11616da6cfd634961cf14a092428448_249282_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-29_hua11616da6cfd634961cf14a092428448_249282_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="593px"
+	
+></p>
+<h2 id="短作业优先">短作业优先</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20.png"
+	width="1355"
+	height="758"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="429px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<h2 id="优先级调度算法">优先级调度算法</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17.png"
+	width="1175"
+	height="588"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="199"
+		data-flex-basis="479px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37.png"
+	width="2202"
+	height="1257"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<h2 id="多级反馈队列调度算法">多级反馈队列调度算法</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<h2 id="pv">PV</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37.png"
+	width="2202"
+	height="1257"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20.png"
+	width="1355"
+	height="758"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="429px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40.png"
+	width="1421"
+	height="805"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40_hu43868529bc9d08afce28ecaec1cf774a_710750_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40_hu43868529bc9d08afce28ecaec1cf774a_710750_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="423px"
+	
+></p>
+<p><strong>因此最好只在临界区里面做最重要的操作</strong></p>
+<p>互斥是指对某一临界资源在某段时刻只能有一个进程使用，PV写在同一进程中，初始值为临界资源的数量。</p>
+<p>同步则是一个进程的发生需要等待另一个进程结束或到某一结点，通常根据实际情况设置初始值，需要在先发生的进程中进行V操作，后发生的进程中进行P操作，这样如果处理机先执行后一个进程也会因为P的值小于0导致进程从运行态转变为阻塞态，直到对应V操作+1以后重新从等待队列唤醒对应进程进入就绪态</p>
+<h3 id="苹果问题多生产者多消费者">苹果问题（多生产者多消费者）</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p>当缓冲区为1时，由于同一时刻至多只有一个大于0，其他都为0，就可以省略mutex互斥</p>
+<h3 id="吸烟者问题一生产者多消费者生产不同类型的消息">吸烟者问题（一生产者多消费者生产不同类型的消息）</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-26.png"
+	width="2307"
+	height="1162"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-26_hu0867bda362b7702101425334401bd940_1602074_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-26_hu0867bda362b7702101425334401bd940_1602074_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="476px"
+	
+></p>
+<h3 id="读者问题写者互斥读者可同时读取">读者问题（写者互斥，读者可同时读取）</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23.png"
+	width="1193"
+	height="386"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="309"
+		data-flex-basis="741px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19.png"
+	width="1322"
+	height="658"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="482px"
+	
+></p>
+<h3 id="哲学家问题进程需要同时持有多个临界资源且每个进程互斥">哲学家问题（进程需要同时持有多个临界资源且每个进程互斥）</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20.png"
+	width="1355"
+	height="758"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="429px"
+	
+></p>
+<h3 id="管程">管程</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37.png"
+	width="2202"
+	height="1257"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p>管程中有很多个入口（函数），但是每次只会开放其中的一个入口给某一个进程使用。如在生产者消费者问题中，各进程需要互斥的访问共享缓冲区。管程的这种特性即可保证一个时间段内最多只有一个进程在访问缓冲区。要注意的是：这种互斥特性已经由编译器帮忙实现了，程序员并不需要关心，程序员只需要调用特定的管程方法操作管程即可，其中的细节已经封装到底层了。</p>
+<h2 id="死锁">死锁</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23.png"
+	width="1193"
+	height="386"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="309"
+		data-flex-basis="741px"
+	
+></p>
+<h3 id="银行家算法">银行家算法</h3>
+<p>在每次分配资源时先判断这次分配资源是否会发生不安全状态，造成死锁</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37.png"
+	width="2202"
+	height="1257"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38.png"
+	width="1449"
+	height="797"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38_hue0f776873b70df5f2b6c4602baecc0aa_985754_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38_hue0f776873b70df5f2b6c4602baecc0aa_985754_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="436px"
+	
+></p>
+<h3 id="死锁的检测">死锁的检测</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-25.png"
+	width="2249"
+	height="1233"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-25_huc56274dea4a329e46967bd8aec1a9728_1670193_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-25_huc56274dea4a329e46967bd8aec1a9728_1670193_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="437px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<h3 id="死锁的解除">死锁的解除</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-16.png"
+	width="1335"
+	height="698"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-16_hu9e1429338e4d66ebffd1add2df57f5e1_632600_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-16_hu9e1429338e4d66ebffd1add2df57f5e1_632600_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="191"
+		data-flex-basis="459px"
+	
+></p>
+<h2 id="内存知识">内存知识</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<p>动态重定位：在程序装入内存中时，程序段中的依然还是逻辑地址，只有当程序运行时，cpu会读取重定位寄存器存放的起始位置(<strong>程序运行时会先将起始地址从pcb存到重定位寄存器中</strong>)，将它与程序段中的逻辑地址相加计算就可以得到物理地址。这是当代计算机使用的装入方式最优解</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23.png"
+	width="1193"
+	height="386"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="309"
+		data-flex-basis="741px"
+	
+></p>
+<h3 id="基本分页存储管理">基本分页存储管理</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p>cpu在得到逻辑地址后，需要访问两次内存，第一次访问是查页表，第二次则是访问目标单元</p>
+<p>系统仅有一个页表寄存器，而在PCB记录的是这个进程对应的页表。一个系统中可能会有多个页表对应多个进程。当程序运行时就会将PCB的页表数据覆盖给页表寄存器中</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<h3 id="快表">快表</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19.png"
+	width="1322"
+	height="658"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-19_hu2dbea39efa09b4a3ba4a1a57171403b5_563801_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-4.png"
+	width="1217"
+	height="78"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-4_hu5e58ab4c9d220dbca58e2d544fe810c2_102294_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-4_hu5e58ab4c9d220dbca58e2d544fe810c2_102294_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1560"
+		data-flex-basis="3744px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<h3 id="基本分段存储管理方式">基本分段存储管理方式</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<h3 id="段页式管理方式分页和分段经典折中">段页式管理方式（分页和分段经典折中）</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34.png"
+	width="1353"
+	height="739"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-34_hu98c77e26d0f9f0941b86b8d767df857f_578365_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-7.png"
+	width="1056"
+	height="154"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-7_hufcc509cdb257fe12b02256ddeb8ac1d6_150205_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-7_hufcc509cdb257fe12b02256ddeb8ac1d6_150205_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="685"
+		data-flex-basis="1645px"
+	
+></p>
+<p>一个进程有一个段表，但是可能会有多个页表（因为每个段表都对应一个页表）。而使用段页存储时，内存是划分为固定长度的多个小区间，因为段页存储最后是由页去操作实际地址</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38.png"
+	width="1449"
+	height="797"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38_hue0f776873b70df5f2b6c4602baecc0aa_985754_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38_hue0f776873b70df5f2b6c4602baecc0aa_985754_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="436px"
+	
+></p>
+<p>用户只需要提供段号和段内地址，因为分段是用户可见的，而分页是由操作系统进行分页的，是对用户不可见的，操作系统会帮用户将段内地址拆分为页号和页内偏移量。因此这个存储管理方式是二维的。</p>
+<h3 id="虚拟内存目前计算机主流设计方案">虚拟内存（目前计算机主流设计方案）</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38.png"
+	width="1449"
+	height="797"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38_hue0f776873b70df5f2b6c4602baecc0aa_985754_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-38_hue0f776873b70df5f2b6c4602baecc0aa_985754_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="436px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-26.png"
+	width="2307"
+	height="1162"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-26_hu0867bda362b7702101425334401bd940_1602074_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-26_hu0867bda362b7702101425334401bd940_1602074_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="476px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28.png"
+	width="1410"
+	height="691"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28_hu74ff3138103eb31b3ba25fd7aadd38a8_454271_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28_hu74ff3138103eb31b3ba25fd7aadd38a8_454271_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="489px"
+	
+></p>
+<p>前面几个内存存储管理方式有很多缺点，最大的缺点则是只能一次性将数据全部存入内存中，这会导致过大的程序无法运行在小内存中</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23.png"
+	width="1193"
+	height="386"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-23_hu86c0fc62057ca5e7e7eaf79f531819c0_316247_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="309"
+		data-flex-basis="741px"
+	
+></p>
+<h4 id="请求分页管理方式">请求分页管理方式</h4>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31.png"
+	width="1337"
+	height="769"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31_hua10c4c16372f15864db52d97bd0e7b6d_420479_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-31_hua10c4c16372f15864db52d97bd0e7b6d_420479_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="173"
+		data-flex-basis="417px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28.png"
+	width="1410"
+	height="691"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28_hu74ff3138103eb31b3ba25fd7aadd38a8_454271_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-28_hu74ff3138103eb31b3ba25fd7aadd38a8_454271_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="489px"
+	
+></p>
+<p>要注意的是：只有写指令才需要修改 修改位，并且，一般只修改外存中的修改位即可。这样可以减少访存次数。但是如果是将某个页面换回外存，则需要先将外存最新的数据写回慢表中，然后删除快表对应数据，然后慢表将数据覆盖到外存忠，最后修改对应慢表数据。</p>
+<p>在页面调入内存后，不仅需要修改慢表的数据，页需要将表项复制到快表中。这样查询就可以减少访存次数。</p>
+<h4 id="页面置换算法">页面置换算法</h4>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-15.png"
+	width="1367"
+	height="759"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-15_hu3bb0a9b6ad1accaba42dfde5d9afaf38_695766_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-15_hu3bb0a9b6ad1accaba42dfde5d9afaf38_695766_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="180"
+		data-flex-basis="432px"
+	
+></p>
+<p>通过四轮扫描就可以发现，第一轮先淘汰最近没访问且没被修改过的页面；第二轮淘汰最近没访问但被修改过的页面；第三轮经过第二轮将其访问位都改为0后，淘汰的就是最近访问过但是没有修改过的页面。第四轮则是淘汰最近访问过并且修改过的页面。</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20.png"
+	width="1355"
+	height="758"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-20_hu2cd37d4509ef0c47e7cb226d6d2fe785_518523_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="429px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32.png"
+	width="1368"
+	height="700"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32_hudde2039b45c0c0e774ed1f159cd85a98_373520_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-32_hudde2039b45c0c0e774ed1f159cd85a98_373520_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="469px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-12.png"
+	width="1294"
+	height="601"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-12_hufb3aa48540d5c69f5c7ac45ce2660108_376390_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-12_hufb3aa48540d5c69f5c7ac45ce2660108_376390_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<p>驻留集是指系统给进程所分配的内存块的集合</p>
+<h2 id="文件管理">文件管理</h2>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35.png"
+	width="1310"
+	height="428"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-35_hu39642ee8e7e25dda5d0506c2ed9e1397_265114_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="734px"
+	
+></p>
+<h3 id="索引顺序文件">索引顺序文件</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36.png"
+	width="1358"
+	height="763"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="427px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36.png"
+	width="1358"
+	height="763"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="427px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17.png"
+	width="1175"
+	height="588"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="199"
+		data-flex-basis="479px"
+	
+></p>
+<h3 id="目录结构">目录结构</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<h3 id="文件分配方式-索引分配">文件分配方式-索引分配</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33.png"
+	width="2421"
+	height="1143"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-33_hu6c6173d35c64e03b5058ca8194ecde3e_1615311_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p>但是如果每个索引块中只有一个表项有实际指向数据，就会造成极大的浪费以及不必要的多次读盘操作，</p>
+<p>因此混合索引诞生解决了此问题。</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21.png"
+	width="1350"
+	height="767"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-21_huc68a520e2f6ff04eb0d30ef6f742d2d1_706107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17.png"
+	width="1175"
+	height="588"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-17_hu3352fdf114bd8bcad9b9f9853f004c7e_534864_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="199"
+		data-flex-basis="479px"
+	
+></p>
+<h3 id="磁盘调度算法">磁盘调度算法</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37.png"
+	width="2202"
+	height="1257"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-37_hub71eeef5dae7a55d9fb7c89dfb0b521b_1385232_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40.png"
+	width="1421"
+	height="805"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40_hu43868529bc9d08afce28ecaec1cf774a_710750_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40_hu43868529bc9d08afce28ecaec1cf774a_710750_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="423px"
+	
+></p>
+<h2 id="io相关知识">I/O相关知识</h2>
+<h3 id="dma">DMA</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40.png"
+	width="1421"
+	height="805"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40_hu43868529bc9d08afce28ecaec1cf774a_710750_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-40_hu43868529bc9d08afce28ecaec1cf774a_710750_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="423px"
+	
+></p>
+<p>采用DMA之后数据就不再需要先存到cpu寄存器中再转存内存了</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24.png"
+	width="2324"
+	height="1266"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-24_hue6f0757551d759fb4bdc412f050b3442_1198969_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<p>DMA控制器读写数据的基本单位依然是一个字，但是以读来说，它会先从磁盘中读入一个字放入DR，然后DR再放到内存。然后进行下一个循环，直到读完一个块的数据后(读完DC需要的字节数)，才会给CPU发出中断。</p>
+<h3 id="通道控制方式">通道控制方式</h3>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22.png"
+	width="1371"
+	height="782"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-22_hu7f3f405ff83389e489097a3766b0080b_674543_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p>通道程序就是一系列针对I/O的通道指令，这种方法CPU干预率进一步降低，通道只有在读取完CPU指定的全部数据后才会发出中断</p>
+<p><img src="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36.png"
+	width="1358"
+	height="763"
+	srcset="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_480x0_resize_box_3.png 480w, /p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/media/image-36_hu2b7e3571291eba9122e2d3267bd59a95_799503_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="427px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

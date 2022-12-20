@@ -1,0 +1,2904 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='gin的路由 gin框架中采用的路由库是基于httprouter做的，httprouter会将所有路由规则构造成一颗前缀树 例如有root and as at'>
+<title>gin框架初了解</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='gin框架初了解'>
+<meta property='og:description' content='gin的路由 gin框架中采用的路由库是基于httprouter做的，httprouter会将所有路由规则构造成一颗前缀树 例如有root and as at'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-11-17T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-11-17T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="gin框架初了解">
+<meta name="twitter:description" content="gin的路由 gin框架中采用的路由库是基于httprouter做的，httprouter会将所有路由规则构造成一颗前缀树 例如有root and as at">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#gin的路由">gin的路由</a>
+      <ol>
+        <li><a href="#上传文件">上传文件</a></li>
+        <li><a href="#routes-group路由组">routes group（路由组）</a></li>
+      </ol>
+    </li>
+    <li><a href="#gin数据解析和绑定">gin数据解析和绑定</a>
+      <ol>
+        <li><a href="#json数据解析和绑定">json数据解析和绑定</a></li>
+        <li><a href="#表单数据解析和绑定">表单数据解析和绑定</a></li>
+        <li><a href="#uri数据解析和绑定">URI数据解析和绑定</a></li>
+      </ol>
+    </li>
+    <li><a href="#gin渲染">gin渲染</a>
+      <ol>
+        <li><a href="#各种数据格式的响应">各种数据格式的响应</a></li>
+        <li><a href="#html模板渲染">HTML模板渲染</a></li>
+        <li><a href="#重定向">重定向</a></li>
+        <li><a href="#同步异步">同步异步</a></li>
+      </ol>
+    </li>
+    <li><a href="#gin中间件">gin中间件</a>
+      <ol>
+        <li><a href="#全局中间件">全局中间件</a></li>
+        <li><a href="#局部中间件">局部中间件</a></li>
+      </ol>
+    </li>
+    <li><a href="#会话控制">会话控制</a>
+      <ol>
+        <li><a href="#cookie是什么">Cookie是什么</a></li>
+        <li><a href="#cookie的用途">Cookie的用途</a></li>
+        <li><a href="#cookie的缺点">Cookie的缺点</a></li>
+        <li><a href="#session">session</a></li>
+        <li><a href="#session中间件开发">Session中间件开发</a></li>
+      </ol>
+    </li>
+    <li><a href="#模板引擎的使用">模板引擎的使用</a>
+      <ol>
+        <li><a href="#变量">变量</a></li>
+        <li><a href="#自定义函数">自定义函数</a></li>
+        <li><a href="#嵌套template">嵌套template</a></li>
+        <li><a href="#block定义块模板">block定义块模板</a></li>
+        <li><a href="#修改默认的标识符">修改默认的标识符</a></li>
+        <li><a href="#texttemplate与htmltemplate的区别">text/template与html/template的区别</a></li>
+      </ol>
+    </li>
+    <li><a href="#gin框架渲染tmpl模板">gin框架渲染tmpl模板</a>
+      <ol>
+        <li><a href="#自定义模板函数">自定义模板函数</a></li>
+        <li><a href="#静态文件处理">静态文件处理</a></li>
+        <li><a href="#json渲染xml渲染和yaml渲染">JSON渲染、XML渲染和YAML渲染</a></li>
+      </ol>
+    </li>
+    <li><a href="#获取参数">获取参数</a>
+      <ol>
+        <li><a href="#获取querystring参数">获取querystring参数</a></li>
+        <li><a href="#获取form参数">获取form参数</a></li>
+        <li><a href="#获取path参数">获取path参数</a></li>
+        <li><a href="#参数绑定">参数绑定</a></li>
+      </ol>
+    </li>
+    <li><a href="#文件上传">文件上传</a>
+      <ol>
+        <li><a href="#单个文件上传">单个文件上传</a></li>
+        <li><a href="#多个文件上传">多个文件上传</a></li>
+      </ol>
+    </li>
+    <li><a href="#重定向-1">重定向</a>
+      <ol>
+        <li><a href="#http重定向">HTTP重定向</a></li>
+        <li><a href="#路由重定向">路由重定向</a></li>
+      </ol>
+    </li>
+    <li><a href="#gin路由">Gin路由</a>
+      <ol>
+        <li><a href="#普通路由">普通路由</a></li>
+        <li><a href="#路由组">路由组</a></li>
+      </ol>
+    </li>
+    <li><a href="#gin中间件-1">Gin中间件</a>
+      <ol>
+        <li><a href="#定义中间件">定义中间件</a></li>
+        <li><a href="#注册中间件">注册中间件</a>
+          <ol>
+            <li><a href="#为全局路由注册">为全局路由注册</a></li>
+            <li><a href="#为某个路由单独注册">为某个路由单独注册</a></li>
+            <li><a href="#为路由组注册中间件">为路由组注册中间件</a></li>
+          </ol>
+        </li>
+        <li><a href="#中间件注意事项">中间件注意事项</a>
+          <ol>
+            <li><a href="#gin默认中间件">gin默认中间件</a></li>
+            <li><a href="#gin中间件中使用goroutine">gin中间件中使用goroutine</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#运行多个服务">运行多个服务</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/">gin框架初了解</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 17, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="gin的路由">gin的路由</h2>
+<p>gin框架中采用的路由库是基于httprouter做的，httprouter会将所有路由规则构造成一颗前缀树</p>
+<p>例如有root  and  as  at  cn  com，这样子查询效率会比传统的KV模式要快</p>
+<p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image.png"
+	width="746"
+	height="368"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image_huaa82164bf287e8b43ee81bc64181b3b9_15594_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image_huaa82164bf287e8b43ee81bc64181b3b9_15594_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="486px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 1. 创建路由，默认用了Logger(), Recovery()两个中间件
+</span></span><span class="line"><span class="cl">	r:=gin.Default()
+</span></span><span class="line"><span class="cl">	// 2. 绑定路由规则GET
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/user/:name/*action&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		//取API参数
+</span></span><span class="line"><span class="cl">		name:=c.Param(&#34;name&#34;)
+</span></span><span class="line"><span class="cl">		ac:=c.Param(&#34;action&#34;)
+</span></span><span class="line"><span class="cl">		c.String(http.StatusOK,name+&#34; is &#34;+ac)
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	// 2. 取URL参数
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/test&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		//URL参数可以通过DefaultQuery()或Query()方法获取
+</span></span><span class="line"><span class="cl">		//DefaultQuery()若参数不存在，返回一个设定的默认值，Query()若不存在是返回空字符串
+</span></span><span class="line"><span class="cl">		name:=c.DefaultQuery(&#34;name&#34;,&#34;没有此变量&#34;)
+</span></span><span class="line"><span class="cl">		c.String(http.StatusOK,name)
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
+</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="上传文件">上传文件</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">		//限制表单上传大小为8MB，gin框架默认限制为32MB
+</span></span><span class="line"><span class="cl">	r.MaxMultipartMemory = 8 &lt;&lt; 20
+</span></span><span class="line"><span class="cl">	// 可以获取客户端传来的表单参数
+</span></span><span class="line"><span class="cl">	r.POST(&#34;/form&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		//表单参数可以设置当参数不存在时的默认值
+</span></span><span class="line"><span class="cl">		c.DefaultPostForm(&#34;type&#34;,&#34;alert&#34;)
+</span></span><span class="line"><span class="cl">		//接受有此变量的参数,若变量不存在则返回空字符串
+</span></span><span class="line"><span class="cl">		name:=c.PostForm(&#34;username&#34;)
+</span></span><span class="line"><span class="cl">		password:=c.PostForm(&#34;password&#34;)
+</span></span><span class="line"><span class="cl">		//多选框用PostFormArray()可以以切片的格式接受数据
+</span></span><span class="line"><span class="cl">		hobbys:=c.PostFormArray(&#34;hobby&#34;)
+</span></span><span class="line"><span class="cl">		c.String(http.StatusOK,fmt.Sprintf(&#34;name is %s,\nusername is %s,\nhobby is %v&#34;,name,password,hobbys))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//在前端表单中，enctype为multipart/form-data则可以发送文件，同时也能发送文字
+</span></span><span class="line"><span class="cl">		//存单个图片
+</span></span><span class="line"><span class="cl">		//file, _ := c.FormFile(&#34;file&#34;)
+</span></span><span class="line"><span class="cl">		//// 存到项目根目录下，名字不变
+</span></span><span class="line"><span class="cl">		//c.SaveUploadedFile(file,file.Filename)
+</span></span><span class="line"><span class="cl">		//c.String(http.StatusOK,file.Filename+&#34;upload success&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//存多个图片,上传多个文件的话前端的input标签要加 multiple
+</span></span><span class="line"><span class="cl">		form, err := c.MultipartForm()
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			c.String(http.StatusBadRequest,&#34;upload file faild,err:&#34;+err.Error())
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		files:=form.File[&#34;files&#34;]
+</span></span><span class="line"><span class="cl">		for _,file:=range files{
+</span></span><span class="line"><span class="cl">			err := c.SaveUploadedFile(file, file.Filename)
+</span></span><span class="line"><span class="cl">			if err != nil {
+</span></span><span class="line"><span class="cl">				c.String(http.StatusBadRequest,&#34;upload file faild,err:&#34;+err.Error())
+</span></span><span class="line"><span class="cl">				return
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		c.String(200,fmt.Sprintf(&#34;upload file success,%v file&#34;,len(files)))
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="routes-group路由组">routes group（路由组）</h3>
+<p>路由组是为了管理一些相同的URL，进行规范</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 2. 集中处理请求,{}花括号去掉也不会报错，这是一个代码书写规范
+</span></span><span class="line"><span class="cl">	// 使用组的时候访问地址就是  address:port/v1/login
+</span></span><span class="line"><span class="cl">	v1:=r.Group(&#34;/v1&#34;)
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		v1.GET(&#34;/login&#34;,login)
+</span></span><span class="line"><span class="cl">		v1.GET(&#34;/submit&#34;,submit)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	v2:=r.Group(&#34;/v2&#34;)
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		v2.GET(&#34;/add&#34;,add)
+</span></span><span class="line"><span class="cl">		v2.GET(&#34;/deltel&#34;,deltel)
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-5.png"
+	width="666"
+	height="109"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-5_hu0c9feeb5e5e90a09f93d37e2fd0e6d3a_54553_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-5_hu0c9feeb5e5e90a09f93d37e2fd0e6d3a_54553_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="611"
+		data-flex-basis="1466px"
+	
+></p>
+<h2 id="gin数据解析和绑定">gin数据解析和绑定</h2>
+<h3 id="json数据解析和绑定">json数据解析和绑定</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Login struct {
+</span></span><span class="line"><span class="cl">	//binding:&#34;required&#34;为前端的必选字段，如果接受到的值是空值则会报错
+</span></span><span class="line"><span class="cl">	User string	`json:&#34;user&#34; binding:&#34;required&#34;`
+</span></span><span class="line"><span class="cl">	Password string	`json:&#34;password&#34; binding:&#34;required&#34;`
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	// 1. 创建路由
+</span></span><span class="line"><span class="cl">	r:=gin.Default()
+</span></span><span class="line"><span class="cl">	// 2. JSON绑定
+</span></span><span class="line"><span class="cl">	r.POST(&#34;/loginJson&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		var login Login
+</span></span><span class="line"><span class="cl">		//将request的body中的数据自动按照json格式解析并绑定到结构体,
+</span></span><span class="line"><span class="cl">		//当客户端传输的数据为json格式的内容时，结构体的tag要定义json格式,且绑定的方法为ShouldBindJSON(&amp;login)
+</span></span><span class="line"><span class="cl">		err := c.ShouldBindJSON(&amp;login)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			//返回错误信息，且返回的内容是一个json格式
+</span></span><span class="line"><span class="cl">			//gin.H封装了生成json数据的工具
+</span></span><span class="line"><span class="cl">			c.JSON(http.StatusBadRequest,gin.H{&#34;error&#34;:err.Error()})
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,login.User)
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
+</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="表单数据解析和绑定">表单数据解析和绑定</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Login struct {
+</span></span><span class="line"><span class="cl">	User string	`form:&#34;username&#34;`
+</span></span><span class="line"><span class="cl">	Password string	`form:&#34;password&#34;`
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	// 1. 创建路由
+</span></span><span class="line"><span class="cl">	r:=gin.Default()
+</span></span><span class="line"><span class="cl">	// 2. JSON绑定
+</span></span><span class="line"><span class="cl">	r.POST(&#34;/loginForm&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		var login Login
+</span></span><span class="line"><span class="cl">		//Bind()默认解析并绑定form格式
+</span></span><span class="line"><span class="cl">		//根据请求头中的content-type自动推断
+</span></span><span class="line"><span class="cl">		err := c.Bind(&amp;login)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			//返回错误信息，且返回的内容是一个json格式
+</span></span><span class="line"><span class="cl">			//gin.H封装了生成json数据的工具
+</span></span><span class="line"><span class="cl">			c.JSON(http.StatusBadRequest,gin.H{&#34;error&#34;:err.Error(),&#34;status&#34;:&#34;400&#34;})
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,login.User)
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
+</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    &lt;form action=&#34;http://127.0.0.1:8000/loginForm&#34; method=&#34;post&#34; enctype=&#34;multipart/form-data&#34;&gt;
+</span></span><span class="line"><span class="cl">        用户名：&lt;input type=&#34;text&#34; name=&#34;username&#34; &gt;&lt;br&gt;
+</span></span><span class="line"><span class="cl">        密&amp;nbsp&amp;nbsp码：&lt;input type=&#34;password&#34; name=&#34;password&#34;&gt;
+</span></span><span class="line"><span class="cl">        &lt;input type=&#34;submit&#34; value=&#34;登录&#34;&gt;
+</span></span><span class="line"><span class="cl">    &lt;/form&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="uri数据解析和绑定">URI数据解析和绑定</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Login struct {
+</span></span><span class="line"><span class="cl">	User string	`uri:&#34;username&#34;`
+</span></span><span class="line"><span class="cl">	Password string	`uri:&#34;password&#34;`
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	// 1. 创建路由
+</span></span><span class="line"><span class="cl">	r:=gin.Default()
+</span></span><span class="line"><span class="cl">	// 2. JSON绑定
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/loginUri/:username/:password&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		var login Login
+</span></span><span class="line"><span class="cl">		err := c.ShouldBindUri(&amp;login)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			//返回错误信息，且返回的内容是一个json格式
+</span></span><span class="line"><span class="cl">			//gin.H封装了生成json数据的工具
+</span></span><span class="line"><span class="cl">			c.JSON(http.StatusBadRequest,gin.H{&#34;error&#34;:err.Error(),&#34;status&#34;:&#34;400&#34;})
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,login.User+&#34;----&#34;+login.Password)
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
+</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用 <code>curl http://127.0.0.1:8000/loginUri/root/admin</code> 可以测试是否成功，root就是用户名，admin是密码</p>
+<h2 id="gin渲染">gin渲染</h2>
+<h3 id="各种数据格式的响应">各种数据格式的响应</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        //1. json
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/someJSON&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,gin.H{&#34;message&#34;:&#34;someJSON&#34;,&#34;status&#34;:200})
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	//2. 结构体
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/someStruct&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		var msg =struct{
+</span></span><span class="line"><span class="cl">			Name string
+</span></span><span class="line"><span class="cl">			Message string
+</span></span><span class="line"><span class="cl">			Number int
+</span></span><span class="line"><span class="cl">		}{&#34;root&#34;,&#34;message&#34;,123}
+</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,msg)
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	//3. XML
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/someXML&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		c.XML(200,gin.H{&#34;message&#34;:&#34;abc&#34;})
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	//4. YAML响应
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/someYAML&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		c.YAML(http.StatusOK,gin.H{&#34;name&#34;:&#34;zhangsan&#34;})
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	//5. protobuf格式,谷歌开发的高效存储读取的工具
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/someProtoBuf&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		resp:=[]int64{int64(1),int64(9)}
+</span></span><span class="line"><span class="cl">		//定义数据
+</span></span><span class="line"><span class="cl">		label:=&#34;lable&#34;
+</span></span><span class="line"><span class="cl">		//构建protobuf格式数据
+</span></span><span class="line"><span class="cl">		data:=&amp;protoexample.Test{
+</span></span><span class="line"><span class="cl">			Label: &amp;label,
+</span></span><span class="line"><span class="cl">			Reps: resp,
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		c.ProtoBuf(http.StatusOK,data)
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="html模板渲染">HTML模板渲染</h3>
+<ul>
+<li>gin支持加载HTML模板，然后根据模板参数进行配置并返回响应的数据，<strong>本质上就是字符串替换</strong></li>
+<li>LoadHTMLGlob()方法可以加载模板文件(加载路径下的所有或部分文件)</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        //加载模板文件,r.LoadHTMLFiles()是匹配文件，r.LoadHTMLGlob()匹配路径
+</span></span><span class="line"><span class="cl">	r.LoadHTMLGlob(&#34;templates/*&#34;)
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/index&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		//根据文件名渲染
+</span></span><span class="line"><span class="cl">		//加载模板是加载的路径，替换的是文件中的某个变量
+</span></span><span class="line"><span class="cl">		c.HTML(200,&#34;index.tmpl&#34;,gin.H{&#34;title&#34;:&#34;标题&#34;})
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>index.tmpl:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;html&gt;
+</span></span><span class="line"><span class="cl">    &lt;h1&gt;
+</span></span><span class="line"><span class="cl">        {{.title}}
+</span></span><span class="line"><span class="cl">    &lt;/h1&gt;
+</span></span><span class="line"><span class="cl">&lt;/html&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="重定向">重定向</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">r.GET(&#34;/redirect&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		//支持内部和外部重定向
+</span></span><span class="line"><span class="cl">		c.Redirect(http.StatusMovedPermanently,&#34;http://www.baidu.com/&#34;)
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="同步异步">同步异步</h3>
+<ul>
+<li>goroutine机制可以方便的实现异步处理</li>
+<li>在启动新的goroutine时，<strong>不能使用原始上下文，必须使用它的只读副本（gin框架要求的）</strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        //异步，瞬间结束，goroutine在后台继续执行
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/async&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		//必须先复制一个副本
+</span></span><span class="line"><span class="cl">		copyContext:=c.Copy()
+</span></span><span class="line"><span class="cl">		//需要注意的是这里开了一个goroutine在后台执行后，即使GET结束了依然在执行，因为GET不是主函数，即使结束了也不会影响到goroutine
+</span></span><span class="line"><span class="cl">		go func() {
+</span></span><span class="line"><span class="cl">			time.Sleep(3*time.Second)
+</span></span><span class="line"><span class="cl">			log.Println(&#34;异步执行:&#34;+copyContext.Request.URL.Path)
+</span></span><span class="line"><span class="cl">		}()
+</span></span><span class="line"><span class="cl">		//可以开多个goroutine且共用一个context副本
+</span></span><span class="line"><span class="cl">		go func() {
+</span></span><span class="line"><span class="cl">			time.Sleep(3*time.Second)
+</span></span><span class="line"><span class="cl">			log.Println(&#34;异步执行:&#34;+copyContext.Request.URL.Path)
+</span></span><span class="line"><span class="cl">		}()
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	//同步，需等待3S才会执行结束
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/sync&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">			time.Sleep(3 * time.Second)
+</span></span><span class="line"><span class="cl">			log.Println(&#34;同步执行:&#34; + c.Request.URL.Path)
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="gin中间件">gin中间件</h2>
+<ul>
+<li>gin可以构建中间件，但它只对注册过的路由函数起作用</li>
+<li>对于分组路由，嵌套使用中间件可以限定中间件的作用范围</li>
+<li>中间件分为全局中间件，单个路由中间件和群组中间件</li>
+<li><strong>gin中间件必须是一个gin.HandlerFunc类型，中间件就类似于拦截器，例如作用于某些页面需要用户登录，先在中间件进行判断，判断成功后再进行真正的业务处理</strong></li>
+<li>中间件在处理用户请求之前会执行，之后也会执行</li>
+</ul>
+<h3 id="全局中间件">全局中间件</h3>
+<p>所有请求都经过此中间件，可以定义多个中间件，执行顺序是依次顺序执行。</p>
+<p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-4.png"
+	width="682"
+	height="538"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-4_hudafcc6b20afb0e6366e5a5613a08d57d_36137_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-4_hudafcc6b20afb0e6366e5a5613a08d57d_36137_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="126"
+		data-flex-basis="304px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func MiddleWare() gin.HandlerFunc{
+</span></span><span class="line"><span class="cl">	return func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		t:=time.Now()
+</span></span><span class="line"><span class="cl">		//在GET之前执行
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;中间件执行了&#34;)
+</span></span><span class="line"><span class="cl">		//设置变量到context（本质上是把一个值设置到request里面去），通过get()取
+</span></span><span class="line"><span class="cl">		c.Set(&#34;name&#34;,&#34;zhangsan&#34;)
+</span></span><span class="line"><span class="cl">		//执行函数（发送数据到request），Next()就是遍历一遍c.handlers，然后把所有的c.handlers（GET/POST的第二个函数参数）都执行
+</span></span><span class="line"><span class="cl">		c.Next()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//下面是在response响应之前GET执行之后进行的操作
+</span></span><span class="line"><span class="cl">		//当执行完c.Next()后，request之后GET之前的中间件代码就已经结束了，下面的就都是response之前要执行的代码
+</span></span><span class="line"><span class="cl">		status:=c.Writer.Status()
+</span></span><span class="line"><span class="cl">		fmt.Println(status)
+</span></span><span class="line"><span class="cl">		//统计从请求过来到发送response之间的耗时
+</span></span><span class="line"><span class="cl">		t1:=time.Since(t)
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;耗时：&#34;,t1)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	// 1. 创建路由，默认用了Logger(), Recovery()两个中间件
+</span></span><span class="line"><span class="cl">	r:=gin.Default()
+</span></span><span class="line"><span class="cl">	//注册中间件
+</span></span><span class="line"><span class="cl">	r.Use(MiddleWare())
+</span></span><span class="line"><span class="cl">	//{}是为了代码规范
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		r.GET(&#34;/middleware&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">			//取值,GET返回值有两个，一个获取到的值和一个是否值存在的布尔值
+</span></span><span class="line"><span class="cl">			value,_:=c.Get(&#34;name&#34;)
+</span></span><span class="line"><span class="cl">			c.JSON(200,gin.H{&#34;name&#34;:value})
+</span></span><span class="line"><span class="cl">		})
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
+</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>当执行完c.Next()后，request之后GET之前的中间件代码就已经结束了，下面的就都是response之前要执行的代码</strong></p>
+<p>在中间件中可以设定三种代码： Next()、return、Abort()</p>
+<ul>
+<li>Next(): 表示跳过当前中间件的剩余内容，去执行下一个中间件。当所有操作执行完之后，再以出栈的顺序执行剩余代码。类似于一个划分，Next()之前的代码是在客户端发起请求后服务器顺序执行的，之后的代码是在服务器response之后 客户端收到数据之前倒叙执行的。就像函数调用栈的形式，中间件1的Next()指向了中间件2，中间件2的Next()部分指向了具体的handlerfunc,当具体func执行完后才会执行中间件2的剩余代码，以此类推。</li>
+</ul>
+<p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-1.png"
+	width="1416"
+	height="599"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-1_hufc6aac3fd5a7740732ce9cc3b0816952_26763_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-1_hufc6aac3fd5a7740732ce9cc3b0816952_26763_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="236"
+		data-flex-basis="567px"
+	
+></p>
+<ul>
+<li>return:终止执行当前中间件的剩余内容，转而执行下一个中间件。且所有函数执行完后不会执行return之后的代码。如上图中把中间件2的next换成return后的打印顺序是1-2-3-5。 4在return之后，不会发生执行。如函数调用栈中某个子函数在执行一半时return，这个子函数会立即返回结束。</li>
+<li>Abort(): 不再执行Abort()之后的中间件，在Abort()之前的代码执行完后开始向客户端响应，先执行Abort之下的代码，然后倒叙向客户端响应。依然如函数调用栈，Abort()的调用表示不会再调用任何子函数，执行完有Abort的当前函数后层层返回，执行上级中间件next()后的剩余代码。</li>
+</ul>
+<p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-2.png"
+	width="1480"
+	height="676"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-2_hu69fb5d634402b69057164a7bd8881c17_46158_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-2_hu69fb5d634402b69057164a7bd8881c17_46158_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="525px"
+	
+></p>
+<h3 id="局部中间件">局部中间件</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        //注册中间件
+</span></span><span class="line"><span class="cl">	r.Use(MiddleWare())
+</span></span><span class="line"><span class="cl">	//{}是为了代码规范
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		//根路由后面是定义的局部中间件
+</span></span><span class="line"><span class="cl">		r.GET(&#34;/middleware&#34;,MiddleWare(), func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">			//取值,GET返回值有两个，一个获取到的值和一个是否值存在的布尔值
+</span></span><span class="line"><span class="cl">			value,_:=c.Get(&#34;name&#34;)
+</span></span><span class="line"><span class="cl">			c.JSON(200,gin.H{&#34;name&#34;:value})
+</span></span><span class="line"><span class="cl">		})
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="会话控制">会话控制</h2>
+<h3 id="cookie是什么">Cookie是什么</h3>
+<ul>
+<li>HTTP是无状态协议，服务器不能记录浏览器的访问状态，也就是说服务器不能区分两次请求是否由同一个客户端发出</li>
+<li>Cookie就是解决HTTP协议无状态的方案之一，它实际上就是服务器保存在浏览器上的一段信息，浏览器有了Cookie之后，每次向服务器发送请求都会同时将该信息发送给服务器，服务器收到请求后就可以根据该信息处理请求</li>
+<li><strong>Cookie由服务器创建，并发送给浏览器，最终由浏览器保存</strong></li>
+</ul>
+<h3 id="cookie的用途">Cookie的用途</h3>
+<ul>
+<li>保持用户登录状态</li>
+<li>电商网站的购物车（京东），商品添加到cookie，无需登录，关闭浏览器重新打开依然存在</li>
+</ul>
+<p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-6.png"
+	width="1004"
+	height="381"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-6_hu21d1436627a39a8c67bd18216ba0fb2b_177625_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-6_hu21d1436627a39a8c67bd18216ba0fb2b_177625_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="263"
+		data-flex-basis="632px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        // 服务端给客户端cookie
+</span></span><span class="line"><span class="cl">	r.GET(&#34;cookie&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		//获取客户端是否携带了cookie
+</span></span><span class="line"><span class="cl">		cookie, err := c.Cookie(&#34;key_cookie&#34;)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			cookie =&#34;Not Set&#34;
+</span></span><span class="line"><span class="cl">			//给客户端设置cookie，随着response一起返回给浏览器
+</span></span><span class="line"><span class="cl">			//maxAge int,cookie的存在时间，单位为秒，超过时间cookie会过期,为0时会跟着会话结束而结束
+</span></span><span class="line"><span class="cl">			//path,cookie在浏览器中的所在目录，默认为“”，让浏览器自己分配
+</span></span><span class="line"><span class="cl">			//domain ,域名，通常设置为“”即可
+</span></span><span class="line"><span class="cl">			//secure,是否只能通过https访问
+</span></span><span class="line"><span class="cl">			//httpOnly,是否允许别人通过js获取自己的cookie
+</span></span><span class="line"><span class="cl">			c.SetCookie(&#34;key_cookie&#34;,&#34;value_cookie&#34;,60,&#34;&#34;,&#34;&#34;,false,true)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		//第一次是NotSet，刷新页面重新发送请求后则是value_cookie
+</span></span><span class="line"><span class="cl">		fmt.Println(cookie)
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>示例：用中间件判断用户登录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func cookieGin() gin.HandlerFunc{
+</span></span><span class="line"><span class="cl">	return func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		cookie, err := c.Cookie(&#34;name&#34;)
+</span></span><span class="line"><span class="cl">		if err == nil {
+</span></span><span class="line"><span class="cl">			if cookie == &#34;zhangsan&#34;{
+</span></span><span class="line"><span class="cl">				c.Next()
+</span></span><span class="line"><span class="cl">				return
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		//返回错误
+</span></span><span class="line"><span class="cl">		c.JSON(http.StatusBadRequest,gin.H{&#34;error&#34;:&#34;StatusUnauthorized&#34;})
+</span></span><span class="line"><span class="cl">		//c.Abort()的作用是不再调用后续的函数处理,直接response
+</span></span><span class="line"><span class="cl">		c.Abort()
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	r:=gin.Default()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/login&#34;, func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		c.SetCookie(&#34;name&#34;,&#34;zhangsan&#34;,60,&#34;/&#34;,&#34;localhost&#34;,false,true)
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	//不进行login直接home就会被中间件拦截
+</span></span><span class="line"><span class="cl">	r.GET(&#34;/home&#34;, cookieGin(), func(c *gin.Context) {
+</span></span><span class="line"><span class="cl">		cookie, _ := c.Cookie(&#34;name&#34;)
+</span></span><span class="line"><span class="cl">		c.JSON(200,gin.H{&#34;name&#34;:cookie})
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="cookie的缺点">Cookie的缺点</h3>
+<ul>
+<li>不安全，明文的（加密了也不太安全）</li>
+<li>增加了带宽消耗</li>
+<li>可以被禁用（禁用之后功能就不再完善）</li>
+<li>cookie有上限</li>
+</ul>
+<h3 id="session">session</h3>
+<p>session它可以弥补cookie的不足。session必须依赖于cookie才能使用。它在服务端生成一个SessionId，然后放在cookie里传给客户端，cookie本身改存到了服务端。</p>
+<p>session常用的是临时session，用来记录用户的状态，当浏览器关闭时session也会消失。下次打开浏览器就需要重新存入。</p>
+<p>在三次握手阶段，客户端第一次握手时请求服务器，服务器产生cookie。</p>
+<p>然后在第二次握手之前服务器将这个cookie加密作为key，生成session为value，然后存在服务器设置的容器中。第二次握手服务器将cookie明文发给客户端，客户端决定是否存储。</p>
+<p>第三次握手客户端发送cookie过去，服务器加密cookie并以这个cookie去查找是否有对应的session。</p>
+<p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-8.png"
+	width="1105"
+	height="480"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-8_huecc383fda296f178cfec5cdbf2faa340_171570_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-8_huecc383fda296f178cfec5cdbf2faa340_171570_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="552px"
+	
+></p>
+<p>gin-contrib : gin框架的各种插件中间件，如session在gin中是默认不支持的，可以通过这个包中的session来给gin安装，使用中间件的方式。</p>
+<p><a class="link" href="https://github.com/gin-contrib/sessions"  target="_blank" rel="noopener"
+    >https://github.com/gin-contrib/sessions</a>     session在gin中的使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/gin-contrib/sessions&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/gin-contrib/sessions/redis&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">r</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">store</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">redis</span><span class="p">.</span><span class="nf">NewStore</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:6379&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;secret&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// &#34;mysession&#34;是cookie的名称，即key,在setCookie中的name等于的内容
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">r</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">sessions</span><span class="p">.</span><span class="nf">Sessions</span><span class="p">(</span><span class="s">&#34;mysession&#34;</span><span class="p">,</span> <span class="nx">store</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/incr&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">session</span> <span class="o">:=</span> <span class="nx">sessions</span><span class="p">.</span><span class="nf">Default</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">count</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">v</span> <span class="o">:=</span> <span class="nx">session</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;count&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">v</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">count</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">count</span> <span class="p">=</span> <span class="nx">v</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">count</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">session</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;count&#34;</span><span class="p">,</span> <span class="nx">count</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">session</span><span class="p">.</span><span class="nf">Save</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;count&#34;</span><span class="p">:</span> <span class="nx">count</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">r</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;:8000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-3.png"
+	width="976"
+	height="232"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-3_hu6ed8566ce82ddbeb49260fab459b2302_142132_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-3_hu6ed8566ce82ddbeb49260fab459b2302_142132_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="420"
+		data-flex-basis="1009px"
+	
+></p>
+<p>比如存储到redis中，session会在redis中以session_开头加cookie的value的加密值来拼接一个redis的key: <code>session_UHNOMHSNWKEJWSJIOPY2AQI7VCE3P2SMDV4LGSFNHJWPCJFM72ZQ</code>，且该用户的所有的session.set操作都会放到这一个key中[无论有多少个session，都不会创建新的redis-key，仅在这一个key中进行拼接存储]，获取时会先获取这里面的所有值，因为里面存的是key-value的格式，它获取所有值后再通过key来获取具体的session-value</p>
+<p>总结下来session的流程是客户端请求，然后服务器返回cookie，同时将这个cookie的value值加密组装存到redis或其他容器中（不取name的原因是name在不同主机中值是相同的），然后返回cookie的name和value等给客户端，下次客户端访问就可以将这个cookie的name和value传给服务器，服务器通过将value加密然后查询是否有对应的session值</p>
+<p>一定要注意的是每个浏览器(开无痕也会出现新的cookie)都会有一个唯一的cookie来存储它自己的session，因此在这个cookie使用session.Del(&ldquo;key&rdquo;) 只会删除当前cookie中存的session值，不会影响到其他的key-session。所以在实际应用中同一主机不同浏览器存储的session是不同的，因为两者是不同的cookie，redis中指向的是不同的key。如在Chrome中登录了淘宝，Edge中并不会直接显示你已经登录了，你需要重新登录，他们属于两个不同的session。</p>
+<p>一定要记得，并不是每一个会话都有一个单独的session,session取决于这个cookie是否更改过，关闭此浏览器再重新打开这个网页后，虽然会话是新的，但是其cookie还是原本的值，在redis中依然存在。只有换一个浏览器(或开启无痕模式)或者  删除cookie让其重新生成新的cookie  才能在redis中生成新的session记录。</p>
+<p><img src="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-7.png"
+	width="1371"
+	height="67"
+	srcset="/p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-7_hud735a859f528f63a5f76491af3a42180_23936_480x0_resize_box_3.png 480w, /p/gin%E6%A1%86%E6%9E%B6%E5%88%9D%E4%BA%86%E8%A7%A3/media/image-7_hud735a859f528f63a5f76491af3a42180_23936_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="2046"
+		data-flex-basis="4911px"
+	
+></p>
+<p>set和delete操作后一定要进行save操作。</p>
+<p>options可以设置这个session存在的时间，当其为0时表示在会话结束时就会消失。重新打开浏览器session就会失效。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	store.Options(sessions.Options{
+</span></span><span class="line"><span class="cl">		MaxAge: 10,
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="session中间件开发">Session中间件开发</h3>
+<p>设计一个通用的session服务，支持内存存储和redis存储</p>
+<p>session模块设计</p>
+<ul>
+<li>本质上k-v系统，通过key进行增删改查</li>
+<li>session可以存储在内存或者redis中</li>
+</ul>
+<p><a class="link" href="https://github.com/XiaoNuoZ/session_cookie_Middleware"  target="_blank" rel="noopener"
+    >https://github.com/XiaoNuoZ/session_cookie_Middleware</a></p>
+<h2 id="模板引擎的使用">模板引擎的使用</h2>
+<p>在一些前后端不分离的Web架构中，我们通常需要在后端将一些数据渲染到HTML文档中，从而实现动态的网页（网页的布局和样式大致一样，但展示的内容并不一样）效果。</p>
+<p>我们这里说的模板可以理解为事先定义好的HTML文档文件，模板渲染的作用机制可以简单理解为文本替换操作–使用相应的数据去替换HTML文档中事先准备好的标记。</p>
+<p>Go语言内置了文本模板引擎 <code>text/template</code>和用于<strong>HTML文档的 <code>html/template</code></strong>。它们的作用机制可以简单归纳如下：</p>
+<ol>
+<li>模板文件通常定义为 <code>.tmpl</code>和 <code>.tpl</code>为后缀（也可以使用其他的后缀），必须使用 <code>UTF8</code>编码。</li>
+<li>模板文件中使用 <code>{{</code>和 <code>}}</code>包裹和标识需要传入的数据。</li>
+<li>传给模板这样的数据就可以通过点号（<code>.</code>）来访问，如果数据是复杂类型的数据，可以通过{ { .FieldName }}来访问它的字段。</li>
+<li>除 <code>{{</code>和 <code>}}</code>包裹的内容外，其他内容均不做修改原样输出。</li>
+</ol>
+<p><strong>Go语言模板引擎的使用可以分为三部分：定义模板文件、解析模板文件和模板渲染.</strong></p>
+<p>其中，定义模板文件时需要我们按照相关语法规则去编写，就是在html内容中加入{{ . }}来进行接收数据</p>
+<p>上面定义好了模板文件之后，可以使用下面的常用方法去解析模板文件，得到模板对象：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Template</span><span class="p">)</span> <span class="nf">Parse</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Template</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ParseFiles</span><span class="p">(</span><span class="nx">filenames</span> <span class="o">...</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Template</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ParseGlob</span><span class="p">(</span><span class="nx">pattern</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Template</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>渲染模板简单来说就是使用数据去填充模板。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Template</span><span class="p">)</span> <span class="nf">Execute</span><span class="p">(</span><span class="nx">wr</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Template</span><span class="p">)</span> <span class="nf">ExecuteTemplate</span><span class="p">(</span><span class="nx">wr</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func sayHello(w http.ResponseWriter,r *http.Request){
+</span></span><span class="line"><span class="cl">	//解析模板
+</span></span><span class="line"><span class="cl">	t,_:=template.ParseFiles(&#34;./hello.html&#34;)
+</span></span><span class="line"><span class="cl">	//也可以使用t,_:=template.New(&#34;hello.html&#34;).ParseFiles(&#34;./hello.html&#34;)
+</span></span><span class="line"><span class="cl">	//一定要注意的就是New中的参数一定要和模板文件名字对应上，不然解析会失败
+</span></span><span class="line"><span class="cl">	//如果ParseFiles传了很多个文件，那么至少要和其中一个对应上
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//需要注意的是，结构体首字母必须大写才能在html中接收到，但是map不在乎大小写
+</span></span><span class="line"><span class="cl">	u1:=User{
+</span></span><span class="line"><span class="cl">		Name: &#34;笑傩&#34;,
+</span></span><span class="line"><span class="cl">		Age: 18,
+</span></span><span class="line"><span class="cl">		Address: &#34;四川&#34;,
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	m1:=map[string]interface{}{
+</span></span><span class="line"><span class="cl">		&#34;Name&#34;: &#34;笑傩&#34;,
+</span></span><span class="line"><span class="cl">		&#34;Age&#34;: 18,
+</span></span><span class="line"><span class="cl">		&#34;Address&#34;: &#34;四川&#34;,
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	//渲染模板，通过嵌套的方法可以传过去多个数据
+</span></span><span class="line"><span class="cl">	t.Execute(w,map[string]interface{}{
+</span></span><span class="line"><span class="cl">		&#34;u1&#34;:u1,
+</span></span><span class="line"><span class="cl">		&#34;m1&#34;:m1,
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;body&gt;
+</span></span><span class="line"><span class="cl">    &lt;p&gt;Hello {{.u1.Name}}&lt;/p&gt;
+</span></span><span class="line"><span class="cl">    &lt;p&gt;Age {{.u1.Age}}&lt;/p&gt;
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    &lt;p&gt;{{.m1.Name}}&lt;/p&gt;
+</span></span><span class="line"><span class="cl">    &lt;p&gt;Age {{.m1.Age}}&lt;/p&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    //with可以设定一个局部作用域，在此作用域中.代表.m1
+</span></span><span class="line"><span class="cl">    {{with .m1}}
+</span></span><span class="line"><span class="cl">    &lt;p&gt;{{.Name}}&lt;/p&gt;
+</span></span><span class="line"><span class="cl">    &lt;p&gt;Age {{.Age}}&lt;/p&gt;
+</span></span><span class="line"><span class="cl">    {{end}}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">     {{index .slice 2}} //取切片中索引为2的值
+</span></span><span class="line"><span class="cl">&lt;/body&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="变量">变量</h3>
+<p>还可以在模板中声明变量，用来保存传入模板的数据或其他语句生成的结果。具体语法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">{{ $v1 := 100}}
+</span></span><span class="line"><span class="cl">{{ $age := .m1.age }}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其中 <code>$age</code>是变量的名字，在后续的代码中就可以使用该变量了。</p>
+<p>有时候我们在使用模板语法的时候会不可避免的引入一下空格或者换行符，这样模板最终渲染出来的内容可能就和我们想的不一样，这个时候可以使用 <code>{{-</code>语法去除模板内容左侧的所有空白符号， 使用 <code>-}}</code>去除模板内容右侧的所有空白符号。<code>{{- .Name -}}</code>,  <code>-</code>要紧挨 <code>{{</code>和 <code>}}</code>，同时与模板值之间需要使用空格分隔。</p>
+<h3 id="自定义函数">自定义函数</h3>
+<p>Go的模板支持自定义函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//定义一个自定义的函数，返回值要么有一个，要么有两个且第二个返回值必须是error类型
+</span></span><span class="line"><span class="cl">	kua := func(name string,address string)(string,error) {
+</span></span><span class="line"><span class="cl">		return name+&#34;测试&#34;+address,nil
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	//解析模板，采用链式操作在Parse之前调用Funcs添加自定义的kua函数，把kua存入FuncMap中
+</span></span><span class="line"><span class="cl">	//添加自定义函数一定要在解析模板之前
+</span></span><span class="line"><span class="cl">	t,_:=template.New(&#34;hello.html&#34;).Funcs(template.FuncMap{&#34;kua&#34;:kua}).ParseFiles(&#34;./hello.html&#34;)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后在前端文件中则是通过 <code>{{kua .Name .Address}}</code> 来调用，模板也有管道符 <code>{{ .Name | kua }}</code>，意思是将Name的值作为后面函数的参数</p>
+<h3 id="嵌套template">嵌套template</h3>
+<p>可以在template中嵌套其他的template。这个template可以是单独的文件，也可以是通过 <code>define</code>定义的template。</p>
+<p><code>t.tmpl</code>文件内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;!DOCTYPE html&gt;
+</span></span><span class="line"><span class="cl">&lt;html lang=&#34;zh-CN&#34;&gt;
+</span></span><span class="line"><span class="cl">&lt;head&gt;
+</span></span><span class="line"><span class="cl">    &lt;meta charset=&#34;UTF-8&#34;&gt;
+</span></span><span class="line"><span class="cl">    &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+</span></span><span class="line"><span class="cl">    &lt;meta http-equiv=&#34;X-UA-Compatible&#34; content=&#34;ie=edge&#34;&gt;
+</span></span><span class="line"><span class="cl">    &lt;title&gt;tmpl test&lt;/title&gt;
+</span></span><span class="line"><span class="cl">&lt;/head&gt;
+</span></span><span class="line"><span class="cl">&lt;body&gt;
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    &lt;h1&gt;测试嵌套template语法&lt;/h1&gt;
+</span></span><span class="line"><span class="cl">    &lt;hr&gt;
+</span></span><span class="line"><span class="cl">    {{template &#34;ul.tmpl&#34;}}
+</span></span><span class="line"><span class="cl">    &lt;hr&gt;
+</span></span><span class="line"><span class="cl">    {{template &#34;ol.tmpl&#34;}}
+</span></span><span class="line"><span class="cl">&lt;/body&gt;
+</span></span><span class="line"><span class="cl">&lt;/html&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{ define &#34;ol.tmpl&#34;}}
+</span></span><span class="line"><span class="cl">&lt;ol&gt;
+</span></span><span class="line"><span class="cl">    &lt;li&gt;吃饭&lt;/li&gt;
+</span></span><span class="line"><span class="cl">    &lt;li&gt;睡觉&lt;/li&gt;
+</span></span><span class="line"><span class="cl">    &lt;li&gt;打豆豆&lt;/li&gt;
+</span></span><span class="line"><span class="cl">&lt;/ol&gt;
+</span></span><span class="line"><span class="cl">{{end}}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>ul.tmpl</code>文件内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;ul&gt;
+</span></span><span class="line"><span class="cl">    &lt;li&gt;注释&lt;/li&gt;
+</span></span><span class="line"><span class="cl">    &lt;li&gt;日志&lt;/li&gt;
+</span></span><span class="line"><span class="cl">    &lt;li&gt;测试&lt;/li&gt;
+</span></span><span class="line"><span class="cl">&lt;/ul&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>路由处理函数如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">tmplDemo</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">tmpl</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;./t.tmpl&#34;</span><span class="p">,</span> <span class="s">&#34;./ul.tmpl&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;create template failed, err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">user</span> <span class="o">:=</span> <span class="nx">UserInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Name</span><span class="p">:</span>   <span class="s">&#34;笑傩&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Gender</span><span class="p">:</span> <span class="s">&#34;男&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Age</span><span class="p">:</span>    <span class="mi">18</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">tmpl</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注意</strong>：在解析模板时，<strong>被嵌套的模板一定要在后面解析</strong>，例如上面的示例中 <code>t.tmpl</code>模板中嵌套了 <code>ul.tmpl</code>，所以 <code>ul.tmpl</code>要在 <code>t.tmpl</code>后进行解析。</p>
+<h3 id="block定义块模板">block定义块模板</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">{{block &#34;name&#34; pipeline}} T1 {{end}}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>block</code>是定义模板 <code>{{define &quot;name&quot;}} T1 {{end}}</code>和执行 <code>{{template &quot;name&quot; pipeline}}</code>缩写，典型的用法是定义一组根模板，然后通过在其中重新定义块模板进行自定义。</p>
+<p>定义一个根模板 <code>templates/base.tmpl</code>，内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;!DOCTYPE html&gt;
+</span></span><span class="line"><span class="cl">&lt;html lang=&#34;zh-CN&#34;&gt;
+</span></span><span class="line"><span class="cl">&lt;head&gt;
+</span></span><span class="line"><span class="cl">    &lt;title&gt;Go Templates&lt;/title&gt;
+</span></span><span class="line"><span class="cl">&lt;/head&gt;
+</span></span><span class="line"><span class="cl">&lt;body&gt;
+</span></span><span class="line"><span class="cl">&lt;div class=&#34;container-fluid&#34;&gt;
+</span></span><span class="line"><span class="cl">    {{block &#34;content&#34; . }}{{end}}
+</span></span><span class="line"><span class="cl">&lt;/div&gt;
+</span></span><span class="line"><span class="cl">&lt;/body&gt;
+</span></span><span class="line"><span class="cl">&lt;/html&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后定义一个 <code>templates/index.tmpl</code>，”继承”<code>base.tmpl</code>，然后重新定义区块 <code>content</code>，在区块中写入不同于其他网页的内容即可，这样就可以实现多个页面用同一个根模板，仅部分数据不同：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//一定要在最后加上在根模板定义的pipeline，表示从根模板把数据拿过来
+</span></span><span class="line"><span class="cl">{{template &#34;base.tmpl&#34; .}}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{define &#34;content&#34;}}
+</span></span><span class="line"><span class="cl">    &lt;div&gt;Hello world!&lt;/div&gt;
+</span></span><span class="line"><span class="cl">    &lt;p&gt;Hello {{ . }}&lt;/p&gt;
+</span></span><span class="line"><span class="cl">{{end}}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后使用 <code>template.ParseGlob</code>按照<strong>正则匹配规则解析模板文件</strong>，然后通过 <code>ExecuteTemplate</code>渲染指定的模板：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">index</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//也可以使用template.ParseFiles(&#34;./templates/根模板&#34;,&#34;./templates/继承模板&#34;)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//根模板一定要写在前面
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">tmpl</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseGlob</span><span class="p">(</span><span class="s">&#34;templates/*.tmpl&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//使用ExecuteTemplate的原因是前面解析了两个模板，以前使用Execute是因为只渲染一个模板，不需要指定也知道渲染哪个模板，现在有两个则必须要进行指定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">name</span> <span class="o">:=</span> <span class="s">&#34;笑傩&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">tmpl</span><span class="p">.</span><span class="nf">ExecuteTemplate</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;index.tmpl&#34;</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果我们的模板名称冲突了，例如不同业务线下都定义了一个 <code>index.tmpl</code>模板，我们可以通过下面两种方法来解决。</p>
+<ol>
+<li>在模板文件开头使用 <code>{{define 模板名}}</code>语句显式的为模板命名（不写默认将文件名作为模板名）。</li>
+<li>可以把模板文件存放在 <code>templates</code>文件夹下面的不同目录中，然后使用 <code>template.ParseGlob(&quot;templates/**/*.tmpl&quot;)</code>解析模板。</li>
+</ol>
+<h3 id="修改默认的标识符">修改默认的标识符</h3>
+<p>Go标准库的模板引擎使用的花括号 <code>{{</code>和 <code>}}</code>作为标识，而许多前端框架（如 <code>Vue</code>和 <code>AngularJS</code>）也使用 <code>{{</code>和 <code>}}</code>作为标识符，所以当我们同时使用Go语言模板引擎和以上前端框架时就会出现冲突，这个时候我们需要修改标识符，修改前端的或者修改Go语言的。这里演示如何修改Go语言模板引擎默认的标识符：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">).</span><span class="nf">Delims</span><span class="p">(</span><span class="s">&#34;{[&#34;</span><span class="p">,</span> <span class="s">&#34;]}&#34;</span><span class="p">).</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;./t.tmpl&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="err">然后在模板中就可以通过</span>   <span class="p">{[</span> <span class="p">.</span><span class="nx">name</span> <span class="p">]}</span> <span class="err">来引用数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="texttemplate与htmltemplate的区别">text/template与html/template的区别</h3>
+<p><code>html/template</code>针对的是需要返回HTML内容的场景，在模板渲染过程中会对一些有风险的内容进行转义，以此来防范跨站脚本攻击。比如在输入框中输入sql语句造成拖库或者死循环，html/template可以对内容进行转移，保证输出的html内容都是安全的。但是在某些场景下，我们如果相信用户输入的内容，不想转义的话，可以自行编写一个safe函数，手动返回一个 <code>template.HTML</code>类型的内容，<code>template.HTML可以将用户输入的内容转成html</code>。</p>
+<h2 id="gin框架渲染tmpl模板">gin框架渲染tmpl模板</h2>
+<p>Gin框架中使用 <code>LoadHTMLGlob()</code> 加载文件夹或者 <code>LoadHTMLFiles()</code> 加载单一文件夹  来进行HTML模板渲染。Glob通过正则表达式进行匹配，<strong>如 <code>templates/**/*</code>表示templates下的任意文件夹中的任意文件，不能省略</strong>，它代表任意文件夹。 <code>templates/*</code>是表示templates下的任意文件，它加载不到该文件夹下的某个文件夹中的文件，必须加上**。</p>
+<p><strong>tmpl文件中最好在内容前加上define定义，避免在未来不同文件夹中有同名文件</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">{{define &#34;posts/index.html&#34;}}
+</span></span><span class="line"><span class="cl">	......
+</span></span><span class="line"><span class="cl">{{end}}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	r.LoadHTMLGlob(&#34;templates/**/*&#34;)
+</span></span><span class="line"><span class="cl">	r.GET(&#34;index&#34;, func(c *gin.Context){
+</span></span><span class="line"><span class="cl">		//第二个参数是defin定义的名字，如果没有则默认为文件名（即使是在二级目录templates/posts/下也只是仅有文件名，因此需要define定义）
+</span></span><span class="line"><span class="cl">		c.HTML(http.StatusOK,&#34;index.html&#34;,&#34;zhangsan&#34;)
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="自定义模板函数">自定义模板函数</h3>
+<p>定义一个不转义相应内容的 <code>safe</code>模板函数如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">router</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">router</span><span class="p">.</span><span class="nf">SetFuncMap</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">FuncMap</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;safe&#34;</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">str</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">template</span><span class="p">.</span><span class="nx">HTML</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">template</span><span class="p">.</span><span class="nf">HTML</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">router</span><span class="p">.</span><span class="nf">LoadHTMLFiles</span><span class="p">(</span><span class="s">&#34;./index.tmpl&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">router</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">HTML</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="s">&#34;index.tmpl&#34;</span><span class="p">,</span> <span class="s">&#34;&lt;a href=&#39;https://baidu.com&#39;&gt;baidu&lt;/a&gt;&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">router</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 <code>index.tmpl</code>中使用定义好的 <code>safe</code>模板函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;!DOCTYPE html&gt;
+</span></span><span class="line"><span class="cl">&lt;html lang=&#34;zh-CN&#34;&gt;
+</span></span><span class="line"><span class="cl">&lt;head&gt;
+</span></span><span class="line"><span class="cl">    &lt;title&gt;修改模板引擎的标识符&lt;/title&gt;
+</span></span><span class="line"><span class="cl">&lt;/head&gt;
+</span></span><span class="line"><span class="cl">&lt;body&gt;
+</span></span><span class="line"><span class="cl">//此处通过管道将取到的数据作为safe函数的参数
+</span></span><span class="line"><span class="cl">&lt;div&gt;{{ . | safe }}&lt;/div&gt;
+</span></span><span class="line"><span class="cl">&lt;/body&gt;
+</span></span><span class="line"><span class="cl">&lt;/html&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="静态文件处理">静态文件处理</h3>
+<p>当我们渲染的HTML文件中引用了静态文件时，我们只需要按照以下方式在渲染页面前调用 <code>gin.Static</code>方法即可。Static方法要在加载模板文件之前调用。第一个参数为在html文件中引用的目录 <code>href=&quot;/static/index.css&quot;</code>，第二个为本地静态文件存放路径</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">Static</span><span class="p">(</span><span class="s">&#34;/static&#34;</span><span class="p">,</span> <span class="s">&#34;./statics&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">LoadHTMLGlob</span><span class="p">(</span><span class="s">&#34;templates/**/*&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>关于模板文件和静态文件的路径，需要根据公司/项目的要求进行设置。可以使用下面的函数获取当前执行程序的路径。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">getCurrentPath</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">ex</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Executable</span><span class="p">();</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Dir</span><span class="p">(</span><span class="nx">ex</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="s">&#34;./&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="json渲染xml渲染和yaml渲染">JSON渲染、XML渲染和YAML渲染</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/someJSON&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 方式一：自己拼接JSON
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;message&#34;</span><span class="p">:</span> <span class="s">&#34;Hello world!&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">XML</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;message&#34;</span><span class="p">:</span> <span class="s">&#34;Hello world!&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">YAML</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;message&#34;</span><span class="p">:</span> <span class="s">&#34;ok&#34;</span><span class="p">,</span> <span class="s">&#34;status&#34;</span><span class="p">:</span> <span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/moreJSON&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 方法二：使用结构体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">type</span> <span class="nx">msg</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Name</span>    <span class="kt">string</span> <span class="s">`json:&#34;user&#34;`</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Message</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Age</span>     <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="s">&#34;小王子&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span><span class="p">.</span><span class="nx">Message</span> <span class="p">=</span> <span class="s">&#34;Hello world!&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span><span class="p">.</span><span class="nx">Age</span> <span class="p">=</span> <span class="mi">18</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//返回的数据中Name在前端显示为user
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">XML</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="获取参数">获取参数</h2>
+<h3 id="获取querystring参数">获取querystring参数</h3>
+<p><code>querystring</code>指的是URL中 <code>?</code>后面携带的参数，例如：<code>/user/search?username=笑傩</code>。 获取请求的querystring参数的方法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/user/search&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//没取到值则为第二个参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">username</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">DefaultQuery</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">,</span> <span class="s">&#34;小王子&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//没取到username为零值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">username</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//没取到ok的值为false
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">name</span><span class="p">,</span><span class="nx">ok</span><span class="o">:=</span><span class="nx">c</span><span class="p">.</span><span class="nf">GetQuery</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">name</span><span class="p">=</span><span class="s">&#34;no name&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//输出json结果给调用方
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;username&#34;</span><span class="p">:</span> <span class="nx">username</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="获取form参数">获取form参数</h3>
+<p>当前端请求的数据通过form表单提交时，例如向 <code>/user/search</code>发送一个POST请求，获取请求数据的方式如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/user/search&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// DefaultPostForm取不到值时会返回指定的默认值,但是如果前端是输入框，则用户不填时默认为空字符串，表示永远无法返回默认值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">username</span><span class="o">:=</span><span class="nx">c</span><span class="p">.</span><span class="nf">DefaultPostForm</span><span class="p">(</span><span class="s">&#34;xxx&#34;</span><span class="p">,</span><span class="s">&#34;something&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//getPostform取不到则返回false
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">username</span><span class="p">,</span><span class="nx">ok</span><span class="o">:=</span><span class="nx">c</span><span class="p">.</span><span class="nf">GetPostForm</span><span class="p">(</span><span class="s">&#34;xxx&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">username</span><span class="p">=</span><span class="s">&#34;somebody&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">username</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">PostForm</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">address</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">PostForm</span><span class="p">(</span><span class="s">&#34;address&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//输出json结果给调用方
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;message&#34;</span><span class="p">:</span>  <span class="s">&#34;ok&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;username&#34;</span><span class="p">:</span> <span class="nx">username</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;address&#34;</span><span class="p">:</span>  <span class="nx">address</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="获取path参数">获取path参数</h3>
+<p>请求的参数通过URL路径传递，例如：<code>/user/search/xiaoNuo/abc</code>。 获取请求URL路径中的参数的方式如下。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/user/search/:username/:address&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//获取URI参数就只有一个Param方法，通常用在博客日期统计，如blog/19/03
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">username</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Param</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">address</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Param</span><span class="p">(</span><span class="s">&#34;address&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//输出json结果给调用方
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;message&#34;</span><span class="p">:</span>  <span class="s">&#34;ok&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;username&#34;</span><span class="p">:</span> <span class="nx">username</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;address&#34;</span><span class="p">:</span>  <span class="nx">address</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="参数绑定">参数绑定</h3>
+<p>为了能够更方便的获取请求相关参数，提高开发效率，可以基于请求的 <code>Content-Type</code>识别请求数据类型并利用反射机制自动提取请求中 <code>QueryString</code>、<code>form表单</code>、<code>JSON</code>、<code>XML</code>等参数到结构体中。 下面的示例代码演示了 <code>.ShouldBind()</code>强大的功能，<strong>它能够基于请求自动提取 <code>JSON</code>、<code>form表单</code>和 <code>QueryString</code>类型的数据(一个方法提取多种类型)</strong>，并把值绑定到指定的结构体对象。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Binding from JSON
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Login</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//binding:&#34;required&#34;为前端的必选字段，如果接受到的值是空值则会报错,不加则表示该字段前端可以为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//通常只需要写一个form就可以同时获取到GET POST以及json格式的数据，但如果在form的基础上加了json的tag，则发往后端的json名必须和tag定义的相同，不加则以form为准
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//这个方法是通过反射实现，因此结构体名和字段名皆必须为大写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">User</span>     <span class="kt">string</span> <span class="s">`form:&#34;user&#34; json:&#34;user&#34; binding:&#34;required&#34;`</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Password</span> <span class="kt">string</span> <span class="s">`form:&#34;password&#34; json:&#34;password&#34; binding:&#34;required&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">router</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 绑定JSON的示例 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">router</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/loginJSON&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">var</span> <span class="nx">login</span> <span class="nx">Login</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">ShouldBind</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">login</span><span class="p">);</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;login info:%#v\n&#34;</span><span class="p">,</span> <span class="nx">login</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;user&#34;</span><span class="p">:</span>     <span class="nx">login</span><span class="p">.</span><span class="nx">User</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;password&#34;</span><span class="p">:</span> <span class="nx">login</span><span class="p">.</span><span class="nx">Password</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusBadRequest</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">()})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 绑定form表单示例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">router</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/loginForm&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">var</span> <span class="nx">login</span> <span class="nx">Login</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// ShouldBind()会根据请求的Content-Type自行选择绑定器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">ShouldBind</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">login</span><span class="p">);</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;user&#34;</span><span class="p">:</span>     <span class="nx">login</span><span class="p">.</span><span class="nx">User</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;password&#34;</span><span class="p">:</span> <span class="nx">login</span><span class="p">.</span><span class="nx">Password</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusBadRequest</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">()})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 绑定QueryString示例 (/loginQuery?user=xiaonuo&amp;password=123456)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">router</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/loginForm&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">var</span> <span class="nx">login</span> <span class="nx">Login</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// ShouldBind()会根据请求的Content-Type自行选择绑定器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">ShouldBind</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">login</span><span class="p">);</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;user&#34;</span><span class="p">:</span>     <span class="nx">login</span><span class="p">.</span><span class="nx">User</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;password&#34;</span><span class="p">:</span> <span class="nx">login</span><span class="p">.</span><span class="nx">Password</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusBadRequest</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">()})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// Listen and serve on 0.0.0.0:8080
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">router</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>ShouldBind</code>会按照下面的顺序解析请求中的数据完成绑定：</p>
+<ol>
+<li>如果是 <code>GET</code> 请求，只使用 <code>Form</code> 绑定引擎（<code>query</code>）。</li>
+<li>如果是 <code>POST</code> 请求，首先检查 <code>content-type</code> 是否为 <code>JSON</code> 或 <code>XML</code>，然后再使用 <code>Form</code>（<code>form-data</code>）。</li>
+</ol>
+<h2 id="文件上传">文件上传</h2>
+<h3 id="单个文件上传">单个文件上传</h3>
+<p>文件上传前端页面代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;zh-CN&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>上传文件示例<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--enctype=&#34;multipart/form-data&#34;:以二进制形式传输数据，传输文件必须要使用此参数 --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;/upload&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span> <span class="na">enctype</span><span class="o">=</span><span class="s">&#34;multipart/form-data&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;file&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;f1&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;submit&#34;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;上传&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>后端gin框架部分代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="c1">// 处理multipart forms提交文件时默认的内存限制是32 MiB
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 可以通过下面的方式修改
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// router.MaxMultipartMemory = 8 &lt;&lt; 20  // 8 MiB
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">router</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/upload&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//从请求中读取文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">f</span><span class="p">,</span><span class="nx">_</span><span class="o">:=</span><span class="nx">c</span><span class="p">.</span><span class="nf">FormFile</span><span class="p">(</span><span class="s">&#34;f1&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//Join将任意数量的路径元素拼接成一条路径，用斜线将它们拼接。空元素将被忽略。如果都是空的则返回空字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">dst</span><span class="o">:=</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="s">&#34;./&#34;</span><span class="p">,</span><span class="nx">f</span><span class="p">.</span><span class="nx">Filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//将读取到的文件保存到服务端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nf">SaveUploadedFile</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span><span class="nx">dst</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;message&#34;</span><span class="p">:</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;&#39;%s&#39; uploaded!&#34;</span><span class="p">,</span> <span class="nx">file</span><span class="p">.</span><span class="nx">Filename</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="多个文件上传">多个文件上传</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">r</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//从请求中读取文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">form</span><span class="p">,</span><span class="nx">_</span><span class="o">:=</span><span class="nx">c</span><span class="p">.</span><span class="nf">MultipartForm</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//根据input标签的name属性获取内容，一定要注意的是上传多个文件，其name属性要一致
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">files</span><span class="o">:=</span><span class="nx">form</span><span class="p">.</span><span class="nx">File</span><span class="p">[</span><span class="s">&#34;f1&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span><span class="nx">file</span><span class="o">:=</span><span class="k">range</span> <span class="nx">files</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">dst</span><span class="o">:=</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="s">&#34;./&#34;</span><span class="p">,</span><span class="nx">file</span><span class="p">.</span><span class="nx">Filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">SaveUploadedFile</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span><span class="nx">dst</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="重定向-1">重定向</h2>
+<h3 id="http重定向">HTTP重定向</h3>
+<p>HTTP 重定向很容易。 内部、外部重定向均支持。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//跳转到站外，URL也会改变。属于请求重定向
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nf">Redirect</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusMovedPermanently</span><span class="p">,</span><span class="s">&#34;https://www.baidu.com&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="路由重定向">路由重定向</h3>
+<p>路由重定向，使用 <code>HandleContext</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/a&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//跳转到/b对应的路由处理函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//这种属于内部跳转，属于请求转发，网页上的URL始终不会改变的，依然是/a
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">Path</span><span class="p">=</span><span class="s">&#34;/b&#34;</span>	<span class="c1">//把请求的URL修改成/b
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">r</span><span class="p">.</span><span class="nf">HandleContext</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>	<span class="c1">//继续进行后续的操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="gin路由">Gin路由</h2>
+<h3 id="普通路由">普通路由</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">r</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此外，还有一个可以匹配所有请求方法的 <code>Any</code>方法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="c1">//请求方法的大杂烩
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nf">Any</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">switch</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">Method</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//case可以是字符串也可以使用http包的常量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">case</span> <span class="s">&#34;GET&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span><span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;method&#34;</span><span class="p">:</span><span class="s">&#34;GET&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="nx">http</span><span class="p">.</span><span class="nx">MethodPost</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span><span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;method&#34;</span><span class="p">:</span><span class="s">&#34;POST&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>为没有配置处理函数的路由添加处理程序，默认情况下它返回404代码，下面的代码为没有匹配到路由的请求都返回 <code>views/404.html</code>页面。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">r</span><span class="p">.</span><span class="nf">NoRoute</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">HTML</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusNotFound</span><span class="p">,</span> <span class="s">&#34;views/404.html&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="路由组">路由组</h3>
+<p>我们可以将拥有共同URL前缀的路由划分为一个路由组。习惯性一对 <code>{}</code>包裹同组的路由，这只是为了看着清晰，你用不用 <code>{}</code>包裹功能上没什么区别。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//把公用的前缀提取出来，创建一个路由组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">userGroup</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/user&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">userGroup</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">userGroup</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">userGroup</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">shopGroup</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/shop&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">shopGroup</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">shopGroup</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/cart&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">shopGroup</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/checkout&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>路由组也是支持嵌套的，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">shopGroup</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/shop&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">shopGroup</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">shopGroup</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/cart&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">shopGroup</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/checkout&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 嵌套路由组,访问URL为/shop/xx/oo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">xx</span> <span class="o">:=</span> <span class="nx">shopGroup</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;xx&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">xx</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/oo&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通常我们将路由分组用在划分业务逻辑或划分API版本时。</p>
+<p>Gin框架中的路由使用的是<a class="link" href="https://github.com/julienschmidt/httprouter"  target="_blank" rel="noopener"
+    >httprouter</a>这个库。</p>
+<p>其基本原理就是构造一个路由地址的前缀树。</p>
+<h2 id="gin中间件-1">Gin中间件</h2>
+<p>Gin框架允许开发者在处理请求的过程中，加入用户自己的钩子（Hook）函数。这个钩子函数就叫中间件，中间件适合处理一些公共的业务逻辑，比如登录认证、权限校验、数据分页、记录日志、耗时统计等。它的作用范围是作用于中间件之后的路由，中间件之前的不会被波及。</p>
+<h3 id="定义中间件">定义中间件</h3>
+<p>Gin中的中间件必须是一个 <code>gin.HandlerFunc</code>类型。例如像下面的代码一样定义一个统计请求耗时的中间件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// StatCost 是一个统计耗时请求耗时的中间件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">StatCost</span><span class="p">()</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">HandlerFunc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;小王子&#34;</span><span class="p">)</span> <span class="c1">// 可以通过c.Set在请求上下文中设置值，后续的处理函数能够取到该值c.Get()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//中间件执行完后默认会继续执行对应的处理函数，但当需要对响应做修改时就需要c.Next()临时调用执行函数，然后回来继续执行中间件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//如果有多个中间件存在，Next的作用是执行下一个中间件函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//（若下一个中间件中也有next，则继续向后执行），当下一个是处理函数，则是执行处理函数。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//遵循先执行后退出的运行原则
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span>	<span class="c1">//调用后续的处理函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//c.Abort() 	//阻止调用后续的处理函数，自身执行完后直接返回上一级，没有上一级则直接返回response
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//下面是response之前需要执行的代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">cost</span><span class="o">:=</span><span class="nx">time</span><span class="p">.</span><span class="nf">Since</span><span class="p">(</span><span class="nx">start</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">cost</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如果用中间件来进行登录判断，则可以通过if判断是否登录，是则next()，不是则abort()。千万不能在不是时使用return。return只是退出当前函数，但是下一个函数依然会继续执行</strong></p>
+<h3 id="注册中间件">注册中间件</h3>
+<p>在gin框架中，我们可以为每个路由添加任意数量的中间件。</p>
+<h4 id="为全局路由注册">为全局路由注册</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 新建一个没有任何默认中间件的路由
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">r</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//注册全局中间件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nf">StatCost</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/test&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">name</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">MustGet</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">).(</span><span class="kt">string</span><span class="p">)</span> <span class="c1">// 从上下文取值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;message&#34;</span><span class="p">:</span> <span class="s">&#34;Hello world!&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="为某个路由单独注册">为某个路由单独注册</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 给/test2路由单独注册中间件StatCost()（可注册多个）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/test2&#34;</span><span class="p">,</span> <span class="nf">StatCost</span><span class="p">(),</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">name</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">MustGet</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">).(</span><span class="kt">string</span><span class="p">)</span> <span class="c1">// 从上下文取值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="s">&#34;message&#34;</span><span class="p">:</span> <span class="s">&#34;Hello world!&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="为路由组注册中间件">为路由组注册中间件</h4>
+<p>为路由组注册中间件有以下两种写法。</p>
+<p>写法1：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">shopGroup</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/shop&#34;</span><span class="p">,</span> <span class="nf">StatCost</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">shopGroup</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>写法2：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">shopGroup</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/shop&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">shopGroup</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nf">StatCost</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">shopGroup</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="中间件注意事项">中间件注意事项</h3>
+<h4 id="gin默认中间件">gin默认中间件</h4>
+<p><code>gin.Default()</code>默认使用了 <code>Logger</code>和 <code>Recovery</code>中间件，其中：</p>
+<ul>
+<li><code>Logger</code>中间件将日志写入 <code>gin.DefaultWriter</code>，即使配置了 <code>GIN_MODE=release</code>。</li>
+<li><code>Recovery</code>中间件会recover任何 <code>panic</code>。如果有panic的话，会写入500响应码。</li>
+</ul>
+<p>如果不想使用上面两个默认的中间件，可以使用 <code>gin.New()</code>新建一个没有任何默认中间件的路由。</p>
+<h4 id="gin中间件中使用goroutine">gin中间件中使用goroutine</h4>
+<p>当在中间件或 <code>handler</code>中启动新的 <code>goroutine</code>时，<strong>不能使用</strong>原始的上下文（c *gin.Context），<strong>必须使用其只读副本 <code>c.Copy()</code>。避免并发不安全的问题</strong></p>
+<h2 id="运行多个服务">运行多个服务</h2>
+<p>我们可以在多个端口启动服务，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;golang.org/x/sync/errgroup&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">g</span> <span class="nx">errgroup</span><span class="p">.</span><span class="nx">Group</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">router01</span><span class="p">()</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">gin</span><span class="p">.</span><span class="nf">Recovery</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;code&#34;</span><span class="p">:</span>  <span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="s">&#34;Welcome server 01&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="p">},</span>
+</span></span><span class="line"><span class="cl">		<span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">e</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">router02</span><span class="p">()</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">gin</span><span class="p">.</span><span class="nf">Recovery</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;code&#34;</span><span class="p">:</span>  <span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">				<span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="s">&#34;Welcome server 02&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="p">},</span>
+</span></span><span class="line"><span class="cl">		<span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">e</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">server01</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Addr</span><span class="p">:</span>         <span class="s">&#34;:8080&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Handler</span><span class="p">:</span>      <span class="nf">router01</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">ReadTimeout</span><span class="p">:</span>  <span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">WriteTimeout</span><span class="p">:</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">server02</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Addr</span><span class="p">:</span>         <span class="s">&#34;:8081&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Handler</span><span class="p">:</span>      <span class="nf">router02</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">ReadTimeout</span><span class="p">:</span>  <span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">WriteTimeout</span><span class="p">:</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">   <span class="c1">// 借助errgroup.Group或者自行开启两个goroutine分别启动两个服务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">g</span><span class="p">.</span><span class="nf">Go</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">server01</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">g</span><span class="p">.</span><span class="nf">Go</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">server02</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">g</span><span class="p">.</span><span class="nf">Wait</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

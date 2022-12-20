@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Git基础 安装调配 安装好git后先配置user信息 1 2 git config --global user.name &amp;#39;your_name&amp;#39; git config --global user.email &amp;#39;your_email&amp;#39; config有三个作用域，local（缺省，只对某个仓库有效）、g'>
+<title>Git三剑客</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='Git三剑客'>
+<meta property='og:description' content='Git基础 安装调配 安装好git后先配置user信息 1 2 git config --global user.name &amp;#39;your_name&amp;#39; git config --global user.email &amp;#39;your_email&amp;#39; config有三个作用域，local（缺省，只对某个仓库有效）、g'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-12-03T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-12-03T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Git三剑客">
+<meta name="twitter:description" content="Git基础 安装调配 安装好git后先配置user信息 1 2 git config --global user.name &amp;#39;your_name&amp;#39; git config --global user.email &amp;#39;your_email&amp;#39; config有三个作用域，local（缺省，只对某个仓库有效）、g">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#git基础">Git基础</a>
+      <ol>
+        <li><a href="#安装调配">安装调配</a></li>
+        <li><a href="#建立git仓库提交代码">建立git仓库提交代码</a></li>
+      </ol>
+    </li>
+    <li><a href="#常用命令基础">常用命令基础</a>
+      <ol>
+        <li><a href="#分离头指针">分离头指针</a></li>
+        <li><a href="#多人开发">多人开发</a></li>
+      </ol>
+    </li>
+    <li><a href="#找github资源的小技巧">找github资源的小技巧：</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/git/" >
+                git
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/">Git三剑客</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 03, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="git基础">Git基础</h2>
+<h3 id="安装调配">安装调配</h3>
+<p>安装好git后先配置user信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">git config --global user.name &#39;your_name&#39;
+</span></span><span class="line"><span class="cl">git config --global user.email &#39;your_email&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>config有三个作用域，local（缺省，只对某个仓库有效）、global（对当前用户所有仓库有效）、system（对系统所有登录的用户有效），在作用域之后加 &ndash;list可以显示config相关作用域的配置。local优先级大于global，global优先级大于system</p>
+<h3 id="建立git仓库提交代码">建立git仓库提交代码</h3>
+<p>如果是将原有代码纳入git管理就只需要进入项目所在文件夹，然后 <code>git init</code>即可</p>
+<p>对于新的项目则是进入某个文件夹，然后 <code>git init your_project</code>(此命令会在当前路径下创建和项目名称同名的文件夹)，然后进入 <code>your_project</code></p>
+<p>git提交流程：</p>
+<p>先通过 <code>git add files</code>将文件从工作目录添加到暂存区（可以将暂存区的东西重新回退覆盖到工作目录），<strong>多次add后觉得没问题了</strong>再通过 <code>git commit -m '提交信息'</code>提交到git中。</p>
+<p><code>git status</code> 查看暂存区和工作目录的状态。</p>
+<p><code>git log</code>查看git的版本历史，可以使用 <code>git log --oneline</code>来简洁查看版本历史。历史过多使用空格可以向下翻页，b 向上翻页</p>
+<p>对于git已经跟踪过的文件（存入暂存区的文件），可以通过 <code>git add -u</code> 将工作目录中所有被git管理的文件一起添加到暂存区。<code>got rm file</code>删除暂存区中的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">如果要将本地git和GitHub连接起来，首先要在GitHub建一个仓库，然后关联本地和GitHub,此处是用orgin来代替后面一长串的地址，类似别名。现在可以直接clone拉取远端代码，它会自动帮我们起origin的别名，并且初始化本地库
+</span></span><span class="line"><span class="cl">git remote add orgin git@github.com..../..git
+</span></span><span class="line"><span class="cl">// git remote -v    查看连接上的仓库
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">如果GitHub上的项目中有readme或者license文件，则需要先pull,pull会将本地的master和远端的master相关联，并且拉取远端的文件
+</span></span><span class="line"><span class="cl">git pull orgin
+</span></span><span class="line"><span class="cl">//git clone git@github.com:....   将远端的git项目拷贝到本地当前文件夹中
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">然后将本地项目push到远端，可以接分支名只push一个分支，如果Git连接名是orgin是可以缺省的
+</span></span><span class="line"><span class="cl">git push &lt;远程主机名&gt;   &lt;本地分支名&gt;:&lt;远程分支名&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="常用命令基础">常用命令基础</h2>
+<p><code>git reset --hard xxxhash</code>  将git的指针指向某次commit后，即回退到之前某个版本，这个版本之后的commit都会消失，此时可以以当前版本创建新的分支或者tag，但千万不要进行git push ，会导致远端之后的版本消失。此时本地的commit对比远端commit应该会落后几个版本，创建完分支或tag后可以通过git pull重新同步本地commit 变回去。</p>
+<p><code>git reset --soft xxx</code> 仅仅在本地库中移动HEAD指针，不会改变本地真实文件的内容，暂存区依然是之前最新版本的内容，可以理解为撤销了这个commit之后的所有提交，本地库和真实代码的差异放在了暂存区中。&ndash;mixed则是移动了指针和暂存区，真实内容不会更改，即差异化出现在了工作区中。</p>
+<p><code>git mv old_name new_name</code>对git跟踪后的文件进行重命名，同时会更改本地文件名</p>
+<p><code>gir rm file</code> 删除暂存区和工作区中对应的文件</p>
+<p><code>git branch -av </code>查看有多少个分支，信息前的*符号表示目前工作在哪个分支</p>
+<p><code>git branch 分支名</code> 创建一个以当前分支内容相同的新分支</p>
+<p><code>git checkout master</code> 切换分支到master</p>
+<p><code>git checkout -b newBranchName branchOrCommit</code> 创建一个基于某分支或commit的新分支并切换到分支上</p>
+<p><code>git branch -d 分支名</code> 删除分支</p>
+<p><code>git merge 分支名a</code> 合并分支，将分支a的内容合并到当前指针指向的分支，但a分支还是存在的，可以继续向前迭代，因此在合并前一定要checkout到a分支外那个合并的目的分支</p>
+<p><code>git diff --cached</code> <strong>比较暂存区和当前所在分支最新commit（HEAD）的差异，只输入 <code>git diff</code>是比较工作区和暂存区的差异</strong></p>
+<p><code>git reset HEAD -- &lt;fileName&gt;</code> <strong>将暂存区恢复成当前所在分支的最新commit（HEAD）</strong>，通常用在暂存区有东西后，工作区有更优的方案了，也可以在HEAD后加fileName来恢复部分文件</p>
+<p><code>git checkout -- &lt;file&gt;</code>将工作区的某个文件内容回退恢复成暂存区中该文件的内容</p>
+<p><code>git commit --amend</code> 对最近一次提交的commit的message作变更</p>
+<p><code>git rebase -i 父commit</code>，如果要修改某个commit的属性，可以通过此命令更改，它的参数是对应修改commit的父commit，输入后会进入一个交互页面，里面有此父commit的所有子commit，如要修改子commit的message，则将pick改成reword(或者r)，改完后保存退出则会跳到对应的修改页面，修改message然后保存退出即可，修改后对应commit的哈希码会因此发生改变。改变的原因是git会在分离头指针状态下剪切子commit，并根据命令（pick则是只剪切，reword是剪切但修改message）进行操作，最后子commit的哈希码都会发生改变。</p>
+<p><code>git rebase</code>其中还有一个命令是 [s,squash]，它可以将多个分支合并。即找出需要合并的多个commit的最前面的一个的它的父commit，在一条分支上都是父传子一直穿下去，找出父commit后它会显示出后面所有的子commit，使用rebase命令进入交互页面，在需要合并的多个commit中，最后一个子commit使用pick命令只剪切，前面的commit使用squash合并到pick的那个子commit中。<strong>如果合并的commit在历史版本中不连续，可以通过rebase的交互页面，通过调换位置的方法放在一起（剪切粘贴），依然是第一行pick，后面squash，如果是需要合并最古老的commit（没有父级），在rebase的交互页面添加对应的commit即可</strong></p>
+<p><code>git stash</code> 假如在开发中偶遇临时任务，如正在修改index文件，修改到一半临时加塞了另一个任务，可以通过此命令先将工作区和暂存区状态存到一个堆栈中，且工作区和暂存区会回退到最新一次commit，改完临时任务之后，再通过 <code>git stash pop</code>(取出堆栈内容且清除堆栈中的对应内容)或 <code>git stash appluy</code>(取出堆栈内容但保存堆栈对应内容)</p>
+<p>gti中有三大objects：commit、tree及blob，它们的关系是，commit是每一次提交，它里面含有tree的信息，<strong>tree表示了commit在当时的时间点的项目中文件的结构</strong>，它可以包含其他tree（就像文件夹下还有文件夹），tree保存了blob的哈希码，blob存放了文件的内容。<strong>这里要注意的是，在git中，即使文件名不同，只要文件内容相同，那么它们就是同一个文件，并不会因为名字不同而产生两个文件，这样大大节约了存储空间</strong></p>
+<p><strong>分支的本质就是一个指针，它指向的是该分支中最新的一次提交commit</strong></p>
+<p><code>git cat-file -p 7737016481f</code>通过此命令可以查看commit、tree、blob的内容，-t查看对应的类型</p>
+<h3 id="分离头指针">分离头指针</h3>
+<p>如果不小心通过git checkout命令切换到某个commit中（即HEAD指向某个commit），git会提示我们正处于分离头指针的状态下（<strong>工作在没有分支的情况下</strong>），如果我们做了大量的修改，但是某天我们突然又切换到另一个commit时，我们的修改就有可能被git当做垃圾清除掉，因此这个动作十分危险。</p>
+<p>**分离头指针的用处：进行尝试性的变更时。**当我们试着修改某些文件时，如果觉得修改的效果不满意，可以直接切换到别的分支，丢弃当前修改。如果我们切换出去时，觉得当前的修改十分重要，就按照git的提示创建一个新分支与此commit进行绑定 <code>git branch 新分支名 commit哈希码</code>，<strong>如果某个变更（提交）是非常重要的，那么一定要跟某个分支绑定在一起</strong></p>
+<h3 id="多人开发">多人开发</h3>
+<p>千万不要在master分支上进行代码的迭代，master是作为服务器运行分支</p>
+<p>Git Flow工作流</p>
+<ul>
+<li>主干分支 master：主要负责管理正在运行的生产环境代码。永远保持与正在运行的生产环境完全一致。</li>
+<li>开发分支 develop ： 主要负责管理正在开发过程中的代码。一般情况下应该是最新的代码。程序员从这个分支中迁出新分支进行功能开发</li>
+<li>功能分支 feature：为了不影响短周期的开发工作，一般把中长期开发模块从开发分支中独立出来。开发完成后再合并到最新的开发分支中。</li>
+<li>bug 修复 分支 hotfix [热修复] ：主要负责管理生产环境下出现的紧急修复的代码。从主干分支分出，修复完毕并测试上线后，合并回主干分支。并会后可视情况删除该分支。</li>
+<li>预发布分支 release ： 较大的版本上线前，会从开发分支中分出预发布分支，用于进行最后阶段的集成测试。该版本上线后会合并到主干分支上。</li>
+</ul>
+<p><img src="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-4.png"
+	width="873"
+	height="440"
+	srcset="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-4_hucc70e1f5011ce26f2409bca0fc7ef9e7_205684_480x0_resize_box_3.png 480w, /p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-4_hucc70e1f5011ce26f2409bca0fc7ef9e7_205684_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="476px"
+	
+></p>
+<p>在多人开发的情况下，经常会出现同时有多人操作同一个项目的不同文件，<strong>当其他人push后，本地的git就不是远端最新的commit了</strong>，此时如果不在意线性分支，可以使用 <code>git merge github/commitName</code>将远端最新的和本地进行关联，commitName可以通过 <code>git branch -av</code>查看。此时本地就拉取了最新的commit，再进行push就不会出错了。</p>
+<p>当出现两人修改相同文件的不同位置时，某一方提交后，另一方使用 <code>git pull</code>会拉取并和远端关联，此时这个文件有对方修改的数据，且自己修改的数据不会消失</p>
+<p>当两人同时修改相同文件的相同位置，一方提交后，另一方pull会发生冲突，提示某文件内容有问题，此时打开对应文件就能发现远端和本地的差异</p>
+<p><img src="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-3.png"
+	width="585"
+	height="183"
+	srcset="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-3_hua3b8289f4219a9094ca92f7bda899ad2_60221_480x0_resize_box_3.png 480w, /p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-3_hua3b8289f4219a9094ca92f7bda899ad2_60221_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="319"
+		data-flex-basis="767px"
+	
+></p>
+<p>当两人同时修改同一文件时，一方修改了该文件的文件名并提交，另一方在旧文件名上修改内容并提交就会出错，此时只需要使用 <code>git pull</code> 拉取远端最新的，git会将改名后的commit拉取过来，<strong>并且本地修改过的旧文件名中的内容会出现在新文件名内容中。</strong></p>
+<p>当两人同时对同一个文件修改文件名，一方提交后另一方pull就会报错，此时本地会出现两个不同名字的同一文件，需要经过协商删除某个或保留，然后通过 <code>add--commit---push</code>的流程重新提交一个commit</p>
+<p><strong>千万不要在多人开发时使用 <code>git push -f</code> ，这会导致历史commit部分丢失</strong>，也不要对公共分支进行变基（Rebase）操作，例如修改某个commit的message，这会导致commit的id改变，原commit分叉成新的分支，如果有其他人基于原commit进行开发，两个分支就会分叉，重新合成需要<strong>多人merge关联新的commit</strong></p>
+<p>普通的搜索是匹配仓库名和描述，可以在搜索栏中加入 <code>in:readme</code>即表示在readme中搜索关键字，加入 <code>stars:&gt;1000</code>表示筛选出星星数超过一千。根据内容搜索则是 <code>'文件内容' filename:文件名</code>，如 <code>'struct' filename:server.go</code></p>
+<p>在GitHub中对分支集成有三种策略</p>
+<p><img src="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-2.png"
+	width="366"
+	height="271"
+	srcset="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-2_hu1140b44446a8d9cf3144d134615c3003_74142_480x0_resize_box_3.png 480w, /p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-2_hu1140b44446a8d9cf3144d134615c3003_74142_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="135"
+		data-flex-basis="324px"
+	
+></p>
+<p><strong>Create a merge commit</strong> 是将某分支的最后一个提交合并到目标分支中，生成一个新的commit。就是把提交历史原封不动的拷贝过来，包含完整的提交历史记录。</p>
+<p><img src="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-1.png"
+	width="638"
+	height="188"
+	srcset="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-1_hu5a5c80beab7e0bca1b877f4fb5d455c0_27652_480x0_resize_box_3.png 480w, /p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-1_hu5a5c80beab7e0bca1b877f4fb5d455c0_27652_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="339"
+		data-flex-basis="814px"
+	
+></p>
+<p><strong>Squash and merge 压缩提交</strong>，有一些很小的提交，或者是纠正前面的错误的提交，对于这类提交对整个工程来说不需要单独显示出来一次提交，不然导致项目的提交历史过于复杂；所以基于这种原因，我们可以把Beijing上的所有提交都合并成一个提交；然后提交到主干。</p>
+<p><img src="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-5.png"
+	width="435"
+	height="182"
+	srcset="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-5_hu2b591e32405c036adf9df5bcb8746778_19960_480x0_resize_box_3.png 480w, /p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-5_hu2b591e32405c036adf9df5bcb8746778_19960_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="239"
+		data-flex-basis="573px"
+	
+></p>
+<p><strong>Rebase and merge</strong> ,由于squash merge会变更提交者作者信息，这是一个很大的问题，后期问题追溯不好处理(当然也可以由分支的所有者来执行squash merge操作，以解决部分问题)，rebase merge可以保留提交的作者信息，同时可以合并commit历史。</p>
+<p><img src="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image.png"
+	width="482"
+	height="120"
+	srcset="/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image_hu9d326889aaac065fd9948aee68607848_11330_480x0_resize_box_3.png 480w, /p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image_hu9d326889aaac065fd9948aee68607848_11330_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="401"
+		data-flex-basis="964px"
+	
+></p>
+<p>如果想对github上开源的项目进行修改并提给作者，可以通过fork将此项目复制一份到自己仓库中(直接拉取的是没有写的权限的)，拉取下来修改好提交上去，然后创建一个pull request发送给原作者。原作者看见同意后merge到自己的仓库中。</p>
+<h2 id="找github资源的小技巧">找github资源的小技巧：</h2>
+<p>常用前缀后缀：</p>
+<ul>
+<li>找百科大全:  awesome golang   针对某个技术的所有东西，很杂很丰富</li>
+<li>找例子： gin sample    找相应项目的例子，商城或者其他项目样例</li>
+<li>找空架子项目：go-gin starter/go boilerplate   找相应技术的空脚架</li>
+<li>找技术教程：go tutorial   找相应教程</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

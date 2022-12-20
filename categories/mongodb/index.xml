@@ -1,0 +1,1365 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>MongoDB on 笑傩</title>
+        <link>https://xiaonuoz.github.io/categories/mongodb/</link>
+        <description>Recent content in MongoDB on 笑傩</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Fri, 09 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaonuoz.github.io/categories/mongodb/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>MongoDB入门</title>
+        <link>https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/</link>
+        <pubDate>Fri, 09 Apr 2021 00:00:00 +0000</pubDate>
+        
+        <guid>https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/</guid>
+        <description>&lt;p&gt;适用于mongodb的业务场景：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;数据量大&lt;/li&gt;
+&lt;li&gt;写入操作频繁（读写都很频繁）&lt;/li&gt;
+&lt;li&gt;价值较低的数据，对事物要求不高（mongodb对于事物的支持不是很好）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;什么时候选择mongodb:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;应用不需要事物及复杂的join支持&lt;/li&gt;
+&lt;li&gt;新应用，需求会变，数据模型无法确定，想快速迭代开发&lt;/li&gt;
+&lt;li&gt;应用需要高读写速率，需要2000-3000以上的读写QPS&lt;/li&gt;
+&lt;li&gt;应用需要TB及PB级别的数据存储（维护成本较mysql低）&lt;/li&gt;
+&lt;li&gt;应用要求存储的数据不丢失&lt;/li&gt;
+&lt;li&gt;应用需要99.9999…%高可用&lt;/li&gt;
+&lt;li&gt;应用需要大量的地理位置查询、文本查询&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果上述有一个符合就可以考虑使用mongodb，2个以上直接选择使用mongodb就行&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-2.png&#34;
+	width=&#34;1386&#34;
+	height=&#34;475&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-2_hu3e4263186cc6ae9e7898a81cb987c777_431210_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-2_hu3e4263186cc6ae9e7898a81cb987c777_431210_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;291&#34;
+		data-flex-basis=&#34;700px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-13.png&#34;
+	width=&#34;2103&#34;
+	height=&#34;1266&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-13_hu7f44308c2d509039b6d5eec393574e5b_468198_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-13_hu7f44308c2d509039b6d5eec393574e5b_468198_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;166&#34;
+		data-flex-basis=&#34;398px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;基础mongodb命令&#34;&gt;基础mongodb命令&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mongod --dbpath=../data/db    // 在debug时可以这样启动
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mongod -f ./mongod.conf		// 以配置文件的方式启动mongodb
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mongod --config ./mongod.conf
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mongo 或
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mongo --host=127.0.0.1 --port=27017   // 命令行连接mongodb，只mongo则是连接本地27017
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;配置文件内容：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png&#34;
+	width=&#34;2124&#34;
+	height=&#34;1056&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;关闭mongodb可以使用kill，但可能会出现数据错误，因此可以进入mongodb来关闭，
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mongo --port 27017
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;use admin
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.shutdownServer()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id=&#34;crud&#34;&gt;CRUD&lt;/h1&gt;
+&lt;h2 id=&#34;数据库操作&#34;&gt;数据库操作&lt;/h2&gt;
+&lt;p&gt;在每个集合中都会存在一个 _id，这个是mongdb的主键，它自己生成的&lt;/p&gt;
+&lt;h3 id=&#34;显示数据库&#34;&gt;&lt;strong&gt;显示数据库&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;show dbs   或者  show databases   显示所有数据库
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db   显示当前所处数据库
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;选择和创建数据库&#34;&gt;&lt;strong&gt;选择和创建数据库&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;use 数据库名称
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果库不存在则自动创建，有则切换到此库&lt;/p&gt;
+&lt;p&gt;要注意的是，在mongodb中，要新建了一个集合后才会真正的创建一个库。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;原因是use后这个库会先存在于内存中，只有当往这个库中写入了数据，mongodb才会持久化这个库到磁盘中。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;删除数据库&#34;&gt;&lt;strong&gt;删除数据库&lt;/strong&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.dropDatabase()
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;删除当前所在的库，因此删除前需要先use
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;默认库的作用&#34;&gt;默认库的作用&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;admin:&lt;/strong&gt; 从权限的角度来看，这就类似于mysql的root数据库，如果将一个用户添加到这个数据库中，这个用户就自动继承所有数据库的权限。一些特定的服务器命令也只能在这个数据库中运行，比如关闭服务器。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;local:&lt;/strong&gt; 这个数据库中的数据永远不会被复制，作用于集群，集群之间是会相互复制彼此的数据，当数据存于这个库中时，数据就不会被集群中的其他库所复制，可以用来存储限于本地单台服务器的任意集合。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;config:&lt;/strong&gt; 当mongodb用于分片设置时，config数据库在内部使用，用于保存分片的相关信息。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;集合操作&#34;&gt;集合操作&lt;/h2&gt;
+&lt;p&gt;集合类似于关系型数据库中的表。它可以显式创建也可以隐式创建。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.createCollection(name)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;显式创建名称为name的集合
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;show tables 或 show collections  查看当前库中的表
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;当向一个集合中插入一个文档的时候，如果集合不存在，则会自动创建集合。通常使用隐式创建即可&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.table.drop()
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;删除名为table的集合,删除成功返回true,反之false
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;文档基本crud&#34;&gt;文档基本CRUD&lt;/h2&gt;
+&lt;p&gt;文档的数据结构和JSON基本一样，所有存储在集合中的数据都是BSON格式。&lt;/p&gt;
+&lt;h3 id=&#34;单个文档的插入&#34;&gt;单个文档的插入&lt;/h3&gt;
+&lt;p&gt;使用insert()或save()方法向集合中插入文档，语法如下:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;# collection代表集合的名称
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.collection.insert(
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&amp;lt;document or array of ducuments&amp;gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	{
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		writeConcern:&amp;lt;document&amp;gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		ordered:&amp;lt;boolean&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.insertOne({&amp;#34;name&amp;#34;:&amp;#34;zs&amp;#34;,&amp;#34;age&amp;#34;:11})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;往comm集合中插入一条数据
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.insertMany([{&amp;#34;name&amp;#34;:&amp;#34;zs&amp;#34;,&amp;#34;age&amp;#34;:11},{&amp;#34;name&amp;#34;:&amp;#34;ww&amp;#34;,&amp;#34;age&amp;#34;:12}])
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;往comm集合中插入多条数据
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;要注意的是：当插入多条时如果某条数据插入失败，将会终止插入，但已经插入成功的数据不会回滚掉。&lt;/p&gt;
+&lt;p&gt;因此批量插入时最好可以加上try-catch来进行异常捕捉处理&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;try { 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	db.comm.insertMany([{&amp;#34;name&amp;#34;:&amp;#34;zs&amp;#34;,&amp;#34;age&amp;#34;:11},{&amp;#34;name&amp;#34;:&amp;#34;ww&amp;#34;,&amp;#34;age&amp;#34;:12}])
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;} catch(e){
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	print(e)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;文档的查询&#34;&gt;文档的查询&lt;/h3&gt;
+&lt;h4 id=&#34;基本查询&#34;&gt;基本查询&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.find()
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;查询comm中的所有数据
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;此时会发现在文档中会有一个叫_id的字段，这个相当于MySQL的主键ID，在插入文档时没有指定该字段则MongoDB会自动创建，其类型是ObjectID类型。当然在插入文档时也可以指定_id为自己设置的值，建议不要自己指定_id，因为重复后会很麻烦。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.find({name:&amp;#34;ww&amp;#34;})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;根据条件进行查询
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.findOne(name:&amp;#34;ww&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;只获取第一条数据，相当于mysql的limit
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mongodb的find().pretty()
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;使得查询出来的数据在命令行中更加美观的显示,不至于太紧凑。
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png&#34;
+	width=&#34;2150&#34;
+	height=&#34;1005&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;513px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png&#34;
+	width=&#34;2124&#34;
+	height=&#34;1056&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;2067&#34;
+	height=&#34;989&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;208&#34;
+		data-flex-basis=&#34;501px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;投影查询&#34;&gt;投影查询&lt;/h4&gt;
+&lt;p&gt;相当于mysql的select id,name from user，即只显示指定的字段，其中value为1则表示显示此key字段，为0则为不显示，_id默认是显示的，所以必须设置为0让其不显示，其他字段只要没有显式设置，默认都是不显示&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.find({},{name:1,_id:0})
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id=&#34;聚合查询&#34;&gt;聚合查询&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png&#34;
+	width=&#34;2150&#34;
+	height=&#34;1005&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;513px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png&#34;
+	width=&#34;2150&#34;
+	height=&#34;1005&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;513px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-18.png&#34;
+	width=&#34;2446&#34;
+	height=&#34;923&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-18_hue6f9bbf0307de28f8160b209dbe6421f_556723_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-18_hue6f9bbf0307de28f8160b209dbe6421f_556723_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;265&#34;
+		data-flex-basis=&#34;636px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-8.png&#34;
+	width=&#34;1460&#34;
+	height=&#34;721&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-8_hu33de268e48399b7fb7974dc9e6fae27b_307760_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-8_hu33de268e48399b7fb7974dc9e6fae27b_307760_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;202&#34;
+		data-flex-basis=&#34;485px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h5 id=&#34;示例&#34;&gt;示例&lt;/h5&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;2067&#34;
+	height=&#34;989&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;208&#34;
+		data-flex-basis=&#34;501px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png&#34;
+	width=&#34;2124&#34;
+	height=&#34;1056&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;2067&#34;
+	height=&#34;989&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;208&#34;
+		data-flex-basis=&#34;501px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;lookup只支持left outer join&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;文档的更新&#34;&gt;文档的更新&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.collection.update(query,update,options)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;query是查询条件，update是修改内容，options是附加的一些选项
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;覆盖修改&#34;&gt;覆盖修改&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.update({name:&amp;#34;ww&amp;#34;},{age:11})
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;update字段的age可以为文档中不存在的值，此时这个文档除了age和_id，其他字段都不见了，此为覆盖修改&lt;/p&gt;
+&lt;h3 id=&#34;局部修改&#34;&gt;局部修改&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.update({name:&amp;#34;ww&amp;#34;},{$set:{age:123}})
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;只修改指定的字段，其他字段不变&lt;/p&gt;
+&lt;h3 id=&#34;批量修改&#34;&gt;批量修改&lt;/h3&gt;
+&lt;p&gt;覆盖修改和局部修改都只会修改一个文档，必须使用批量修改来改集合中满足条件的所有文档&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.updateMany({name:&amp;#34;zs&amp;#34;},{$set:{age:12}})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;OR
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.update({name:&amp;#34;zs&amp;#34;},{$set:{age:13}},{multi:true})
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;列值增长的修改&#34;&gt;列值增长的修改&lt;/h3&gt;
+&lt;p&gt;如果想对某列值在原有的基础上进行增加和减少，可以使用 $inc 运算符来实现。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.updateMany({name:&amp;#34;ww&amp;#34;},{$inc:{age:2}})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;将集合中name=ww的所有文档的age加2
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;文档的删除&#34;&gt;文档的删除&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.deleteOne({agess:165})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;删除comm表中age=165的最前面的一条文档
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.deleteMany({agess:165})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;删除comm表中age=165的所有文档
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.remove({})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;删除该集合中的所有文档，慎用！
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;文档的分页查询&#34;&gt;文档的分页查询&lt;/h2&gt;
+&lt;h3 id=&#34;统计查询&#34;&gt;统计查询&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.count({age:11})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;查询age=11的文档的个数
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.count()
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;查询该集合总共有多少个文档
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;分页列表查询&#34;&gt;分页列表查询&lt;/h3&gt;
+&lt;p&gt;可以使用limit()方法来读取指定数量的数据，使用skip()方法来跳过指定数量的数据。limit默认是20，skip默认是0&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.find().limit(2).skip(1)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;排序查询&#34;&gt;排序查询&lt;/h3&gt;
+&lt;p&gt;sort()方法可以通过参数指定排序的字段来对数据进行排序，并用 1和-1来指定排序的方式，其中1为升序排列，-1为降序排列。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.find().sort({age:1})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;查询comm所有文档并按照age升序排列
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;注意：&lt;/p&gt;
+&lt;p&gt;skip(),limit(),sort()三个放一起执行的时候，执行顺序是sort(),skip(),limit()，和命令的编写顺序无关。&lt;/p&gt;
+&lt;h2 id=&#34;复杂查询&#34;&gt;复杂查询&lt;/h2&gt;
+&lt;h3 id=&#34;正则的复杂条件查询&#34;&gt;正则的复杂条件查询&lt;/h3&gt;
+&lt;p&gt;mongodb的模糊查询是通过正则表达式的方式实现的。其正则是用js的写法&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.find(name:/zs/)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;查询name中包含zs的文档
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.find(name:/^zs/)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;查询以zs开头的name的文档
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;name后的value不要加引号，这表示此为字符串，变成等于了&lt;/p&gt;
+&lt;h3 id=&#34;比较查询&#34;&gt;比较查询&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;包含查询&#34;&gt;包含查询&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-1.png&#34;
+	width=&#34;1025&#34;
+	height=&#34;429&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-1_hu87ee13c64eb19af71853ac609a5b2f7d_62833_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-1_hu87ee13c64eb19af71853ac609a5b2f7d_62833_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;238&#34;
+		data-flex-basis=&#34;573px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;条件连接查询&#34;&gt;条件连接查询&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;索引&#34;&gt;索引&lt;/h1&gt;
+&lt;p&gt;索引支持在mongodb中高效的执行查询。如果没有索引，mongodb必须执行全集合扫描，即扫描集合中的每个文档来选择与查询语句匹配的文档。这种扫描全集合的查询效率是非常低的，尤其是在处理大量数据时，查询可能要花费几十秒甚至几分钟，这对网站的性能是非常致命的。&lt;/p&gt;
+&lt;p&gt;如果查询存在适当的索引，mongodb可以使用该索引限制必须检查的文档数。&lt;/p&gt;
+&lt;p&gt;索引是特殊的数据结构，它以易于遍历的形式存储集合数据集的一小部分。索引存储特定字段或一组字段的值，按字段值排序。索引项的排序支持有效的相等匹配和基于范围的查询操作。还可以使用索引中的排序返回排序结果。&lt;/p&gt;
+&lt;p&gt;mongodb索引使用的是B tree 数据结构，MySQL是B+ tree&lt;/p&gt;
+&lt;p&gt;多路动态平衡树，简称b-tree，效率高，尤其是可以最大提高磁盘io效率，所以大部分数据库的存储引擎都用b-tree或者b-tree增强版作为索引的数据存储结构&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-3.png&#34;
+	width=&#34;1126&#34;
+	height=&#34;515&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-3_hu9822659c10b37422a8295d381d42e701_107937_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-3_hu9822659c10b37422a8295d381d42e701_107937_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;218&#34;
+		data-flex-basis=&#34;524px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;1154&#34;
+	height=&#34;509&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;226&#34;
+		data-flex-basis=&#34;544px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;索引的查看&#34;&gt;索引的查看&lt;/h2&gt;
+&lt;p&gt;返回一个集合中的所有索引的数组。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.conn.getIndexes()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;索引的创建&#34;&gt;索引的创建&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.createIndex({userid:1,age:-1},{unique:true})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;创建一个以userid升序，age降序的复合唯一索引，选项options是可以省略的
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;索引的移除&#34;&gt;索引的移除&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.dropIndex(&amp;#34;agess_1_age_-1&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;删除索引名 agess_1_age_-1的索引，也可以通过索引规则删除
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.dropIndex({userid:1})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;删除仅以userid为升序的索引
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.dropIndexes()
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;删除comm集合中的所有索引，但是mongodb自建的_id索引例外，它不会被删除
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;执行计划&#34;&gt;执行计划&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.comm.find(query,options).explain(options)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;分析查询语句，查看是否用上了索引&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-8.png&#34;
+	width=&#34;1460&#34;
+	height=&#34;721&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-8_hu33de268e48399b7fb7974dc9e6fae27b_307760_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-8_hu33de268e48399b7fb7974dc9e6fae27b_307760_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;202&#34;
+		data-flex-basis=&#34;485px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;设计模式&#34;&gt;设计模式&lt;/h1&gt;
+&lt;h2 id=&#34;分桶设计&#34;&gt;分桶设计&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;每分钟写入一次，如果运行一年则数据量极大，采用分桶模式进行分组，因为展现数据一般不会基于一分钟进行展现，最低级别可能都是一小时，因此将其合为一组即可极大的优化数据容量和读取速度。一般适用于数据点采集频繁，数据量过多的场景中。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png&#34;
+	width=&#34;2308&#34;
+	height=&#34;1051&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;219&#34;
+		data-flex-basis=&#34;527px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;2067&#34;
+	height=&#34;989&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;208&#34;
+		data-flex-basis=&#34;501px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;列转行&#34;&gt;列转行&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;导致创建新数据时要花费更多的数据，则可以采用列转行的方式，将相似的列变成一个列&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png&#34;
+	width=&#34;2124&#34;
+	height=&#34;1056&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;版本字段&#34;&gt;版本字段&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;1154&#34;
+	height=&#34;509&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;226&#34;
+		data-flex-basis=&#34;544px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-4.png&#34;
+	width=&#34;1255&#34;
+	height=&#34;687&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-4_hub96ecdf1307927c216cbda75bd14b74d_175285_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-4_hub96ecdf1307927c216cbda75bd14b74d_175285_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;182&#34;
+		data-flex-basis=&#34;438px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;近似计算&#34;&gt;近似计算&lt;/h2&gt;
+&lt;p&gt;在所需要的计算非常有挑战性或消耗的资源昂贵（时间、内存、CPU周期）时，&lt;strong&gt;如果精度不是首要考虑因素时&lt;/strong&gt;，那么我们就可以使用近似值模式。&lt;/p&gt;
+&lt;p&gt;假设现在有一个相当规模的城市，大约有3.9万人。人口的确切数字是相当不稳定的，人们会搬入搬出、有婴儿会出生、有人会死亡。我们也许要花上整天的时间来得到每天确切的居民数量。在应用程序中，我们不需要每次更改都去更新数据库中的人口数。我们可以构建一个计数器，只在每达到100的时候才去更新数据库，这样只用原来1%的时间。在这个例子里，我们的写操作显著减少了99%。还有一种做法是创建一个返回随机数的函数。比如该函数返回一个0到100之间的数字，它在大约1%的时间会返回0。当这个条件满足时，我们就把计数器增加100。&lt;/p&gt;
+&lt;p&gt;我们为什么需要关心这个？当数据量很大或用户量很多时，对写操作性能的影响也会变得很明显。规模越大，影响也越大，而当数据有一定规模时，这通常是你最需要关心的。通过减少写操作以及不必要的“完美”，可以极大地提高性能。&lt;/p&gt;
+&lt;h2 id=&#34;预聚合字段&#34;&gt;预聚合字段&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png&#34;
+	width=&#34;2150&#34;
+	height=&#34;1005&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;513px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;因为计算需要一行一行的扫描进行计算，因此可以采用预聚合模式&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;2377&#34;
+	height=&#34;1270&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-14_hu7518c23f0a19eddd177fae0e78a0c6b0_929961_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-14_hu7518c23f0a19eddd177fae0e78a0c6b0_929961_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;187&#34;
+		data-flex-basis=&#34;449px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;mongodb事物&#34;&gt;mongodb事物&lt;/h1&gt;
+&lt;h2 id=&#34;写事物&#34;&gt;写事物&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;1154&#34;
+	height=&#34;509&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;226&#34;
+		data-flex-basis=&#34;544px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-13.png&#34;
+	width=&#34;2103&#34;
+	height=&#34;1266&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-13_hu7f44308c2d509039b6d5eec393574e5b_468198_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-13_hu7f44308c2d509039b6d5eec393574e5b_468198_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;166&#34;
+		data-flex-basis=&#34;398px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.conn.insert({count:1},{writeConcern:{w:&amp;#34;majority&amp;#34;,wtimeout:3000}})
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;执行此写入操作时，要落入到大多数节点上后才算成功。如果在某个节点写入时间超时3S则直接返回写入失败。但是数据已经写入到其他成功的节点中了
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png&#34;
+	width=&#34;2308&#34;
+	height=&#34;1051&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;219&#34;
+		data-flex-basis=&#34;527px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;读事物&#34;&gt;读事物&lt;/h2&gt;
+&lt;h3 id=&#34;readpreference-选择读哪个节点的数据&#34;&gt;readPreference (选择读哪个节点的数据)&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;2067&#34;
+	height=&#34;989&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;208&#34;
+		data-flex-basis=&#34;501px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;默认是primary，并且这是推荐的做法，因为这样读肯定是读到最新的数据。nearest是根据ping time来决定。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png&#34;
+	width=&#34;2308&#34;
+	height=&#34;1051&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;219&#34;
+		data-flex-basis=&#34;527px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;2067&#34;
+	height=&#34;989&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;208&#34;
+		data-flex-basis=&#34;501px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png&#34;
+	width=&#34;2308&#34;
+	height=&#34;1051&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;219&#34;
+		data-flex-basis=&#34;527px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;readconcern-隔离级别&#34;&gt;readConcern (隔离级别)&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-19.png&#34;
+	width=&#34;2239&#34;
+	height=&#34;1107&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-19_hu61debfed50adff225ebf1534d4a69ac0_754923_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-19_hu61debfed50adff225ebf1534d4a69ac0_754923_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;202&#34;
+		data-flex-basis=&#34;485px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-14.png&#34;
+	width=&#34;2377&#34;
+	height=&#34;1270&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-14_hu7518c23f0a19eddd177fae0e78a0c6b0_929961_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-14_hu7518c23f0a19eddd177fae0e78a0c6b0_929961_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;187&#34;
+		data-flex-basis=&#34;449px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-16.png&#34;
+	width=&#34;2318&#34;
+	height=&#34;1236&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-16_hu60876d0c5562b271d64fe3e87464db1d_662725_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-16_hu60876d0c5562b271d64fe3e87464db1d_662725_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;187&#34;
+		data-flex-basis=&#34;450px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;db.conn.find().readConcern(&amp;#34;local&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;以local的隔离级别进行查询,如果是majority,大多数从节点未同步完,查询就会阻塞，直到大多数从节点同步完数据。
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果要使用majority级别必须要在配置文件中配置enableMajorityReadConcern=true (记住所有写操作的位置和状态)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image.png&#34;
+	width=&#34;710&#34;
+	height=&#34;137&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image_hu8a3b479792fc6a7491ec6ecde98c1bdb_60282_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image_hu8a3b479792fc6a7491ec6ecde98c1bdb_60282_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;518&#34;
+		data-flex-basis=&#34;1243px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;多文档事物-重要平常代码中使用的事物&#34;&gt;多文档事物 (重要，平常代码中使用的事物)&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1362&#34;
+	height=&#34;345&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;394&#34;
+		data-flex-basis=&#34;947px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png&#34;
+	width=&#34;2150&#34;
+	height=&#34;1005&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;513px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;2067&#34;
+	height=&#34;989&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;208&#34;
+		data-flex-basis=&#34;501px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png&#34;
+	width=&#34;2150&#34;
+	height=&#34;1005&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;513px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-7.png&#34;
+	width=&#34;2182&#34;
+	height=&#34;1297&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-7_hu9862dce131dc42ee82a2f5f862baab6a_801008_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-7_hu9862dce131dc42ee82a2f5f862baab6a_801008_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;168&#34;
+		data-flex-basis=&#34;403px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;change-stream-触发器&#34;&gt;Change Stream (触发器)&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;1154&#34;
+	height=&#34;509&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;226&#34;
+		data-flex-basis=&#34;544px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-17.png&#34;
+	width=&#34;1418&#34;
+	height=&#34;357&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-17_hub00b9ea4cf3b7165bf9fad8dea5a661e_305552_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-17_hub00b9ea4cf3b7165bf9fad8dea5a661e_305552_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;397&#34;
+		data-flex-basis=&#34;953px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png&#34;
+	width=&#34;2124&#34;
+	height=&#34;1056&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;mongodb-代码编写规范&#34;&gt;mongodb 代码编写规范&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png&#34;
+	width=&#34;2308&#34;
+	height=&#34;1051&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;219&#34;
+		data-flex-basis=&#34;527px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png&#34;
+	width=&#34;2067&#34;
+	height=&#34;989&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;208&#34;
+		data-flex-basis=&#34;501px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1362&#34;
+	height=&#34;345&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;394&#34;
+		data-flex-basis=&#34;947px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-7.png&#34;
+	width=&#34;2182&#34;
+	height=&#34;1297&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-7_hu9862dce131dc42ee82a2f5f862baab6a_801008_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-7_hu9862dce131dc42ee82a2f5f862baab6a_801008_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;168&#34;
+		data-flex-basis=&#34;403px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png&#34;
+	width=&#34;2308&#34;
+	height=&#34;1051&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;219&#34;
+		data-flex-basis=&#34;527px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png&#34;
+	width=&#34;2150&#34;
+	height=&#34;1005&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;513px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png&#34;
+	width=&#34;1154&#34;
+	height=&#34;509&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;226&#34;
+		data-flex-basis=&#34;544px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6.png&#34;
+	width=&#34;1362&#34;
+	height=&#34;345&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;394&#34;
+		data-flex-basis=&#34;947px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png&#34;
+	width=&#34;1110&#34;
+	height=&#34;528&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

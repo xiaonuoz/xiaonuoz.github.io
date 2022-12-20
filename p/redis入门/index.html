@@ -1,0 +1,2231 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Redis,远程字典服务，是由C语言开发的一个开源的高性能键值对数据库。 set key value 添加修改数据,get/del key 获取删除数据。操作时返回 (integer) 1 则是'>
+<title>Redis入门</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='Redis入门'>
+<meta property='og:description' content='Redis,远程字典服务，是由C语言开发的一个开源的高性能键值对数据库。 set key value 添加修改数据,get/del key 获取删除数据。操作时返回 (integer) 1 则是'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/redis%E5%85%A5%E9%97%A8/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-03-10T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-03-10T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Redis入门">
+<meta name="twitter:description" content="Redis,远程字典服务，是由C语言开发的一个开源的高性能键值对数据库。 set key value 添加修改数据,get/del key 获取删除数据。操作时返回 (integer) 1 则是">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#数据类型">数据类型</a>
+      <ol>
+        <li><a href="#string">string</a></li>
+        <li><a href="#hash">hash</a></li>
+        <li><a href="#list">list</a></li>
+        <li><a href="#set">set</a></li>
+        <li><a href="#sorted_set">sorted_set</a></li>
+      </ol>
+    </li>
+    <li><a href="#key通用操作">key通用操作</a></li>
+    <li><a href="#linux安装redis">Linux安装redis</a></li>
+    <li><a href="#持久化优先使用aof">持久化(优先使用AOF)</a>
+      <ol>
+        <li><a href="#rdb">RDB</a></li>
+        <li><a href="#aof">AOF</a></li>
+      </ol>
+    </li>
+    <li><a href="#事务">事务</a>
+      <ol>
+        <li><a href="#事务的工作流程">事务的工作流程</a></li>
+        <li><a href="#锁">锁</a></li>
+        <li><a href="#watch锁乐观锁通过监听一个字段是否改变来确定后面的事务是否失败">watch锁（乐观锁，通过监听一个字段是否改变来确定后面的事务是否失败）</a></li>
+        <li><a href="#setnx-锁悲观锁通过设置一个锁来确定之后代码是否执行">setnx 锁（悲观锁，通过设置一个锁来确定之后代码是否执行）</a></li>
+      </ol>
+    </li>
+    <li><a href="#删除策略">删除策略</a>
+      <ol>
+        <li><a href="#过期数据">过期数据</a></li>
+        <li><a href="#删除策略-1">删除策略</a></li>
+        <li><a href="#逐出算法">逐出算法</a></li>
+      </ol>
+    </li>
+    <li><a href="#redisconf配置部分介绍">redis.conf配置部分介绍</a></li>
+    <li><a href="#高级数据类型">高级数据类型</a>
+      <ol>
+        <li><a href="#bitmaps针对状态统计">Bitmaps(针对状态统计)</a></li>
+        <li><a href="#hyperloglog-基数统计专用于统计不重复的数据的数量">HyperLogLog (基数统计，专用于统计不重复的数据的数量)</a></li>
+        <li><a href="#geo-地理定位计算只能计算水平位置的距离">GEO (地理定位计算,只能计算水平位置的距离)</a></li>
+      </ol>
+    </li>
+    <li><a href="#主从复制读写分离">主从复制(读写分离)</a></li>
+    <li><a href="#哨兵">哨兵</a>
+      <ol>
+        <li><a href="#配置文件">配置文件</a></li>
+        <li><a href="#工作原理">工作原理</a></li>
+      </ol>
+    </li>
+    <li><a href="#集群">集群</a>
+      <ol>
+        <li><a href="#配置文件-1">配置文件</a></li>
+      </ol>
+    </li>
+    <li><a href="#监控指标">监控指标</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/redis/" >
+                redis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/redis%E5%85%A5%E9%97%A8/">Redis入门</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 10, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Redis,远程字典服务，是由C语言开发的一个开源的<strong>高性能键值对数据库</strong>。</p>
+<p><code>set key value </code>添加修改数据,<code>get/del key</code> 获取删除数据。操作时返回 <code>(integer) 1</code> 则是操作成功，0则是失败</p>
+<p><strong>redis为每个独立的redis服务提供了16个数据库，编号从0到15。每个数据库之间的数据相互独立，且数据库大小是动态扩容。通过 <code>select [0-15]</code> 来切换到其他数据库中。默认是在0号数据库。</strong></p>
+<p><code>move key db</code> 将当前库的某个key移动到其他库中，<strong>当前库必须要有这个key且对方库必须不能存在这个key，两者任意一个条件不满足都会移动失败。</strong></p>
+<p><strong><code>dbsize</code> 可以查看当前库存在多少个key。<code>flushdb </code>清空当前库的key <code>flushall</code> 清空所有key</strong></p>
+<h2 id="数据类型">数据类型</h2>
+<h3 id="string">string</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-3.png"
+	width="1120"
+	height="197"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="568"
+		data-flex-basis="1364px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-20.png"
+	width="1006"
+	height="201"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="500"
+		data-flex-basis="1201px"
+	
+></p>
+<p>在setex之后再使用setex会刷新时效性为新设置的秒数值</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="1068"
+	height="496"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<h3 id="hash">hash</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-8.png"
+	width="1291"
+	height="457"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="282"
+		data-flex-basis="677px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-2.png"
+	width="1008"
+	height="391"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="257"
+		data-flex-basis="618px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-7.png"
+	width="1092"
+	height="395"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-7_hu4e178d8c3127f5078695244b287868d9_86700_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-7_hu4e178d8c3127f5078695244b287868d9_86700_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="276"
+		data-flex-basis="663px"
+	
+></p>
+<p><code>hsetnx key field value</code> 设置field的值，如果原本存在则不设置，不存在才进行set</p>
+<h3 id="list">list</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-8.png"
+	width="1291"
+	height="457"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="282"
+		data-flex-basis="677px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><strong>stop为-1就表示最后一个数据，lindex表示查看某个索引的值，查最后一个也可以使用-1</strong></p>
+<p><strong>读取只有lrange，这说明读索引依然是从左往右读取，因此如果是lpush那它是从最后一个往前插入数据；rpush则是从第一个开始往后添加数据</strong></p>
+<p>lpop表示移出list中左边的一个值，rpop则是右边出一个。根据索引都是从第一条往后读，lpop是从第一个开始往下进行移出，rpop是从最后一个往前移出</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-21.png"
+	width="1109"
+	height="290"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="382"
+		data-flex-basis="917px"
+	
+></p>
+<p>并且它可以同时等待多个list，某个list有就取，全没有才进行等待。</p>
+<p><code>lrem key count value </code>移除指定数据，count表示移除几个，因为值等于value的可能会有多个</p>
+<h3 id="set">set</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<p>set类型不允许值数据重复，如果添加的数据在set中已经存在一份，则会添加失败。[因为添加相同的数据是没有意义的]。可以根据这个去重特性做权限控制或者网站访问统计</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image.png"
+	width="807"
+	height="270"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image_huf60be562b40b463deed29464241d7ce3_57494_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image_huf60be562b40b463deed29464241d7ce3_57494_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="298"
+		data-flex-basis="717px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-5.png"
+	width="894"
+	height="283"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-5_hu57c008cde00713426d705e1dd3c31e71_69316_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-5_hu57c008cde00713426d705e1dd3c31e71_69316_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="315"
+		data-flex-basis="758px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="1068"
+	height="496"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<h3 id="sorted_set">sorted_set</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-4.png"
+	width="1291"
+	height="577"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-4_hue3f527443be8208981aa97995c082e08_291030_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-4_hue3f527443be8208981aa97995c082e08_291030_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="223"
+		data-flex-basis="536px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="1260"
+	height="411"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p><strong>zremrangebyrank是根据索引删除，且索引来自于zrange显示的顺序。</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-12.png"
+	width="1624"
+	height="455"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-12_hufe5113c32507e080f0b0a76c2132d580_232456_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-12_hufe5113c32507e080f0b0a76c2132d580_232456_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="356"
+		data-flex-basis="856px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-1.png"
+	width="1301"
+	height="349"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-1_hucbad342a6491fdfc091c549d8120795e_132802_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-1_hucbad342a6491fdfc091c549d8120795e_132802_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="372"
+		data-flex-basis="894px"
+	
+></p>
+<p>sorted_set底层存储依然是基于set结构的，因此数据不能重复，重复添加一个相同的数据，它的值会添加失败，但是如果新增时附带的score值不同，它的score值将被反复覆盖，保留最后一次修改的结果。</p>
+<h2 id="key通用操作">key通用操作</h2>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-8.png"
+	width="1291"
+	height="457"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="282"
+		data-flex-basis="677px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-2.png"
+	width="1008"
+	height="391"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="257"
+		data-flex-basis="618px"
+	
+></p>
+<h2 id="linux安装redis">Linux安装redis</h2>
+<p>下载安装一条龙</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">weget https://download.redis.io/releases/redis-6.2.3.tar.gz
+</span></span><span class="line"><span class="cl">tar -zxvf ...
+</span></span><span class="line"><span class="cl">cd redis
+</span></span><span class="line"><span class="cl">make install
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>服务器的redis通常会启动多个，因此启动根据配置文件进行启动</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cp redis.conf redis-6379.conf
+</span></span><span class="line"><span class="cl">vim redis-6379.conf
+</span></span><span class="line"><span class="cl">//需要修改的字段有
+</span></span><span class="line"><span class="cl">bind 绑定的ip
+</span></span><span class="line"><span class="cl">port 启动的端口号
+</span></span><span class="line"><span class="cl">daemonize yes  以守护进程的方式启动，而不是前端启动
+</span></span><span class="line"><span class="cl">logfile &#34;redis-6379.log&#34;   日志的文件名
+</span></span><span class="line"><span class="cl">dir /user/local/src/redis/data    日志的路径名
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最后以配置文件方式启动
+</span></span><span class="line"><span class="cl">redis-server redis-6379.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">连接则是redis-cli -p PORT -h HOST 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1007"
+	height="437"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="553px"
+	
+></p>
+<h2 id="持久化优先使用aof">持久化(优先使用AOF)</h2>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1377"
+	height="755"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="437px"
+	
+></p>
+<p>官方推荐两个方法同时使用</p>
+<h3 id="rdb">RDB</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image.png"
+	width="807"
+	height="270"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image_huf60be562b40b463deed29464241d7ce3_57494_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image_huf60be562b40b463deed29464241d7ce3_57494_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="298"
+		data-flex-basis="717px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><strong>如果出现意外情况导致redis崩溃消失，在下次启动时，redis会自动加载这个dump.rdb文件进行数据恢复，不需要人为操作恢复</strong></p>
+<p>要注意的是 save指令的执行会阻塞当前redis服务器(执行完才能进行后续的set等命令)，直到当前rdb过程完成为止，有可能造成长时间阻塞，<strong>线上环境不建议使用。</strong></p>
+<p><strong>可以使用bgsave来替代save，它会生成一个Linux子进程，而不占用redis的进程</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p>bgsave命令是针对save阻塞问题做的优化。redis内部所有涉及到reb操作都建议采用bgsave的方式。save命令可以放弃使用了</p>
+<p>但是不能说每次程序调用set方法就由程序发送bgsave方法，<strong>可以设置自动执行来让服务器自己进行保存</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-2.png"
+	width="1008"
+	height="391"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="257"
+		data-flex-basis="618px"
+	
+></p>
+<p><strong>发生变化包括修改原有key的value，新增key，删除key</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1377"
+	height="755"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="437px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<h3 id="aof">AOF</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-1.png"
+	width="1301"
+	height="349"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-1_hucbad342a6491fdfc091c549d8120795e_132802_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-1_hucbad342a6491fdfc091c549d8120795e_132802_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="372"
+		data-flex-basis="894px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p>最后根据策略将AOF缓存的写记录数据存放到 .aof文件中</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-7.png"
+	width="1092"
+	height="395"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-7_hu4e178d8c3127f5078695244b287868d9_86700_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-7_hu4e178d8c3127f5078695244b287868d9_86700_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="276"
+		data-flex-basis="663px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-2.png"
+	width="1008"
+	height="391"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-2_hu2c685cb8733f7a4cb8ff1cd6d1878a34_92650_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="257"
+		data-flex-basis="618px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<p>**<code>bgrewriteaof</code> 手动后台重写，逻辑和bgsave相似。**要注意的是对一个数据修改删除之后,重写完这个数据的操作会消失，因为它在redis中已经被删除了</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="1260"
+	height="411"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p><strong>在这两种重写条件中选择一种即可，而size的单位是字节，即linux输入ls -l显示的大小值</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-20.png"
+	width="1006"
+	height="201"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="500"
+		data-flex-basis="1201px"
+	
+></p>
+<h2 id="事务">事务</h2>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-22.png"
+	width="1022"
+	height="543"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-22_hu7341ec957299b453d8813f6ce83ef4e6_186303_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-21.png"
+	width="1109"
+	height="290"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="382"
+		data-flex-basis="917px"
+	
+></p>
+<h3 id="事务的工作流程">事务的工作流程</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="1260"
+	height="411"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-20.png"
+	width="1006"
+	height="201"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-20_huce7d9fd40f5e94a8e64a2ac6e13b5441_68526_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="500"
+		data-flex-basis="1201px"
+	
+></p>
+<h3 id="锁">锁</h3>
+<h3 id="watch锁乐观锁通过监听一个字段是否改变来确定后面的事务是否失败">watch锁（乐观锁，通过监听一个字段是否改变来确定后面的事务是否失败）</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1377"
+	height="755"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-15_hu2d2b8759926784ca532f2d5b7f52fbca_415455_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="437px"
+	
+></p>
+<p>终止执行是直接discard。之前的执行语句都得重写进行</p>
+<p>watch和mysql的锁有点区别，watch定义在开启事务之前，且watch key和事务中的字段没关系。比如对name进行watch，然后开启事务后set的是 age，假如在没有执行exec前另一个服务器对name字段的值进行了改变，<strong>它是可以成功改变name的值的</strong>。而此时执行exec就会失败，不存在阻塞的情况。</p>
+<p><strong>只有当watch的对象没有改变时，后面的事务才能成功执行。watch的key改变与否影响着下一个事务的执行，但key的值和事务中的操作值没有关系。watch定义在事务开始之前，和mysql完全不相同</strong></p>
+<h3 id="setnx-锁悲观锁通过设置一个锁来确定之后代码是否执行">setnx 锁（悲观锁，通过设置一个锁来确定之后代码是否执行）</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<p>它依然不会阻塞，且value值可以任意，假如在会话1中 <code>setnx lock-age 1 </code>,此时会话1可以 <code>set age 3</code> ,但会话2也可以 <code>set age 3</code> ,**这个锁不会对age字段进行加锁。**它只会对 <code>lock-age </code>加锁，如果会话2再加一次 <code>set lock-age 1</code> 就会发生失败，因为程序中每次都要使用一次lock-age ，如果失败则意味着有其他地方加锁了。<strong>解锁则是删除这个锁，<code>del lock-age </code></strong></p>
+<p><strong>但是经常会出现加锁却忘记解锁的情况，就需要使用 <code>expire lock-key second </code>来给锁加个生存周期。这个指令只能添加生存周期，因此加生存周期之前要使用setnx进行加锁</strong></p>
+<h2 id="删除策略">删除策略</h2>
+<h3 id="过期数据">过期数据</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><strong>过期数据一般不会立即删除，它会根据删除策略来延迟删除。过期数据的底层就是开辟了一个空间来存key的内存指针和过期时间，如果到了这个时间点才根据策略进行删除。而开辟的这个空间的结构是hash类型，一个failed一个value,failed存key的内存指针，value存它的过期时间</strong></p>
+<p>redis会在内存占用和CPU占用之间寻找一个平衡，顾此失彼都会造成整体redis性能的下降，甚至引发服务器宕机或内存泄漏</p>
+<h3 id="删除策略-1">删除策略</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="1260"
+	height="411"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p><strong>拿时间换空间</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<p>拿空间换时间（图片写错了）</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-24.png"
+	width="1524"
+	height="769"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="475px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><strong>折中方案，server.hz通过info server 查看hz</strong></p>
+<h3 id="逐出算法">逐出算法</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-17.png"
+	width="2165"
+	height="992"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="523px"
+	
+></p>
+<p><strong>前四个是操作过期数据，后三个操作全部数据，最后一个都不处理</strong></p>
+<h2 id="redisconf配置部分介绍">redis.conf配置部分介绍</h2>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-13.png"
+	width="691"
+	height="404"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-13_hub03db1af66ef13313c5cebd167228b61_80363_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-13_hub03db1af66ef13313c5cebd167228b61_80363_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="171"
+		data-flex-basis="410px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<h2 id="高级数据类型">高级数据类型</h2>
+<h3 id="bitmaps针对状态统计">Bitmaps(针对状态统计)</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<p>Bitmaps本身不是一种数据结构， 实际上它就是字符串，但是它可以对字符串的位进行操作**。Bitmaps并不是实际的数据类型，而是定义在String类型上的一个面向字节操作的集合。**
+Bitmaps单独提供了一套命令， 所以在Redis中使用Bitmaps和使用字符串的方法不太相同。可以把Bitmaps想象成一个以位为单位的数组， 数组的每个单元只能存储0和1， 数组的下标在Bitmaps中叫做偏移量。</p>
+<p>bitmaps通常作用在统计用户访问量，<strong>因为一个用户只有访问和未访问两种状态，为此存储用户的uid会极大的浪费redis的内存。那么以1表示访问，以0表示未访问，而bitmaps的下标索引则代表这个用户的uid，则可以缩减所需内存。</strong></p>
+<p>假设现在有20个用户，userid=0， 5， 11， 15， 19的用户对网站进行了访问， 那么当前Bitmaps初始化结果如下图所示。</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<p>那么设置id为5的bit为1则是 <code>setbit testkey 4 1 </code>设置索引为4的bit为1，取则是 <code>getbit testkey 4</code>，返回的0和1则是代表是否被点播，而4之前的值都会被0填充。而取不存在的位，如 <code>getbit testkey 10</code> 也是能取到的，它被填充为了0</p>
+<p><strong>很多应用的用户id以一个指定数字（例如10000） 开头， 直接将用户id和Bitmaps的偏移量对应势必会造成一定的浪费， 通常的做法是每次做setbit操作时将用户id减去这个指定数字(之前的10000)。
+在第一次初始化Bitmaps时， 假如偏移量非常大， 那么整个初始化过程执行会比较慢， 可能会造成Redis的阻塞</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-8.png"
+	width="1291"
+	height="457"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="282"
+		data-flex-basis="677px"
+	
+></p>
+<p><code>bitpos key targetBit</code>  返回第一个值为targetBit(0/1)的偏移量</p>
+<h3 id="hyperloglog-基数统计专用于统计不重复的数据的数量">HyperLogLog (基数统计，专用于统计不重复的数据的数量)</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-3.png"
+	width="1120"
+	height="197"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="568"
+		data-flex-basis="1364px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1007"
+	height="437"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="553px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<h3 id="geo-地理定位计算只能计算水平位置的距离">GEO (地理定位计算,只能计算水平位置的距离)</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-10.png"
+	width="1050"
+	height="435"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-10_huef1da5d0b37166517db76f98132f6294_121460_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-10_huef1da5d0b37166517db76f98132f6294_121460_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="241"
+		data-flex-basis="579px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-8.png"
+	width="1291"
+	height="457"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="282"
+		data-flex-basis="677px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<h2 id="主从复制读写分离">主从复制(读写分离)</h2>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1007"
+	height="437"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="553px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-18.png"
+	width="1096"
+	height="463"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-18_huf28539295af3a9a705d7eb5545766739_162516_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-18_huf28539295af3a9a705d7eb5545766739_162516_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="236"
+		data-flex-basis="568px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="1260"
+	height="411"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p><strong>只需要在从机使用slaveof 主机ip 主机port 就可以开始连接了，然后看下主机和从机是否有同步数据成功的日志即可。同步成功后从机只能进行get读的操作，写会失败，且每次主机set一次，从机就可以get到最新的数据</strong></p>
+<p>也可以在启动从机时  在redis-cli后加 &ndash;slaveof 127.0.0.1 6379</p>
+<p><strong>但是最常用的还是修改配置文件的方法：	在从机的redis.conf中加 <code>slaveof 主机ip 主机port</code></strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1007"
+	height="437"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="553px"
+	
+></p>
+<p><code>slaveof no one </code> 从机发送命令，断开主从连接</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-21.png"
+	width="1109"
+	height="290"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="382"
+		data-flex-basis="917px"
+	
+></p>
+<p>全量复制指的是从发psync2指令那一刻开始主机原来的所有数据，而部分数据则是进行rdb过程中所有的数据，后面发送的指令已经属于命令传播阶段了</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="1260"
+	height="411"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1007"
+	height="437"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="553px"
+	
+></p>
+<p>命令传播阶段会因为短时间的网络中断 开启  部分复制</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="1068"
+	height="496"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<p>如slave重连master时，如果运行id和上次不同，就需要判断是否是同一台机器，如果不是就得进行全量复制了。运行id主要用于识别对方身份</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-24.png"
+	width="1524"
+	height="769"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="475px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="1068"
+	height="496"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<p><strong>数据同步阶段：</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-21.png"
+	width="1109"
+	height="290"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="382"
+		data-flex-basis="917px"
+	
+></p>
+<p>蓝色的runid和offset是全量复制时主发给从的  主机runid和offset，红色也是主机的runid和offset[当前的偏移量]。offset如果不在缓冲区就说明被挤出去了，就得重新全量复制</p>
+<p><strong>命令传播阶段：</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="1260"
+	height="411"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p>master的复制缓冲区会暂存传播的命令和偏移量。如果从机发来的偏移量和主机记录的偏移量不同则可以知道主机更新了哪些数据[<strong>即使两者连接断开</strong>]，<strong>如果从机发来的偏移量不在主机的复制缓冲区中，则意味着数据过早，已经被挤出缓存区了，只能重新进行全量复制。</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="1260"
+	height="411"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-19_hu9830d7fec5d65ba46e0b326fdca7d8f9_221073_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p>lag项大于1就说明曾经slave掉过</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-18.png"
+	width="1096"
+	height="463"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-18_huf28539295af3a9a705d7eb5545766739_162516_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-18_huf28539295af3a9a705d7eb5545766739_162516_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="236"
+		data-flex-basis="568px"
+	
+></p>
+<p><strong>常见问题：</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="1068"
+	height="496"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1007"
+	height="437"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="553px"
+	
+></p>
+<h2 id="哨兵">哨兵</h2>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-3.png"
+	width="1120"
+	height="197"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-3_hu305516d7ec7f50763e9cd3bb653d0972_60131_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="568"
+		data-flex-basis="1364px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-13.png"
+	width="691"
+	height="404"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-13_hub03db1af66ef13313c5cebd167228b61_80363_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-13_hub03db1af66ef13313c5cebd167228b61_80363_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="171"
+		data-flex-basis="410px"
+	
+></p>
+<h3 id="配置文件">配置文件</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1007"
+	height="437"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-6_hu5022b8c127923939e657e760767c3bb3_120005_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="553px"
+	
+></p>
+<p>启动顺序为先启动主节点，再从节点，然后再启动哨兵</p>
+<h3 id="工作原理">工作原理</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p>sentinel会先向master和slave要信息，要完以后建立一个cmd连接。而sentinel之间会组件一个频道，在里面发布订阅信息，如当master记录了第一个sentinel的信息时，第二个sentinel再发info给master就会发现，它会加入那个频道并将自己的信息发布进去。这样新增哨兵就会快速同步给其他原有哨兵。</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-17.png"
+	width="2165"
+	height="992"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="523px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-17.png"
+	width="2165"
+	height="992"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-17_hudd03a9cb4d0bef6d9290c90079763bbf_925744_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="523px"
+	
+></p>
+<p>当确认主机挂了以后，哨兵会进行选举来确定谁去选新的主机。而每个哨兵都是竞选者也是投票者。具体原理百度即可。</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="1068"
+	height="496"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-11_huaa65dc1066778e06c185185a35e11a88_212475_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<p><strong>当未来原master重新连接上了，它也依然是从机。</strong></p>
+<h2 id="集群">集群</h2>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="1184"
+	height="754"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-16_hu911e6cd9c74407d89fcd73d7f4c14835_284611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="376px"
+	
+></p>
+<p>而每一个区域，36-41那部分则是一个个的存储槽，每个计算机中都记录了所有机器的槽的位置。当key访问一台机器没找到时，则会让key去对应槽的机器上寻找。</p>
+<p><strong>然而槽的总数是不会发生变化的，每次新增一个节点就只是将当前所有机器中的槽拆出来部分给新的节点</strong></p>
+<h3 id="配置文件-1">配置文件</h3>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p>线上的时候，节点服务响应超时时间一般设置为30-60s之间</p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<p>而作为集群启动后，redis-cli就需要加 -c 来专门作为集群方式操作，不加c操作key就必须去对应槽的机器中才能操作</p>
+<p><strong>而如果运行过程中如果从机挂了，对应的主机会进行记录（一主对一从时），如果主机挂了，从机会作为新的主机继续运行。而原来的master再上线就只能作为从机运行了。</strong></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-24.png"
+	width="1524"
+	height="769"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="475px"
+	
+></p>
+<h2 id="监控指标">监控指标</h2>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-24.png"
+	width="1524"
+	height="769"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-24_hufd9abe5dc8267e95afa38ad76035683b_884964_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="475px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="1180"
+	height="587"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-14_hua787d579937fcc10af6a46e5ed9deeac_229951_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="814"
+	height="186"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-9_hu3c633ea1166c7463edfda48146b529ad_64190_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-23.png"
+	width="1811"
+	height="636"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-23_hua15a4d94a9e211f6b3b2f339da6fc97f_437067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-8.png"
+	width="1291"
+	height="457"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-8_hue9594bbd34add187d9cbee4c9c4f4f1d_145694_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="282"
+		data-flex-basis="677px"
+	
+></p>
+<p><img src="/p/redis%E5%85%A5%E9%97%A8/media/image-21.png"
+	width="1109"
+	height="290"
+	srcset="/p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_480x0_resize_box_3.png 480w, /p/redis%E5%85%A5%E9%97%A8/media/image-21_hu4b49b892ffae8d0008010c32a6ecd317_70736_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="382"
+		data-flex-basis="917px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

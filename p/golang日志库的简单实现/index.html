@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在开发过程中，通常我们会将信息输出到终端来查看变量和结果是否和预想的一样，但是如果丢到线上后依然是输出到终端的话，它就会占用部分资源，但是我'>
+<title>golang日志库的简单实现</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/golang%E6%97%A5%E5%BF%97%E5%BA%93%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='golang日志库的简单实现'>
+<meta property='og:description' content='在开发过程中，通常我们会将信息输出到终端来查看变量和结果是否和预想的一样，但是如果丢到线上后依然是输出到终端的话，它就会占用部分资源，但是我'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/golang%E6%97%A5%E5%BF%97%E5%BA%93%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-10-10T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-10-10T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="golang日志库的简单实现">
+<meta name="twitter:description" content="在开发过程中，通常我们会将信息输出到终端来查看变量和结果是否和预想的一样，但是如果丢到线上后依然是输出到终端的话，它就会占用部分资源，但是我">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#需求分析">需求分析</a></li>
+    <li><a href="#runtimecaller">runtime.Caller()</a></li>
+    <li><a href="#代码">代码</a>
+      <ol>
+        <li><a href="#公用代码logpublicfuncgo">公用代码：logPublicfunc.go</a></li>
+        <li><a href="#日志写到终端中consoleloggergo">日志写到终端中：consolelogger.go</a></li>
+        <li><a href="#日志写到文件中且以大小分隔fileloggergo">日志写到文件中，且以大小分隔：fileLogger.go</a></li>
+        <li><a href="#main文件logermaingo">main文件：logermain.go</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/golang%E6%97%A5%E5%BF%97%E5%BA%93%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/">golang日志库的简单实现</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 10, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>在开发过程中，通常我们会将信息输出到终端来查看变量和结果是否和预想的一样，但是如果丢到线上后依然是输出到终端的话，它就会占用部分资源，但是我们并没有使用到，并且后期出错查询也很困难，因此写一个在开发过程中输出到终端，在编译后输出到文件的程序很有必要</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">fileObj,_:=os.OpenFile(&#34;./xx.log&#34;,os.O_APPEND|os.O_CREATE|os.O_WRONLY,0644)
+</span></span><span class="line"><span class="cl">	//设置日志输出位置为fileObj，默认的值是os.Stdout,即终端
+</span></span><span class="line"><span class="cl">	log.SetOutput(fileObj)
+</span></span><span class="line"><span class="cl">	log.Printf(&#34;这是一条错误输出&#34;)
+</span></span><span class="line"><span class="cl">	time.Sleep(3*time.Second)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="需求分析">需求分析</h2>
+<ol>
+<li>支持往不同的地方输出日志（终端和文件中）</li>
+<li>日志分级别
+<ol>
+<li>Debug</li>
+<li>Trace</li>
+<li>Info</li>
+<li>Warning</li>
+<li>Error</li>
+<li>Fatal</li>
+</ol>
+</li>
+<li>日志要支持级别开关控制，比如说开发的时候所有级别都输出，但是上线后只有INFO级别往下的才能输出</li>
+<li>完整的日志记录要包含时间、行号、文件名、日志级别、日志信息</li>
+<li>日志文件要切割
+<ol>
+<li>按文件大小切割
+<ol>
+<li>我们初始化时有设置一个maxFileSize文件最大值，可以通过在每次写日志时都判断一下当前文件大小来进行切割</li>
+</ol>
+</li>
+<li>按日志切割（直接将文件名设置为当前时间就可以通过日志切割）</li>
+</ol>
+</li>
+</ol>
+<h2 id="runtimecaller">runtime.Caller()</h2>
+<p><code>pc,file,line,ok:=runtime.Caller(skip int)</code>  这个函数是运行时gc的获取的部分信息，它返回四个值</p>
+<ul>
+<li>pc返回的是执行函数指针，可以通过这个获取函数名 <code>runtime.FuncForPC(pc).Name()</code>等信息</li>
+<li>file是执行函数所在文件名目录，使用 <code>path.Base(file)</code>可以获取到绝对路径中的最后一层目录，</li>
+<li>line是执行的函数所在行号</li>
+<li>ok 是否可以获取到信息,返回false时前面三个值都为零值</li>
+</ul>
+<p>执行函数指的是调用Caller的那个函数，通过skip可以向上调用更高级别的执行函数信息</p>
+<p>skip是要提升的堆栈帧数，如就在当前函数调用的Caller，它的值就是0，如果要在另一个函数调用它，并且获取的值要是另一个函数的，那它就得提升一个，即为1，如果main再调用，想获取main的信息，就是2，即a函数调用caller就升一层，b调用a再升一层，想获取b的信息skip就为2</p>
+<h2 id="代码">代码</h2>
+<h3 id="公用代码logpublicfuncgo">公用代码：logPublicfunc.go</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">mylogger</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;strings&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//定义一个接口处理两种不同日志
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Logger</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Debug</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Info</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//定义日志级别为非0的整数，使用type可以在以后打印类型时知道它的作用，而uint则无法理解用于什么地方
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">LogLevel</span> <span class="kt">uint16</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//设置每个级别对应的uint16值，unknow为0，表示输入的格式不正确
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">UNKNOW</span> <span class="nx">LogLevel</span> <span class="p">=</span><span class="kc">iota</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">DEBUG</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">INFO</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//通过传入的字符串来判断级别，返回的是uint常量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">parseLogLevel</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">LogLevel</span><span class="p">,</span><span class="kt">error</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//将传入的字符串全部转为大写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">s</span><span class="p">=</span><span class="nx">strings</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="s">&#34;DEBUG&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">DEBUG</span><span class="p">,</span><span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="s">&#34;INFO&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">INFO</span><span class="p">,</span><span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//创建一个err，如果err不为空则是输入有误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">err</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;无效的日志级别，请检查&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">UNKNOW</span><span class="p">,</span><span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">getLogString</span><span class="p">(</span><span class="nx">lv</span> <span class="nx">LogLevel</span><span class="p">)</span> <span class="kt">string</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="nx">lv</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">DEBUG</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;DEBUG&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">INFO</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;INFO&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;UNKNOW&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="日志写到终端中consoleloggergo">日志写到终端中：consolelogger.go</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">mylogger</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//往终端中写日志
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//自定义一个日志库结构体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">ConsoleLogger</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Level</span> <span class="nx">LogLevel</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//初始化一个Logger结构体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewConsoleLogger</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">level</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nf">parseLogLevel</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//如果err不为空，则level为零值=0,0对应着UNKNOW
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">ConsoleLogger</span><span class="p">{</span><span class="nx">Level</span><span class="p">:</span> <span class="nx">level</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//实现开关级别,通过对象和参数的比较来执行比设置的级别高的日志消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">)</span><span class="nf">enable</span><span class="p">(</span><span class="nx">loglevel</span> <span class="nx">LogLevel</span><span class="p">)</span><span class="kt">bool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">loglevel</span><span class="o">&gt;=</span><span class="nx">c</span><span class="p">.</span><span class="nx">Level</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//可以通过可变参数（参照fmt.Printf函数）实现格式化输出,实现传变量进字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1">//Sprintf返回一个格式化好的字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">)</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">lv</span> <span class="nx">LogLevel</span><span class="p">,</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//设置日志时间格式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">timeInit</span> <span class="p">=</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nf">enable</span><span class="p">(</span><span class="nx">lv</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span><span class="s">&#34;[%s] [%s] %s\n&#34;</span><span class="p">,</span><span class="nx">timeInit</span><span class="p">,</span><span class="nf">getLogString</span><span class="p">(</span><span class="nx">lv</span><span class="p">),</span><span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">)</span><span class="nf">Debug</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">c</span><span class="p">.</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">DEBUG</span><span class="p">,</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">)</span><span class="nf">Info</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">c</span><span class="p">.</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">INFO</span><span class="p">,</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="日志写到文件中且以大小分隔fileloggergo">日志写到文件中，且以大小分隔：fileLogger.go</h3>
+<p>可以使用channel让日志和业务代码分开来，写日志不影响正常业务的运行。写日志报错只会导致日志写入失败，但是程序依然在运行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">mylogger</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;path&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//往文件中写日志
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">FileLogger</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Level</span> <span class="nx">LogLevel</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">FileName</span> <span class="kt">string</span>	<span class="c1">//日志文件保存的文件名
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">FilePath</span> <span class="kt">string</span>	<span class="c1">//日志文件保存的路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">MaxFileSize</span> <span class="kt">int64</span> <span class="c1">//每个日志文件的最大值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">FileObj</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>	<span class="c1">//初始化时打开一个文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">ErrFileObj</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>	<span class="c1">//记录错误日志的文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">logChan</span> <span class="kd">chan</span> <span class="o">*</span><span class="nx">logMsg</span>	<span class="c1">//管道，用于存放日志信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">logMsg</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">level</span> <span class="nx">LogLevel</span>	<span class="c1">//日志级别
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">msg</span> <span class="kt">string</span>		<span class="c1">//日志信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">timestamp</span> <span class="kt">string</span> <span class="c1">//时间戳
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//初始化一个Logger结构体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewFileLogger</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">fileName</span><span class="p">,</span><span class="nx">filePath</span> <span class="kt">string</span><span class="p">,</span><span class="nx">maxFileSize</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">level</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nf">parseLogLevel</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//如果err不为空，则level为零值=0,0对应着UNKNOW
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f1</span><span class="o">:=</span> <span class="o">&amp;</span><span class="nx">FileLogger</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Level</span><span class="p">:</span> <span class="nx">level</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">FileName</span><span class="p">:</span><span class="nx">fileName</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">FilePath</span><span class="p">:</span> <span class="nx">filePath</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">MaxFileSize</span><span class="p">:</span> <span class="nx">maxFileSize</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">logChan</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">logMsg</span><span class="p">,</span><span class="mi">50000</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">err1</span><span class="o">:=</span><span class="nx">f1</span><span class="p">.</span><span class="nf">initFile</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err1</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//日志文件都无法打开，直接panic中断程序运行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nb">panic</span><span class="p">(</span><span class="nx">err1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">f1</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//实现开关级别,通过对象和参数的比较来执行比设置的级别高的日志消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">enable</span><span class="p">(</span><span class="nx">loglevel</span> <span class="nx">LogLevel</span><span class="p">)</span><span class="kt">bool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">loglevel</span><span class="o">&gt;=</span><span class="nx">f</span><span class="p">.</span><span class="nx">Level</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//初始化，打开一个文件向内写日志
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">initFile</span><span class="p">()</span> <span class="kt">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//拼接文件路径和文件名，然后打开此文件，没有就进行创建
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fullFileName</span><span class="o">:=</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FilePath</span><span class="p">,</span><span class="nx">f</span><span class="p">.</span><span class="nx">FileName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="nx">fullFileName</span><span class="p">,</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">,</span><span class="mo">0644</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open log file failed,err:%v&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//专门记录错误的日志
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">errfileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="nx">fullFileName</span><span class="o">+</span><span class="s">&#34;.err&#34;</span><span class="p">,</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">,</span><span class="mo">0644</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open log file failed,err:%v&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">=</span><span class="nx">fileObj</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">=</span><span class="nx">errfileObj</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//开启一个后台goroutine往文件内写日志
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//不能开启多个，因为同一时间不能有多个程序操作同一个文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">go</span> <span class="nx">f</span><span class="p">.</span><span class="nf">writeLogBackground</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//return nil可以实现调用此方法时加if判断来判断是否有错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//判断当前文件大小，超过指定值就进行切割，将要写入的文件传进去判断
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">checkSize</span><span class="p">(</span><span class="nx">file</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="kt">bool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fileInfo</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">file</span><span class="p">.</span><span class="nf">Stat</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;get file info failed,err:%v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//如果当前文件大小大于等于预设时文件的最大值，就应该返回true，进行切割
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="nx">fileInfo</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span><span class="o">&gt;=</span><span class="nx">f</span><span class="p">.</span><span class="nx">MaxFileSize</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">splitFile</span><span class="p">(</span><span class="nx">file</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span><span class="kt">error</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//此时则需要进行文件切割,如果返回为false就会直接跳过该判断，继续往原文件写内容
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fileInfo</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">file</span><span class="p">.</span><span class="nf">Stat</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open file faile,err:%v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span><span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//然后rename原文件,fileInfo.Name()可以获取文件名，可以同时适配普通文件和错误文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">logName</span><span class="o">:=</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FilePath</span><span class="p">,</span><span class="nx">fileInfo</span><span class="p">.</span><span class="nf">Name</span><span class="p">())</span><span class="c1">//拿到当前日志的路径，join的拼接是用/来拼接的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//在重命名时要先关闭当前的日志文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">nowStr</span><span class="o">:=</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;20060102150405&#34;</span><span class="p">)</span><span class="c1">//获取当前时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">newName</span><span class="o">:=</span><span class="nx">logName</span><span class="o">+</span><span class="s">&#34;.bak&#34;</span><span class="o">+</span><span class="nx">nowStr</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">os</span><span class="p">.</span><span class="nf">Rename</span><span class="p">(</span><span class="nx">logName</span><span class="p">,</span><span class="nx">newName</span><span class="p">)</span><span class="c1">//重命名
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//打开新的文件并赋值给FileObj
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="nx">logName</span><span class="p">,</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">,</span><span class="mo">0644</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open file faild,err:%v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">,</span><span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">fileObj</span><span class="p">,</span><span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//开携程让日志和业务代码区分开
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">writeLogBackground</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//用for循环让此函数一直运行等待从管道中取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//普通日志文件分割
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">f</span><span class="p">.</span><span class="nf">checkSize</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">f</span><span class="p">.</span><span class="nf">splitFile</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open file faild,err:%v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">=</span><span class="nx">fileObj</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//如果无法从logChan中取出数据，就一直阻塞在此处
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">case</span> <span class="nx">logtmp</span><span class="o">:=&lt;-</span><span class="nx">f</span><span class="p">.</span><span class="nx">logChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">logInfo</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;[%s] [%s] %s\n&#34;</span><span class="p">,</span><span class="nx">logtmp</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">,</span><span class="nf">getLogString</span><span class="p">(</span><span class="nx">logtmp</span><span class="p">.</span><span class="nx">level</span><span class="p">),</span><span class="nx">logtmp</span><span class="p">.</span><span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">,</span><span class="nx">logInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="c1">//错误日志文件分割
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">if</span> <span class="nx">logtmp</span><span class="p">.</span><span class="nx">level</span><span class="o">&gt;=</span><span class="nx">INFO</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="nx">f</span><span class="p">.</span><span class="nf">checkSize</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">					<span class="nx">errfileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">f</span><span class="p">.</span><span class="nf">splitFile</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">					<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">						<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open file faild,err:%v&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">						<span class="k">return</span>
+</span></span><span class="line"><span class="cl">					<span class="p">}</span>
+</span></span><span class="line"><span class="cl">					<span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">=</span><span class="nx">errfileObj</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">				<span class="c1">//如果要记录的日志等级（输入的参数）大于等于INFO级别，则还要在err日志文件中再记录一遍
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">,</span><span class="nx">logInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//可以通过可变参数（参照fmt.Printf函数）实现格式化输出,实现传变量进字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1">//Sprintf返回一个格式化好的字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">lv</span> <span class="nx">LogLevel</span><span class="p">,</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">f</span><span class="p">.</span><span class="nf">enable</span><span class="p">(</span><span class="nx">lv</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//设置日志时间格式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">var</span> <span class="nx">timeInit</span> <span class="p">=</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//先把日志发到通道中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">logtmp</span><span class="o">:=&amp;</span><span class="nx">logMsg</span><span class="p">{</span><span class="nx">level</span><span class="p">:</span> <span class="nx">lv</span><span class="p">,</span><span class="nx">msg</span><span class="p">:</span><span class="nx">msg</span><span class="p">,</span><span class="nx">timestamp</span><span class="p">:</span> <span class="nx">timeInit</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//通过select监听管道，避免极端情况下通道阻塞影响业务代码的运行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//写的进去和写不进去都直接跳过，然后继续执行代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="nx">f</span><span class="p">.</span><span class="nx">logChan</span><span class="o">&lt;-</span><span class="nx">logtmp</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//如果写不进去就进行跳过，保证业务代码正常运行，但是此时日志写不进去（极端情况）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">Debug</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">DEBUG</span><span class="p">,</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">Info</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">INFO</span><span class="p">,</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//在用完后记得关闭文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">Close</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="main文件logermaingo">main文件：logermain.go</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;mylogger&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">logger</span> <span class="nx">mylogger</span><span class="p">.</span><span class="nx">Logger</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//这里的参数表示会输出大于等于debug等级的日志
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//可以在consolelogger.go中设置大于则输出到终端，小于则输出到文件中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//输出到终端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">logger</span> <span class="p">=</span> <span class="nx">mylogger</span><span class="p">.</span><span class="nf">NewConsoleLogger</span><span class="p">(</span><span class="s">&#34;debug&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span><span class="o">:=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="p">&lt;</span><span class="mi">2</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;我是一条debug消息&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">id</span><span class="o">:=</span><span class="mi">10010</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">name</span><span class="o">:=</span><span class="s">&#34;张三&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;我是一条info消息，来自%d-%s&#34;</span><span class="p">,</span><span class="nx">id</span><span class="p">,</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">//输出到文件中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">logger</span><span class="p">=</span><span class="nx">mylogger</span><span class="p">.</span><span class="nf">NewFileLogger</span><span class="p">(</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02&#34;</span><span class="p">),</span><span class="s">&#34;./&#34;</span><span class="p">,</span><span class="mi">10</span><span class="o">*</span><span class="mi">1024</span><span class="p">)</span><span class="c1">//for {
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//如果消息级别为0表示是错误的等级
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">for</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;我是一条debug消息&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">id</span><span class="o">:=</span><span class="mi">10010</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">name</span><span class="o">:=</span><span class="s">&#34;张三&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;我是一条info消息，来自%d-%s&#34;</span><span class="p">,</span><span class="nx">id</span><span class="p">,</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

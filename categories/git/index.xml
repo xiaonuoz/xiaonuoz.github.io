@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>git on 笑傩</title>
+        <link>https://xiaonuoz.github.io/categories/git/</link>
+        <description>Recent content in git on 笑傩</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Thu, 03 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaonuoz.github.io/categories/git/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Git三剑客</title>
+        <link>https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/</link>
+        <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+        
+        <guid>https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/</guid>
+        <description>&lt;h2 id=&#34;git基础&#34;&gt;Git基础&lt;/h2&gt;
+&lt;h3 id=&#34;安装调配&#34;&gt;安装调配&lt;/h3&gt;
+&lt;p&gt;安装好git后先配置user信息&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git config --global user.name &amp;#39;your_name&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git config --global user.email &amp;#39;your_email&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;config有三个作用域，local（缺省，只对某个仓库有效）、global（对当前用户所有仓库有效）、system（对系统所有登录的用户有效），在作用域之后加 &amp;ndash;list可以显示config相关作用域的配置。local优先级大于global，global优先级大于system&lt;/p&gt;
+&lt;h3 id=&#34;建立git仓库提交代码&#34;&gt;建立git仓库提交代码&lt;/h3&gt;
+&lt;p&gt;如果是将原有代码纳入git管理就只需要进入项目所在文件夹，然后 &lt;code&gt;git init&lt;/code&gt;即可&lt;/p&gt;
+&lt;p&gt;对于新的项目则是进入某个文件夹，然后 &lt;code&gt;git init your_project&lt;/code&gt;(此命令会在当前路径下创建和项目名称同名的文件夹)，然后进入 &lt;code&gt;your_project&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;git提交流程：&lt;/p&gt;
+&lt;p&gt;先通过 &lt;code&gt;git add files&lt;/code&gt;将文件从工作目录添加到暂存区（可以将暂存区的东西重新回退覆盖到工作目录），&lt;strong&gt;多次add后觉得没问题了&lt;/strong&gt;再通过 &lt;code&gt;git commit -m &#39;提交信息&#39;&lt;/code&gt;提交到git中。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git status&lt;/code&gt; 查看暂存区和工作目录的状态。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git log&lt;/code&gt;查看git的版本历史，可以使用 &lt;code&gt;git log --oneline&lt;/code&gt;来简洁查看版本历史。历史过多使用空格可以向下翻页，b 向上翻页&lt;/p&gt;
+&lt;p&gt;对于git已经跟踪过的文件（存入暂存区的文件），可以通过 &lt;code&gt;git add -u&lt;/code&gt; 将工作目录中所有被git管理的文件一起添加到暂存区。&lt;code&gt;got rm file&lt;/code&gt;删除暂存区中的文件&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;如果要将本地git和GitHub连接起来，首先要在GitHub建一个仓库，然后关联本地和GitHub,此处是用orgin来代替后面一长串的地址，类似别名。现在可以直接clone拉取远端代码，它会自动帮我们起origin的别名，并且初始化本地库
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git remote add orgin git@github.com..../..git
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;// git remote -v    查看连接上的仓库
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;如果GitHub上的项目中有readme或者license文件，则需要先pull,pull会将本地的master和远端的master相关联，并且拉取远端的文件
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git pull orgin
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;//git clone git@github.com:....   将远端的git项目拷贝到本地当前文件夹中
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;然后将本地项目push到远端，可以接分支名只push一个分支，如果Git连接名是orgin是可以缺省的
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git push &amp;lt;远程主机名&amp;gt;   &amp;lt;本地分支名&amp;gt;:&amp;lt;远程分支名&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;常用命令基础&#34;&gt;常用命令基础&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;git reset --hard xxxhash&lt;/code&gt;  将git的指针指向某次commit后，即回退到之前某个版本，这个版本之后的commit都会消失，此时可以以当前版本创建新的分支或者tag，但千万不要进行git push ，会导致远端之后的版本消失。此时本地的commit对比远端commit应该会落后几个版本，创建完分支或tag后可以通过git pull重新同步本地commit 变回去。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git reset --soft xxx&lt;/code&gt; 仅仅在本地库中移动HEAD指针，不会改变本地真实文件的内容，暂存区依然是之前最新版本的内容，可以理解为撤销了这个commit之后的所有提交，本地库和真实代码的差异放在了暂存区中。&amp;ndash;mixed则是移动了指针和暂存区，真实内容不会更改，即差异化出现在了工作区中。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git mv old_name new_name&lt;/code&gt;对git跟踪后的文件进行重命名，同时会更改本地文件名&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;gir rm file&lt;/code&gt; 删除暂存区和工作区中对应的文件&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch -av &lt;/code&gt;查看有多少个分支，信息前的*符号表示目前工作在哪个分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch 分支名&lt;/code&gt; 创建一个以当前分支内容相同的新分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git checkout master&lt;/code&gt; 切换分支到master&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git checkout -b newBranchName branchOrCommit&lt;/code&gt; 创建一个基于某分支或commit的新分支并切换到分支上&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch -d 分支名&lt;/code&gt; 删除分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git merge 分支名a&lt;/code&gt; 合并分支，将分支a的内容合并到当前指针指向的分支，但a分支还是存在的，可以继续向前迭代，因此在合并前一定要checkout到a分支外那个合并的目的分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git diff --cached&lt;/code&gt; &lt;strong&gt;比较暂存区和当前所在分支最新commit（HEAD）的差异，只输入 &lt;code&gt;git diff&lt;/code&gt;是比较工作区和暂存区的差异&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git reset HEAD -- &amp;lt;fileName&amp;gt;&lt;/code&gt; &lt;strong&gt;将暂存区恢复成当前所在分支的最新commit（HEAD）&lt;/strong&gt;，通常用在暂存区有东西后，工作区有更优的方案了，也可以在HEAD后加fileName来恢复部分文件&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git checkout -- &amp;lt;file&amp;gt;&lt;/code&gt;将工作区的某个文件内容回退恢复成暂存区中该文件的内容&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git commit --amend&lt;/code&gt; 对最近一次提交的commit的message作变更&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git rebase -i 父commit&lt;/code&gt;，如果要修改某个commit的属性，可以通过此命令更改，它的参数是对应修改commit的父commit，输入后会进入一个交互页面，里面有此父commit的所有子commit，如要修改子commit的message，则将pick改成reword(或者r)，改完后保存退出则会跳到对应的修改页面，修改message然后保存退出即可，修改后对应commit的哈希码会因此发生改变。改变的原因是git会在分离头指针状态下剪切子commit，并根据命令（pick则是只剪切，reword是剪切但修改message）进行操作，最后子commit的哈希码都会发生改变。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git rebase&lt;/code&gt;其中还有一个命令是 [s,squash]，它可以将多个分支合并。即找出需要合并的多个commit的最前面的一个的它的父commit，在一条分支上都是父传子一直穿下去，找出父commit后它会显示出后面所有的子commit，使用rebase命令进入交互页面，在需要合并的多个commit中，最后一个子commit使用pick命令只剪切，前面的commit使用squash合并到pick的那个子commit中。&lt;strong&gt;如果合并的commit在历史版本中不连续，可以通过rebase的交互页面，通过调换位置的方法放在一起（剪切粘贴），依然是第一行pick，后面squash，如果是需要合并最古老的commit（没有父级），在rebase的交互页面添加对应的commit即可&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git stash&lt;/code&gt; 假如在开发中偶遇临时任务，如正在修改index文件，修改到一半临时加塞了另一个任务，可以通过此命令先将工作区和暂存区状态存到一个堆栈中，且工作区和暂存区会回退到最新一次commit，改完临时任务之后，再通过 &lt;code&gt;git stash pop&lt;/code&gt;(取出堆栈内容且清除堆栈中的对应内容)或 &lt;code&gt;git stash appluy&lt;/code&gt;(取出堆栈内容但保存堆栈对应内容)&lt;/p&gt;
+&lt;p&gt;gti中有三大objects：commit、tree及blob，它们的关系是，commit是每一次提交，它里面含有tree的信息，&lt;strong&gt;tree表示了commit在当时的时间点的项目中文件的结构&lt;/strong&gt;，它可以包含其他tree（就像文件夹下还有文件夹），tree保存了blob的哈希码，blob存放了文件的内容。&lt;strong&gt;这里要注意的是，在git中，即使文件名不同，只要文件内容相同，那么它们就是同一个文件，并不会因为名字不同而产生两个文件，这样大大节约了存储空间&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;分支的本质就是一个指针，它指向的是该分支中最新的一次提交commit&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git cat-file -p 7737016481f&lt;/code&gt;通过此命令可以查看commit、tree、blob的内容，-t查看对应的类型&lt;/p&gt;
+&lt;h3 id=&#34;分离头指针&#34;&gt;分离头指针&lt;/h3&gt;
+&lt;p&gt;如果不小心通过git checkout命令切换到某个commit中（即HEAD指向某个commit），git会提示我们正处于分离头指针的状态下（&lt;strong&gt;工作在没有分支的情况下&lt;/strong&gt;），如果我们做了大量的修改，但是某天我们突然又切换到另一个commit时，我们的修改就有可能被git当做垃圾清除掉，因此这个动作十分危险。&lt;/p&gt;
+&lt;p&gt;**分离头指针的用处：进行尝试性的变更时。**当我们试着修改某些文件时，如果觉得修改的效果不满意，可以直接切换到别的分支，丢弃当前修改。如果我们切换出去时，觉得当前的修改十分重要，就按照git的提示创建一个新分支与此commit进行绑定 &lt;code&gt;git branch 新分支名 commit哈希码&lt;/code&gt;，&lt;strong&gt;如果某个变更（提交）是非常重要的，那么一定要跟某个分支绑定在一起&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;多人开发&#34;&gt;多人开发&lt;/h3&gt;
+&lt;p&gt;千万不要在master分支上进行代码的迭代，master是作为服务器运行分支&lt;/p&gt;
+&lt;p&gt;Git Flow工作流&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主干分支 master：主要负责管理正在运行的生产环境代码。永远保持与正在运行的生产环境完全一致。&lt;/li&gt;
+&lt;li&gt;开发分支 develop ： 主要负责管理正在开发过程中的代码。一般情况下应该是最新的代码。程序员从这个分支中迁出新分支进行功能开发&lt;/li&gt;
+&lt;li&gt;功能分支 feature：为了不影响短周期的开发工作，一般把中长期开发模块从开发分支中独立出来。开发完成后再合并到最新的开发分支中。&lt;/li&gt;
+&lt;li&gt;bug 修复 分支 hotfix [热修复] ：主要负责管理生产环境下出现的紧急修复的代码。从主干分支分出，修复完毕并测试上线后，合并回主干分支。并会后可视情况删除该分支。&lt;/li&gt;
+&lt;li&gt;预发布分支 release ： 较大的版本上线前，会从开发分支中分出预发布分支，用于进行最后阶段的集成测试。该版本上线后会合并到主干分支上。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-4.png&#34;
+	width=&#34;873&#34;
+	height=&#34;440&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-4_hucc70e1f5011ce26f2409bca0fc7ef9e7_205684_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-4_hucc70e1f5011ce26f2409bca0fc7ef9e7_205684_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;198&#34;
+		data-flex-basis=&#34;476px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;在多人开发的情况下，经常会出现同时有多人操作同一个项目的不同文件，&lt;strong&gt;当其他人push后，本地的git就不是远端最新的commit了&lt;/strong&gt;，此时如果不在意线性分支，可以使用 &lt;code&gt;git merge github/commitName&lt;/code&gt;将远端最新的和本地进行关联，commitName可以通过 &lt;code&gt;git branch -av&lt;/code&gt;查看。此时本地就拉取了最新的commit，再进行push就不会出错了。&lt;/p&gt;
+&lt;p&gt;当出现两人修改相同文件的不同位置时，某一方提交后，另一方使用 &lt;code&gt;git pull&lt;/code&gt;会拉取并和远端关联，此时这个文件有对方修改的数据，且自己修改的数据不会消失&lt;/p&gt;
+&lt;p&gt;当两人同时修改相同文件的相同位置，一方提交后，另一方pull会发生冲突，提示某文件内容有问题，此时打开对应文件就能发现远端和本地的差异&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-3.png&#34;
+	width=&#34;585&#34;
+	height=&#34;183&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-3_hua3b8289f4219a9094ca92f7bda899ad2_60221_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-3_hua3b8289f4219a9094ca92f7bda899ad2_60221_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;319&#34;
+		data-flex-basis=&#34;767px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;当两人同时修改同一文件时，一方修改了该文件的文件名并提交，另一方在旧文件名上修改内容并提交就会出错，此时只需要使用 &lt;code&gt;git pull&lt;/code&gt; 拉取远端最新的，git会将改名后的commit拉取过来，&lt;strong&gt;并且本地修改过的旧文件名中的内容会出现在新文件名内容中。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;当两人同时对同一个文件修改文件名，一方提交后另一方pull就会报错，此时本地会出现两个不同名字的同一文件，需要经过协商删除某个或保留，然后通过 &lt;code&gt;add--commit---push&lt;/code&gt;的流程重新提交一个commit&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;千万不要在多人开发时使用 &lt;code&gt;git push -f&lt;/code&gt; ，这会导致历史commit部分丢失&lt;/strong&gt;，也不要对公共分支进行变基（Rebase）操作，例如修改某个commit的message，这会导致commit的id改变，原commit分叉成新的分支，如果有其他人基于原commit进行开发，两个分支就会分叉，重新合成需要&lt;strong&gt;多人merge关联新的commit&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;普通的搜索是匹配仓库名和描述，可以在搜索栏中加入 &lt;code&gt;in:readme&lt;/code&gt;即表示在readme中搜索关键字，加入 &lt;code&gt;stars:&amp;gt;1000&lt;/code&gt;表示筛选出星星数超过一千。根据内容搜索则是 &lt;code&gt;&#39;文件内容&#39; filename:文件名&lt;/code&gt;，如 &lt;code&gt;&#39;struct&#39; filename:server.go&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;在GitHub中对分支集成有三种策略&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-2.png&#34;
+	width=&#34;366&#34;
+	height=&#34;271&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-2_hu1140b44446a8d9cf3144d134615c3003_74142_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-2_hu1140b44446a8d9cf3144d134615c3003_74142_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;135&#34;
+		data-flex-basis=&#34;324px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Create a merge commit&lt;/strong&gt; 是将某分支的最后一个提交合并到目标分支中，生成一个新的commit。就是把提交历史原封不动的拷贝过来，包含完整的提交历史记录。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-1.png&#34;
+	width=&#34;638&#34;
+	height=&#34;188&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-1_hu5a5c80beab7e0bca1b877f4fb5d455c0_27652_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-1_hu5a5c80beab7e0bca1b877f4fb5d455c0_27652_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;339&#34;
+		data-flex-basis=&#34;814px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Squash and merge 压缩提交&lt;/strong&gt;，有一些很小的提交，或者是纠正前面的错误的提交，对于这类提交对整个工程来说不需要单独显示出来一次提交，不然导致项目的提交历史过于复杂；所以基于这种原因，我们可以把Beijing上的所有提交都合并成一个提交；然后提交到主干。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-5.png&#34;
+	width=&#34;435&#34;
+	height=&#34;182&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-5_hu2b591e32405c036adf9df5bcb8746778_19960_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image-5_hu2b591e32405c036adf9df5bcb8746778_19960_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;239&#34;
+		data-flex-basis=&#34;573px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Rebase and merge&lt;/strong&gt; ,由于squash merge会变更提交者作者信息，这是一个很大的问题，后期问题追溯不好处理(当然也可以由分支的所有者来执行squash merge操作，以解决部分问题)，rebase merge可以保留提交的作者信息，同时可以合并commit历史。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image.png&#34;
+	width=&#34;482&#34;
+	height=&#34;120&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image_hu9d326889aaac065fd9948aee68607848_11330_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/git%E4%B8%89%E5%89%91%E5%AE%A2/media/image_hu9d326889aaac065fd9948aee68607848_11330_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;401&#34;
+		data-flex-basis=&#34;964px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;如果想对github上开源的项目进行修改并提给作者，可以通过fork将此项目复制一份到自己仓库中(直接拉取的是没有写的权限的)，拉取下来修改好提交上去，然后创建一个pull request发送给原作者。原作者看见同意后merge到自己的仓库中。&lt;/p&gt;
+&lt;h2 id=&#34;找github资源的小技巧&#34;&gt;找github资源的小技巧：&lt;/h2&gt;
+&lt;p&gt;常用前缀后缀：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;找百科大全:  awesome golang   针对某个技术的所有东西，很杂很丰富&lt;/li&gt;
+&lt;li&gt;找例子： gin sample    找相应项目的例子，商城或者其他项目样例&lt;/li&gt;
+&lt;li&gt;找空架子项目：go-gin starter/go boilerplate   找相应技术的空脚架&lt;/li&gt;
+&lt;li&gt;找技术教程：go tutorial   找相应教程&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

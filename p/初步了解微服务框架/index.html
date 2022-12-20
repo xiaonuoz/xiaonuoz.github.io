@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='垂直扩展和水平扩展： 在垂直扩展模型中，想要增加系统负荷就意味着要在系统现有的部件上下工夫，即通过提高系统部件的能力来实现。不增加系统的成员数'>
+<title>初步了解微服务框架</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='初步了解微服务框架'>
+<meta property='og:description' content='垂直扩展和水平扩展： 在垂直扩展模型中，想要增加系统负荷就意味着要在系统现有的部件上下工夫，即通过提高系统部件的能力来实现。不增加系统的成员数'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-11-15T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-11-15T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="初步了解微服务框架">
+<meta name="twitter:description" content="垂直扩展和水平扩展： 在垂直扩展模型中，想要增加系统负荷就意味着要在系统现有的部件上下工夫，即通过提高系统部件的能力来实现。不增加系统的成员数">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#rpc">RPC</a></li>
+    <li><a href="#grpc">gRPC</a>
+      <ol>
+        <li><a href="#grpc简介">gRPC简介</a></li>
+        <li><a href="#grpc和protobuf介绍">gRPC和protobuf介绍</a></li>
+        <li><a href="#protobuf语法">protobuf语法</a>
+          <ol>
+            <li><a href="#基本规范">基本规范</a></li>
+            <li><a href="#字段规则">字段规则</a></li>
+            <li><a href="#数据类型">数据类型</a></li>
+            <li><a href="#service定义">service定义</a></li>
+            <li><a href="#message定义">message定义</a></li>
+            <li><a href="#map类型的定义">map类型的定义</a></li>
+          </ol>
+        </li>
+        <li><a href="#示例">示例：</a>
+          <ol>
+            <li><a href="#userproto">user.proto</a></li>
+            <li><a href="#servergo">server.go</a></li>
+            <li><a href="#clientgo">client.go</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#go-micro">Go Micro</a>
+      <ol>
+        <li><a href="#主要功能">主要功能</a></li>
+        <li><a href="#服务发现-consul">服务发现-consul</a>
+          <ol>
+            <li><a href="#consul-常用命令">consul 常用命令</a></li>
+          </ol>
+        </li>
+        <li><a href="#new-创建micro脚手架">new [创建micro脚手架]</a></li>
+        <li><a href="#服务端test">服务端Test:</a></li>
+        <li><a href="#客户端test">客户端Test</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/">初步了解微服务框架</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 15, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>垂直扩展和水平扩展：</p>
+<p>在垂直扩展模型中，想要增加系统负荷就意味着要在系统现有的部件上下工夫，即通过提高系统部件的能力来实现。不增加系统的成员数，但是我们通过增加系统成员的生产效率来获得期望的负荷量。</p>
+<p>在水平扩展模型中，我们不是通过增加单个系统成员的负荷而是简单的通过增加更多的系统成员来实现。系统每个成员的生产力依然没变，通过增加更多的成员来提高系统的能力。</p>
+<h2 id="rpc">RPC</h2>
+<p>远程过程调用RPC是一种轻量级的计算机通信协议，它允许运行于一台计算机的程序调用另一台计算机的子程序，而程序员无需额外的为这个交互作用编程，如果涉及的软件采用面向对象编程，那么远程过程调用亦可称作远程调用或远程方法调用</p>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-3.png"
+	width="1096"
+	height="644"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-3_hu9fe7fb97c5ca9f72aed374f8b3d80ede_333829_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-3_hu9fe7fb97c5ca9f72aed374f8b3d80ede_333829_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="170"
+		data-flex-basis="408px"
+	
+>RPC就是像调用本地函数一样去调用远程函数。通过rpc协议传递远程函数的函数名、参数等。达到在本地调用远端函数，得返回值到本地的目标。</p>
+<p>golang有RPC的官方库net/rpc，支持encoding/gob进行编解码，支持tcp和http数据传输方式，由于其他语言不支持gob，因此golang的rpc只适用于golang开发的服务器客户端交互(如用nc工具充当服务端会导致接受数据乱码)，想避免乱码可以使用jsonrpc包，其方法和rpc一致</p>
+<p><strong>golang的rpc必须符合4个条件:</strong></p>
+<ul>
+<li>结构体字段首字母要大写（因为需要跨域访问，这个结构体是函数接收参数的结构体）</li>
+<li>函数名首字母大写</li>
+<li>函数第一个参数是接收参数，第二个参数是返回给客户端的参数，且第二个参数必须是指针类型</li>
+<li>函数必须有一个返回值error</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//服务端，求矩形周长
+</span></span><span class="line"><span class="cl">//声明矩形对象
+</span></span><span class="line"><span class="cl">type Rect struct {
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//声明从客户接受的参数结构体
+</span></span><span class="line"><span class="cl">type Params struct {
+</span></span><span class="line"><span class="cl">	Width,Height int
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//声明返回给客户端的参数结构体
+</span></span><span class="line"><span class="cl">type Ret struct {
+</span></span><span class="line"><span class="cl">	Area int
+</span></span><span class="line"><span class="cl">	Perimeter int
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//定义求矩形面积和周长的方法,第二个参数必须是指针，因为是其他服务调用此服务
+</span></span><span class="line"><span class="cl">//第二个参数也可以定义一个普通类型进行返回
+</span></span><span class="line"><span class="cl">//返回值error如果不为空，那么无论接受参数是否已经有值，服务端都不会返回数据，error和传出参数只会有一个是非空
+</span></span><span class="line"><span class="cl">func (r *Rect)Area(p Params,ret *Ret) error{
+</span></span><span class="line"><span class="cl">	ret.Area=p.Width*p.Height
+</span></span><span class="line"><span class="cl">	ret.Perimeter=(p.Width+p.Height)*2
+</span></span><span class="line"><span class="cl">	return nil
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main(){
+</span></span><span class="line"><span class="cl">	//1.注册服务
+</span></span><span class="line"><span class="cl">	rpc.Register(new(Rect))
+</span></span><span class="line"><span class="cl">	//2.把服务绑定到http协议上
+</span></span><span class="line"><span class="cl">	rpc.HandleHTTP()
+</span></span><span class="line"><span class="cl">	//3.监听服务，等待客户端调用方法
+</span></span><span class="line"><span class="cl">	err:=http.ListenAndServe(&#34;:8989&#34;,nil)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//客户端，请求服务端，获取结果
+</span></span><span class="line"><span class="cl">//声明参数结构体
+</span></span><span class="line"><span class="cl">type Params struct {
+</span></span><span class="line"><span class="cl">	Width,Height int
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type Ret struct {
+</span></span><span class="line"><span class="cl">	Area int
+</span></span><span class="line"><span class="cl">	Perimeter int
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//1. 连接远程的RPC服务
+</span></span><span class="line"><span class="cl">	rp, err := rpc.DialHTTP(&#34;tcp&#34;, &#34;127.0.0.1:8989&#34;)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		log.Fatal(err)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	//2. 调用远程方法
+</span></span><span class="line"><span class="cl">	var ret Ret
+</span></span><span class="line"><span class="cl">	//第一个参数为方法名，为服务器对应的结构体名.方法名，第二个参数为传过去的参数，第三个参数为接受到的参数，与服务器对应的参数类型要一致
+</span></span><span class="line"><span class="cl">	err = rp.Call(&#34;Rect.Area&#34;, Params{10, 20}, &amp;ret)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		log.Fatal(err)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;面积：%v\n周长：%v\n&#34;,ret.Area,ret.Perimeter)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>假如结构体定义的方法参数和返回值不符合rpc的规范，我们是无法在编译期发现的，只有在运行期远程调用时才能发现这个方法的问题。如果希望在编译期就发现其对象是否合法，那就需要在此结构体之上定义一个rpc规范的接口，让这个结构体实现这个接口，这样子如果没有全部实现就无法通过编译</p>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image.png"
+	width="746"
+	height="297"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image_hu31e539317078186e43d64e8a23fb427e_44772_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image_hu31e539317078186e43d64e8a23fb427e_44772_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="251"
+		data-flex-basis="602px"
+	
+></p>
+<p><strong>官方 还提供了net/rpc/jsonrpc库实现rpc方法，jsonrpc采用json进行数据编解码，因此支持跨语言调用，目前jsonrpc库是基于tcp协议实现的，暂不支持http传输方式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//服务端
+</span></span><span class="line"><span class="cl">//1.注册服务
+</span></span><span class="line"><span class="cl">	rpc.Register(new(Rect))
+</span></span><span class="line"><span class="cl">	//2. 监听端口
+</span></span><span class="line"><span class="cl">	listen, err := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8989&#34;)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		log.Fatal(err)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	//3. 循环监听服务
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		conn, err := listen.Accept()
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			log.Fatal(err)
+</span></span><span class="line"><span class="cl">			continue
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		go func(conn net.Conn) {
+</span></span><span class="line"><span class="cl">			//客户端只需要把rpc.DialHTTP变成jsonrpc.Dial即可
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;create new a Client&#34;)
+</span></span><span class="line"><span class="cl">			jsonrpc.ServeConn(conn)
+</span></span><span class="line"><span class="cl">		}(conn)
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="grpc">gRPC</h2>
+<h3 id="grpc简介">gRPC简介</h3>
+<ul>
+<li>grpc由google开发，是一款语言中立，平台中立、开源的远程过程调用系统</li>
+<li>grpc客户端和服务端可以在多种环境中运行和交互，例如用java写一个服务端，可以用go语言客户端调用</li>
+</ul>
+<h3 id="grpc和protobuf介绍">gRPC和protobuf介绍</h3>
+<ul>
+<li>微服务架构中，由于每个服务对应的代码库是独立运行的，无法直接调用，彼此间的通信就是个大问题</li>
+<li>gRPC可以实现微服务，将大的项目拆分为多个小且独立的业务模块，即服务，各服务间使用高效的protobuf协议进行gRPC调用，gRPC默认使用protocol buffers，这是google开源的一套成熟的结果数据序列化机制（也可以使用其他数据格式，如json）</li>
+<li>可以用proto files创建gRPC服务，用message类型来定义方法参数和返回类型</li>
+<li>从protobuf的角度来看，gRPC只不过是一个针对service接口生成代码的生成器(即在生成命令中添加 <code>plugins=grpc </code>，不加这段，生成是无法生成service相关的代码的)</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go get -u -v github.com/golang/protobuf/proto
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">go get google.golang.org/grpc（如果无法使用， 用如下命令代替）
+</span></span><span class="line"><span class="cl">		git clone https://github.com/grpc/grpc-go.git$GOPATH/src/google.golang.org/grpc
+</span></span><span class="line"><span class="cl">		git clone https://github.com/golang/net.git$GOPATH/src/google.golang.org/grpc
+</span></span><span class="line"><span class="cl">		git clone https://github.com/golang/net.git$GOPATH/src/golang.org/x/net
+</span></span><span class="line"><span class="cl">		git clone https://github.com/golang/text.git$GOPATH/src/golang.org/x/text
+</span></span><span class="line"><span class="cl">		go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+</span></span><span class="line"><span class="cl">		git clone https://github.com/google/go-genproto.git GOPATH/src/golang.org/x/text
+</span></span><span class="line"><span class="cl">		go get −u github.com/golang/protobuf/proto,protoc−gen−go
+</span></span><span class="line"><span class="cl">	git clone https://github.com/google/go−genproto.gitGOPATH/src/google.golang.org/genproto
+</span></span><span class="line"><span class="cl">		cd $GOPATH/src/
+</span></span><span class="line"><span class="cl">		go install google.golang.org/grpc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">go get github.com/golang/protobuf/protoc-gen-go
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">上面安装好后， 会在 GOPATH/bin 下生成 protoc-gen-go.exe
+</span></span><span class="line"><span class="cl">但还需要一个 protoc.exe， windows 平台编译受限， 很难自己手动编译， 直接去网
+</span></span><span class="line"><span class="cl">站下载一个， 地址： https://github.com/protocolbuffers/protobuf/releases/tag/v3.9.0 ，
+</span></span><span class="line"><span class="cl">同样放到 GOPATH/bin 下
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过定义好的.proto文件生成Java, Python, C++, Go, Ruby,JavaNano, Objective-C, or C# 代码，需要安装编译器protoc。当使用protocol buffer编译器运行.proto文件时，编译器将生成所选语言的代码，用于使用在.proto文件中定义的消息类型、服务接口约定等。（Go: 生成一个.pb.go文件，每个消息类型对应一个结构体）</p>
+<h3 id="protobuf语法">protobuf语法</h3>
+<h4 id="基本规范">基本规范</h4>
+<ul>
+<li>文件以**.proto作为文件后缀**，除结构体定义外的语句以分号结尾</li>
+<li>结构定义可以包含：message（结构体）、service（接口）、enum（枚举类）</li>
+<li>rpc方法定义结尾的分号可有可无</li>
+<li><strong>字段中的数字并不是赋值，它代表了在编译时字段的位置，不能重复</strong></li>
+</ul>
+<p>Message命名采用驼峰命名方式，字段命名采用小写字母加下划线分隔方式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">message SongServerRequest {
+</span></span><span class="line"><span class="cl">    required string song_name = 1;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>enum 枚举类型名采用驼峰命名方式，字段命名采用大写字母加下划线分隔方式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">enum Foo {
+</span></span><span class="line"><span class="cl">FIRST_VALUE = 0;	// 枚举值必须从0开始
+</span></span><span class="line"><span class="cl">SECOND_VALUE = 1;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Service与rpc方法名统一采用驼峰式命名</p>
+<h4 id="字段规则">字段规则</h4>
+<ul>
+<li>字段格式：限定修饰符 | 数据类型 | 字段名称 | = | 字段编码值 | [字段默认值]</li>
+<li>限定修饰符包含<strong>required\optional\repeated</strong>
+<ul>
+<li>Required: 表示是<strong>一个必须字段</strong>，必须相对于发送方，在发送消息之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思。发送之前没有设置required字段或者无法识别required字段都会引发编解码异常，导致消息被丢弃</li>
+<li>Optional：表示是一个<strong>可选字段</strong>，可选对于发送方，在发送消息时，可以有选择性的设置或者不设置该字段的值。<strong>对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则忽略该字段，消息中的其它字段正常处理。</strong>&mdash;因为optional字段的特性，很多接口在升级版本中都把后来添加的字段都统一的设置为optional字段，这样老的版本无需升级程序也可以正常的与新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡</li>
+<li>Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。<strong>可以看作是在传递一个数组的值(go是转换成切片)</strong></li>
+</ul>
+</li>
+</ul>
+<h4 id="数据类型">数据类型</h4>
+<ul>
+<li>Protobuf定义了一套基本数据类型。几乎都可以映射到C++\Java等语言的基础数据类型</li>
+</ul>
+<p><img src="/file:/C:/Users/admin/AppData/Local/Temp/msohtmlclip1/01/clip_image002.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-2.png"
+	width="1499"
+	height="855"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-2_hu92d8d790df665b53f6dd57c3e44595d9_147460_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-2_hu92d8d790df665b53f6dd57c3e44595d9_147460_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<ul>
+<li>表示打包的字节并不是固定。而是根据数据的大小或者长度</li>
+<li>关于 fixed32 和int32的区别。fixed32的打包效率比int32的效率高，但是使用的空间一般比int32多。因此一个属于时间效率高，一个属于空间效率高</li>
+<li>字段名称的命名与C、C++、Java等语言的变量命名方式几乎是相同的</li>
+<li>protobuf建议字段的命名采用以下划线分割的驼峰式。例如first_name 而不是firstName</li>
+</ul>
+<h5 id="字段编码值">字段编码值</h5>
+<ul>
+<li>有了该值，通信双方才能互相识别对方的字段，相同的编码值，其限定修饰符和数据类型必须相同，编码值的取值范围为 1~2^32（4294967296）</li>
+<li>其中<strong>1~15的编码时间和空间效率都是最高的</strong>，编码值越大，其编码的时间和空间效率就越低，所以建议把经常要传递的值把其字段编码设置为1-15之间的值</li>
+<li>1900~2000编码值为Google protobuf 系统内部保留值，建议不要在自己的项目中使用</li>
+</ul>
+<p><strong>当在传递数据时，对于required数据类型，如果用户没有设置值，则使用默认值传递到对端</strong></p>
+<h4 id="service定义">service定义</h4>
+<ul>
+<li>如果想要将消息类型用在RPC系统中，可以在.proto文件中定义一个RPC服务接口，protocol buffer编译器会根据所选择的不同语言生成服务接口代码。例如，想要定义一个RPC服务并具有一个方法（Search），该方法接收SearchRequest并返回一个SearchResponse(两个都是proto中定义的message)，此时可以在.proto文件中进行如下定义：
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">service SearchService
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">	rpc Search (SearchRequest) returns (SearchResponse);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>生成的接口代码作为客户端与服务端的约定，服务端必须实现定义的所有接口方法，客户端直接调用同名方法向服务端发起请求，比较麻烦的是，即便业务上不需要参数也必须指定一个请求消息，一般会定义一个空message</li>
+</ul>
+<h4 id="message定义">message定义</h4>
+<ul>
+<li>一个message类型定义<strong>描述了一个请求或响应的消息格式</strong>，可以包含多种类型字段。例如定义一个搜索请求的消息格式，每个请求包含查询字符串、页码、每页数目，字段名用小写，<strong>转为go文件后自动变为大写，message就相当于结构体</strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">syntax =&#34;proto3&#34;;
+</span></span><span class="line"><span class="cl">message SearchRequest {
+</span></span><span class="line"><span class="cl">	string query = 1;            // 查询字符串
+</span></span><span class="line"><span class="cl">	int32 page_number = 2;     // 页码
+</span></span><span class="line"><span class="cl">	int32 result_per_page = 3;   // 每页条数
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>SearchRequest 定义了三个字段，每个字段声明以分号结尾，.proto文件支持双斜线 // 添加单行注释</li>
+<li><strong>首行声明使用的protobuf版本为proto3（必须声明）</strong></li>
+<li><strong>一个.proto文件中可以定义多个消息类型</strong>，一般用于同时定义多个相关的消息，例如在同一个.proto文件中同时定义搜索请求和响应消息</li>
+<li>message支持嵌套使用，作为另一message中的字段类型</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">message SearchResponse {
+</span></span><span class="line"><span class="cl">	repeated Result results = 1;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">message Result {
+</span></span><span class="line"><span class="cl">	string url = 1;
+</span></span><span class="line"><span class="cl">	string title = 2;
+</span></span><span class="line"><span class="cl">	repeated string snippets = 3;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//内部声明的message类型名称只可在内部直接使用
+</span></span><span class="line"><span class="cl">message SearchResponse {
+</span></span><span class="line"><span class="cl">    message Result {
+</span></span><span class="line"><span class="cl">        string url = 1;
+</span></span><span class="line"><span class="cl">        string title = 2;
+</span></span><span class="line"><span class="cl">        repeated string snippets = 3;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    repeated Result results = 1;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="map类型的定义">map类型的定义</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//map&lt;key_type, value_type&gt; map_field = N;
+</span></span><span class="line"><span class="cl">message Project {...}
+</span></span><span class="line"><span class="cl">map&lt;string, Project&gt; projects = 1;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>键、值类型可以是内置的类型，也可以是自定义message类型</li>
+<li><strong>字段不支持repeated属性</strong></li>
+</ul>
+<h3 id="示例">示例：</h3>
+<h4 id="userproto">user.proto</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">syntax</span> <span class="p">=</span> <span class="s">&#34;proto3&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">proto</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 编译到当前目录下的proto目录下，包名也会叫proto
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">option</span> <span class="nx">go_package</span><span class="p">=</span><span class="s">&#34;./proto&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">message</span> <span class="nx">UserRequest</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">string</span> <span class="nx">name</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">message</span> <span class="nx">UserResponse</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int32</span> <span class="nx">id</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">string</span> <span class="nx">name</span> <span class="p">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int32</span> <span class="nx">age</span> <span class="p">=</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">repeated</span> <span class="kt">string</span> <span class="nx">hobby</span> <span class="p">=</span> <span class="mi">4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">service</span> <span class="nx">UserInfoService</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">rpc</span> <span class="nf">GetUserInfo</span><span class="p">(</span><span class="nx">UserRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">UserResponse</span><span class="p">){}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>生成go文件： <code>protoc -I . --go_out=plugins=grpc:. ./user.proto</code></p>
+<h4 id="servergo">server.go</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;google.golang.org/grpc&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">pb</span> <span class="s">&#34;main/gRPC/proto&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//定义一个结构体用于实现protobuf生成出来的接口的方法,这样子就可以将这个结构体通过传参的方式进行注册
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">UserInfoService</span> <span class="kd">struct</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//实现接口中的函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">UserInfoService</span><span class="p">)</span><span class="nf">GetUserInfo</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserRequest</span><span class="p">)</span> <span class="p">(</span><span class="nx">resp</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserResponse</span><span class="p">,</span><span class="nx">err</span> <span class="kt">error</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">name</span><span class="o">:=</span><span class="nx">req</span><span class="p">.</span><span class="nx">Name</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">name</span><span class="o">==</span><span class="s">&#34;zs&#34;</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">resp</span><span class="p">=</span><span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserResponse</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Id</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Age</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Hobby</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;run&#34;</span><span class="p">,</span><span class="s">&#34;game&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">UserInfo</span> <span class="p">=</span> <span class="nx">UserInfoService</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">addr</span><span class="o">:=</span><span class="s">&#34;127.0.0.1:8999&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 1.监听端口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">listen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;监听失败,&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">listen</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 2.实例化gRPC
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">s</span> <span class="o">:=</span> <span class="nx">grpc</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 3.在gRPC上注册微服务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">pb</span><span class="p">.</span><span class="nf">RegisterUserInfoServiceServer</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="o">&amp;</span><span class="nx">UserInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 4.启动服务端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="nx">listen</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="clientgo">client.go</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;google.golang.org/grpc&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">pb</span> <span class="s">&#34;main/gRPC/proto&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 1.连接,必须设置传输安全WithInsecure(),作用是关闭传输安全。不加则会报错
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">grpc</span><span class="p">.</span><span class="nf">Dial</span><span class="p">(</span><span class="s">&#34;127.0.0.1:8999&#34;</span><span class="p">,</span><span class="nx">grpc</span><span class="p">.</span><span class="nf">WithInsecure</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;连接异常,&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 2.实例化客户端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">client</span> <span class="o">:=</span> <span class="nx">pb</span><span class="p">.</span><span class="nf">NewUserInfoServiceClient</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 3.组装一个请求参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">req</span><span class="o">:=</span><span class="nb">new</span><span class="p">(</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserRequest</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">req</span><span class="p">.</span><span class="nx">Name</span><span class="p">=</span><span class="s">&#34;zs&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 4.调用接口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">GetUserInfo</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;响应异常，&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;响应结果%v\n&#34;</span><span class="p">,</span><span class="nx">resp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="go-micro">Go Micro</h2>
+<p>Go Micro是一个插件化的基础框架，基于此可以构建微服务，Micro的设计哲学是可插拔的插件化架构。</p>
+<p>在架构之外，它默认实现了mdns作为服务发现，通过http进行通信，通过protobuf和json进行编解码</p>
+<p><strong>go-micro框架的一个缺点是从1.0到2.0,在到3.0版本都不兼容，每个版本都有很大的改动。</strong></p>
+<p>go-micro的3.0版本升级为一个云原生开发平台，原来的go-micro项目改名字了。</p>
+<p>云原生开发平台官网地址：<a class="link" href="https://m3o.com/"  target="_blank" rel="noopener"
+    >https://m3o.com/</a></p>
+<p>可能是由于go-micro框架应用的人比较多，后来作者又把项目改回了go-micro,现在依然在维护。</p>
+<p>所以现在关于go-micro项目是有些混乱的，我们可以这样认为:</p>
+<ul>
+<li>go-micro云原生开发平台版本现在叫micro。项目源码地址：<a class="link" href="https://github.com/micro/micro"  target="_blank" rel="noopener"
+    >https://github.com/micro/micro</a> 。主要作用是用来生成micro的脚手架</li>
+<li>go-micro依然是go-micro，不过项目地址变了，变成了<a class="link" href="https://github.com/asim/go-micro"  target="_blank" rel="noopener"
+    >https://github.com/asim/go-micro</a> 。这个才是开发需要的框架，且导包需要导的是 &ldquo;go-micro.dev/v4&rdquo;</li>
+</ul>
+<p>其实这两个项目的发起人都是asim，不过micro版本的现在是商业化了，变成了一个云原生开发平台，我们使用micro生成脚手架，项目开发框架是asim的go-micro。</p>
+<p>go-micro依然是一个微服务框架，现在说go-micro v3准确的讲是指<a class="link" href="https://github.com/asim/go-micro"  target="_blank" rel="noopener"
+    >https://github.com/asim/go-micro</a> 这个项目，micro v3是指<a class="link" href="https://github.com/micro/micro"  target="_blank" rel="noopener"
+    >https://github.com/micro/micro</a></p>
+<p>所以用micro生成的脚手架后要将micro/v3相关的改成 <code>go-micro.dev/v4</code></p>
+<p>现在网络上很多博客和文章都是过时的，没人讲清楚两者的区别，给初学者带来很多困扰。</p>
+<h3 id="主要功能">主要功能</h3>
+<ul>
+<li>服务发现：自动服务注册和名称解析。服务发现是微服务开发的核心。当服务A需要与服务B通话时，它需要该服务的位置。默认发现机制是多播DNS（mdns），一种零配置系统。可以选择使用SWIM协议为p2p网络设置八卦，或者为弹性云原生设置设置consul
+<ul>
+<li>每个server启动时都会将自己的ip、port和服务名 注册给 服务发现，由服务发现来管理多个服务的信息</li>
+<li>client通过借助服务发现来访问service。当client需要某个服务时，会先请求服务发现，服务发现找到一个可用的服务，返回其对应服务的信息，然后client再借助服务发现返回的服务信息直接访问service</li>
+</ul>
+</li>
+<li>负载均衡：基于服务发现构建的客户端负载均衡。一旦我们获得了服务的任意数量实例的地址，我们现在需要一种方法来决定要路由到哪个节点。我们使用随机散列负载均衡来提供跨服务的均匀分布，并在出现问题时重试不同的节点</li>
+<li>消息编码：基于内容类型的动态消息编码。客户端和服务器将使用编解码器和内容类型为您无缝编码和解码Go类型。可以编码任何种类的消息并从不同的客户端发送。客户端和服务器默认处理此问题。这包括默认的protobuf和json</li>
+<li>请求/响应：基于RPC的请求/响应，支持双向流。我们提供了同步通信的抽象。对服务的请求将自动解决，负载平衡，拨号和流式传输。启用tls时，默认传输为http / 1.1或http2</li>
+<li>Async Messaging（异步处理）：PubSub是异步通信和事件驱动架构的一流公民。事件通知是微服务开发的核心模式。启用tls时，默认消息传递是点对点http/ 1.1或http2</li>
+<li>可插拔接口：Go Micro为每个分布式系统抽象使用Go接口，因此，这些接口是可插拔的，并允许Go Micro与运行时无关，可以插入任何基础技术（插件地址：<a class="link" href="https://github.com/micro/go-plugins"  target="_blank" rel="noopener"
+    >https://github.com/micro/go-plugins</a>）</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/micro/go-micro&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">pb</span> <span class="s">&#34;mico/proto&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Hello</span> <span class="kd">struct</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">Hello</span><span class="p">)</span><span class="nf">Info</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="nx">req</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserRequest</span><span class="p">,</span><span class="nx">resp</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserResponse</span><span class="p">)</span> <span class="kt">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">resp</span><span class="p">.</span><span class="nx">Msg</span><span class="p">=</span><span class="s">&#34;hello&#34;</span><span class="o">+</span><span class="nx">req</span><span class="p">.</span><span class="nx">Name</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 1.得到服务端实例，Name()用于设置微服务的名，用来访问
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//cmd命令： micro call hello Hello.Info {&#34;username&#34;:&#34;zs&#34;}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">service</span> <span class="o">:=</span> <span class="nx">micro</span><span class="p">.</span><span class="nf">NewService</span><span class="p">(</span><span class="nx">micro</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 2.初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">service</span><span class="p">.</span><span class="nf">Init</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 3.服务注册
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">pb</span><span class="p">.</span><span class="nf">RegisterUserInfoServiceHandler</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nf">Server</span><span class="p">(),</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Hello</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 4.启动服务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">service</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">syntax</span> <span class="p">=</span> <span class="s">&#34;proto3&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">proto</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">message</span> <span class="nx">UserRequest</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">string</span> <span class="nx">name</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">message</span> <span class="nx">UserResponse</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">string</span> <span class="nx">msg</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">service</span> <span class="nx">UserInfoService</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">rpc</span> <span class="nf">Info</span><span class="p">(</span><span class="nx">UserRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">UserResponse</span><span class="p">){}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">protoc</span> <span class="o">-</span><span class="nx">I</span> <span class="p">.</span> <span class="o">--</span><span class="nx">micro_out</span><span class="p">=.</span> <span class="o">--</span><span class="nx">go_out</span><span class="p">=.</span> <span class="p">.</span><span class="o">/</span><span class="nx">user</span><span class="p">.</span><span class="nx">proto</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="服务发现-consul">服务发现-consul</h3>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-5.png"
+	width="990"
+	height="283"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-5_hu218e849d0a3cf13322a0c367bb747c37_207718_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-5_hu218e849d0a3cf13322a0c367bb747c37_207718_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="349"
+		data-flex-basis="839px"
+	
+></p>
+<p>服务发现也可以看作是一个服务，是给 “具体业务服务”提供服务的（从这个角度来看，服务发现就属于具体业务的server端，具体业务服务是client端）。通常一台正常运行的服务崩溃的几率在2%，如果有三台则崩溃几率是2% * %2 *%2。</p>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-7.png"
+	width="939"
+	height="255"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-7_hue8571222efe469abed8965cfd6c26e49_191805_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-7_hue8571222efe469abed8965cfd6c26e49_191805_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="368"
+		data-flex-basis="883px"
+	
+></p>
+<h4 id="consul-常用命令">consul 常用命令</h4>
+<p><code>consul agent -dev</code>以一个开发者模式去运行一个consul代理，走的都是consul中一系列默认配置</p>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-7.png"
+	width="939"
+	height="255"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-7_hue8571222efe469abed8965cfd6c26e49_191805_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-7_hue8571222efe469abed8965cfd6c26e49_191805_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="368"
+		data-flex-basis="883px"
+	
+></p>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-5.png"
+	width="990"
+	height="283"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-5_hu218e849d0a3cf13322a0c367bb747c37_207718_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-5_hu218e849d0a3cf13322a0c367bb747c37_207718_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="349"
+		data-flex-basis="839px"
+	
+></p>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-2.png"
+	width="1499"
+	height="855"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-2_hu92d8d790df665b53f6dd57c3e44595d9_147460_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-2_hu92d8d790df665b53f6dd57c3e44595d9_147460_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="420px"
+	
+></p>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-1.png"
+	width="1576"
+	height="794"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-1_hu39b4f57a798ef49976cf2e5bf99df8a9_164866_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-1_hu39b4f57a798ef49976cf2e5bf99df8a9_164866_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="476px"
+	
+></p>
+<h5 id="服务端代码">服务端代码：</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// &#34;github.com/hashicorp/consul/api&#34;
+</span></span><span class="line"><span class="cl">	//把grpc注册到consul上
+</span></span><span class="line"><span class="cl">	// 1.初始化consul配置
+</span></span><span class="line"><span class="cl">	consulConfig := api.DefaultConfig()
+</span></span><span class="line"><span class="cl">	// 2.创建consul对象,此时server对于consul是客户端，因此是NewClient
+</span></span><span class="line"><span class="cl">	consulClient, err := api.NewClient(consulConfig)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;err:&#34;, err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	// 3. 通知consul即将注册的服务的配置信息
+</span></span><span class="line"><span class="cl">	reg := api.AgentServiceRegistration{
+</span></span><span class="line"><span class="cl">		ID:   &#34;1&#34;,
+</span></span><span class="line"><span class="cl">		Tags: []string{&#34;server tag&#34;},
+</span></span><span class="line"><span class="cl">		Name: &#34;server&#34;,
+</span></span><span class="line"><span class="cl">		// 此处的ip port和check的ip port要与grpc监听的ip port一致
+</span></span><span class="line"><span class="cl">		// 这里的ip端口是监听的目标端口，并不是consul自己的端口
+</span></span><span class="line"><span class="cl">		Port:    8999,
+</span></span><span class="line"><span class="cl">		Address: &#34;127.0.0.1&#34;,
+</span></span><span class="line"><span class="cl">		Check: &amp;api.AgentServiceCheck{
+</span></span><span class="line"><span class="cl">			TCP:      &#34;127.0.0.1:8999&#34;,
+</span></span><span class="line"><span class="cl">			Timeout:  &#34;1s&#34;,
+</span></span><span class="line"><span class="cl">			Interval: &#34;5s&#34;,
+</span></span><span class="line"><span class="cl">		},
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	// 4. 注册grpc服务到consul上
+</span></span><span class="line"><span class="cl">	err = consulClient.Agent().ServiceRegister(&amp;reg)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;err:&#34;, err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;注册成功&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//############以下为grpc远程调用####################
+</span></span><span class="line"><span class="cl">	addr := &#34;127.0.0.1:8999&#34;
+</span></span><span class="line"><span class="cl">	// 1.监听端口
+</span></span><span class="line"><span class="cl">	listen, err := net.Listen(&#34;tcp&#34;, addr)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;监听失败,&#34;, err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	defer listen.Close()
+</span></span><span class="line"><span class="cl">	// 2.实例化gRPC
+</span></span><span class="line"><span class="cl">	s := grpc.NewServer()
+</span></span><span class="line"><span class="cl">	// 3.在gRPC上注册微服务
+</span></span><span class="line"><span class="cl">	teacher.RegisterSayServer(s, &amp;SayStruct{})
+</span></span><span class="line"><span class="cl">	// 4.启动服务端
+</span></span><span class="line"><span class="cl">	s.Serve(listen)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>consulClient.Agent().ServiceDeregister(&quot;<code>serviceID</code>&quot;) 注销对应id的服务</p>
+<h5 id="客户端代码">客户端代码</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// &#34;github.com/hashicorp/consul/api&#34;
+</span></span><span class="line"><span class="cl">	// 1.初始化consul配置
+</span></span><span class="line"><span class="cl">	consulConfig := api.DefaultConfig()
+</span></span><span class="line"><span class="cl">	// 2.创建consul对象,此时server对于consul是客户端，因此是NewClient
+</span></span><span class="line"><span class="cl">	consulClient, err := api.NewClient(consulConfig)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;err:&#34;, err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	// 参数： service：对应服务名; tag:别名，如有多个就任选一个；passingOnly; 是否通过健康检查，通常要找通过的，即true; QueryOptions：查询参数，通常传nil
+</span></span><span class="line"><span class="cl">	// 返回值：ServiceEntry:存储服务的切片，因为一个服务可以分成主从的同名多个服务, QueryMeta：查询参数的返回值，传nil返nil
+</span></span><span class="line"><span class="cl">	service, _, err := consulClient.Health().Service(&#34;server&#34;, &#34;server tag&#34;, true, nil)
+</span></span><span class="line"><span class="cl">	if err != nil || len(service) == 0 {
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	addr := fmt.Sprintf(&#34;%v:%v&#34;, service[0].Service.Address, service[0].Service.Port)
+</span></span><span class="line"><span class="cl">	//############以下为grpc远程调用####################
+</span></span><span class="line"><span class="cl">	// 1.连接,必须设置传输安全WithInsecure()，否则会报错
+</span></span><span class="line"><span class="cl">	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;连接异常,&#34;, err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">	// 2.实例化客户端
+</span></span><span class="line"><span class="cl">	client := teacher.NewSayClient(conn)
+</span></span><span class="line"><span class="cl">	// 3.组装一个请求参数
+</span></span><span class="line"><span class="cl">	req := new(teacher.Teacher)
+</span></span><span class="line"><span class="cl">	// 4.调用接口
+</span></span><span class="line"><span class="cl">	resp, err := client.SayHellp(context.Background(), req)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;响应异常，&#34;, err)
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="new-创建micro脚手架">new [创建micro脚手架]</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#指定服务的命名空间
+</span></span><span class="line"><span class="cl">--namespace &#34;go.micro&#34;	Namespace for the service e.g com.example
+</span></span><span class="line"><span class="cl">#服务类型，可以是微服务srv,或者web项目,或者api等
+</span></span><span class="line"><span class="cl">--type &#34;srv&#34;			Type of service e.g api, fnc, srv, web
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-4.png"
+	width="1060"
+	height="1005"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-4_hu995cb959fd632624ed4231ccffef3ef9_102094_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-4_hu995cb959fd632624ed4231ccffef3ef9_102094_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="105"
+		data-flex-basis="253px"
+	
+></p>
+<p><img src="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-6.png"
+	width="1216"
+	height="332"
+	srcset="/p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-6_huab8cea8198395112a973c9eb387b9920_301424_480x0_resize_box_3.png 480w, /p/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/media/image-6_huab8cea8198395112a973c9eb387b9920_301424_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="366"
+		data-flex-basis="879px"
+	
+></p>
+<h3 id="服务端test">服务端Test:</h3>
+<p>micro默认的服务发现插件是mdns,这个插件是支持组播的，它必须和服务在同一局域网内，这导致如果服务分布在不同局域网就无法使用。因此要将插件改为consul <code>micro.Registry(consulReg)</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 初始化服务发现--consul: &#34;github.com/asim/go-micro/plugins/registry/consul/v4&#34;
+</span></span><span class="line"><span class="cl">	// registry: &#34;go-micro.dev/v4/registry&#34;
+</span></span><span class="line"><span class="cl">	consulReg := consul.NewRegistry(
+</span></span><span class="line"><span class="cl">		// 这个可以指定对应的consul地址,不加的话默认是连接本机的8500端口的consul
+</span></span><span class="line"><span class="cl">		func(o *registry.Options) {
+</span></span><span class="line"><span class="cl">			o.Addrs = []string{
+</span></span><span class="line"><span class="cl">				// 配置consul服务地址
+</span></span><span class="line"><span class="cl">				&#34;127.0.0.1:8500&#34;,
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		})
+</span></span><span class="line"><span class="cl">	// Create service   初始化服务器对象
+</span></span><span class="line"><span class="cl">	srv := micro.NewService(
+</span></span><span class="line"><span class="cl">		micro.Address(&#34;127.0.0.1:8999&#34;), // 指定ip和端口，如果不指定的话，micro会随机分配一个端口
+</span></span><span class="line"><span class="cl">		micro.Name(&#34;test-micro&#34;), // 服务器名
+</span></span><span class="line"><span class="cl">		micro.Version(&#34;latest&#34;),  // 版本，latest为最终版本，最新
+</span></span><span class="line"><span class="cl">		micro.Registry(consulReg), // 注册到consul上
+</span></span><span class="line"><span class="cl">		// 设置命令行参数  --run_client,BoolFlag默认值是false。与init配套。如果不需要命令行可以不加
+</span></span><span class="line"><span class="cl">		micro.Flags(&amp;cli.BoolFlag{
+</span></span><span class="line"><span class="cl">			Name:  &#34;run_client&#34;,
+</span></span><span class="line"><span class="cl">			Usage: &#34;Launch the client&#34;,
+</span></span><span class="line"><span class="cl">		}),
+</span></span><span class="line"><span class="cl">	)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// init作用于对newService中的flags进行加工处理，如果没有flag可以不调用
+</span></span><span class="line"><span class="cl">	// 建议不调用，因为init如果加了和newService中相同的参数，如micro.Name(&#34;newName&#34;)，它会覆盖掉之前的。导致name变成newName
+</span></span><span class="line"><span class="cl">	// 后续代码运行期想重新初始化才有必要调用此函数
+</span></span><span class="line"><span class="cl">	// srv.Init(micro.Action(func(c *cli.Context) error {
+</span></span><span class="line"><span class="cl">	// 	if c.Bool(&#34;run_client&#34;) {
+</span></span><span class="line"><span class="cl">	// 		fmt.Println(&#34;run_client cmd&#34;)
+</span></span><span class="line"><span class="cl">	// 		os.Exit(0)
+</span></span><span class="line"><span class="cl">	// 	}
+</span></span><span class="line"><span class="cl">	// 	return nil
+</span></span><span class="line"><span class="cl">	// }))
+</span></span><span class="line"><span class="cl">	// Register handler   注册服务
+</span></span><span class="line"><span class="cl">	pb.RegisterTestMicroHandler(srv.Server(), new(handler.TestMicro))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// Run service  运行服务
+</span></span><span class="line"><span class="cl">	if err := srv.Run(); err != nil {
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过 <code>micro new 服务包名</code> 在当前文件夹下生成一个micro-service的脚手架包，然后通过makefile中的 <code>protoc --proto_path=. --micro_out=. --go_out=:. proto/test-micro.proto</code> 生成对应的proto代码，然后修改对应导入的包名，将micro包改成对应框架的 <code>go-micro.dev/v4</code> 包，最后go mod tidy 服务端就初始化完成可以运行了</p>
+<h3 id="客户端test">客户端Test</h3>
+<p>客户端使用gin框架来对服务端进行远程调用。因为micro的客户端过于臃肿且实现复杂，采用gin会更简单方便</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	route := gin.Default()
+</span></span><span class="line"><span class="cl">	route.GET(&#34;/&#34;, handlerFuncsTest)
+</span></span><span class="line"><span class="cl">	route.Run(&#34;:8080&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func handlerFuncsTest(c *gin.Context) {
+</span></span><span class="line"><span class="cl">// 初始化服务发现consul，可以加参数指定consul的地址，不加默认为本机的8500端口
+</span></span><span class="line"><span class="cl">	consulReg := consul.NewRegistry(
+</span></span><span class="line"><span class="cl">		func(o *registry.Options) {
+</span></span><span class="line"><span class="cl">			o.Addrs = []string{
+</span></span><span class="line"><span class="cl">				// 配置consul服务地址
+</span></span><span class="line"><span class="cl">				&#34;127.0.0.1:8500&#34;,
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		},
+</span></span><span class="line"><span class="cl">	)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 初始化micro对象，指定consul为服务发现
+</span></span><span class="line"><span class="cl">	service := micro.NewService(
+</span></span><span class="line"><span class="cl">		micro.Registry(consulReg),
+</span></span><span class="line"><span class="cl">	)
+</span></span><span class="line"><span class="cl">	// 初始化客户端，client.DefaultClient是go-micro.dev/v4/client包的
+</span></span><span class="line"><span class="cl">	// 如果使用默认的mdns，则是client.DefaultClient
+</span></span><span class="line"><span class="cl">	// microClient := pb.NewTestMicroService(&#34;test-micro&#34;, client.DefaultClient) 
+</span></span><span class="line"><span class="cl">	microClient := pb.NewTestMicroService(&#34;test-micro&#34;, service.Client())
+</span></span><span class="line"><span class="cl">	// 可以将服务端的pb复制过来，也可以通过mod直接调用服务端的pb,在服务端中，handler后缀的是给服务端使用的注册，service是给客户端使用的调用
+</span></span><span class="line"><span class="cl">	resp, _ := microClient.Call(context.TODO(), &amp;pb.Request{Name: &#34;zs&#34;})
+</span></span><span class="line"><span class="cl">	c.JSON(http.StatusOK, gin.H{
+</span></span><span class="line"><span class="cl">		&#34;resp&#34;: resp,
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

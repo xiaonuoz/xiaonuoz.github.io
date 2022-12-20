@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Go从语言层面就支持了并发，虽然并发程序的内存管理是非常复杂的，但是GO提供了自动垃圾回收机制 并行和并发的区别：并行指在同一时刻有多条指令在'>
+<title>Go多线程</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='Go多线程'>
+<meta property='og:description' content='Go从语言层面就支持了并发，虽然并发程序的内存管理是非常复杂的，但是GO提供了自动垃圾回收机制 并行和并发的区别：并行指在同一时刻有多条指令在'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-11-10T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-11-10T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Go多线程">
+<meta name="twitter:description" content="Go从语言层面就支持了并发，虽然并发程序的内存管理是非常复杂的，但是GO提供了自动垃圾回收机制 并行和并发的区别：并行指在同一时刻有多条指令在">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li>
+          <ol>
+            <li></li>
+            <li><a href="#select-可以监听channel通道的数据流动">Select (可以监听channel通道的数据流动)</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/">Go多线程</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 10, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><strong>Go从语言层面就支持了并发，虽然并发程序的内存管理是非常复杂的，但是GO提供了自动垃圾回收机制</strong></p>
+<p>并行和并发的区别：并行指在同一时刻有多条指令在<strong>多个处理器</strong>上同时进行，并发指虽然在单个处理器上同一时刻只能有一条指令执行，但多个进程指令被快速的轮换执行，使得在宏观上具有多个进程同时执行的效果</p>
+<h5 id="goroutine协程">goroutine(协程)</h5>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2.png"
+	width="862"
+	height="265"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2_huae2bd10b2da9e0c541a6ebce2ca61259_214222_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2_huae2bd10b2da9e0c541a6ebce2ca61259_214222_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="325"
+		data-flex-basis="780px"
+	
+></p>
+<p>通常main函数在一个单独的协程中运行，成为主协程，新的goroutine用go语句来创建，称为子协程，<strong>如果主协程中有for死循环，子协程要在死循环前建立，否则一直死循环就无法运行到创建子协程的语句</strong></p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-3.png"
+	width="598"
+	height="715"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-3_hu458a3f7698c383c56ba4e2bf72dccd03_285569_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-3_hu458a3f7698c383c56ba4e2bf72dccd03_285569_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="83"
+		data-flex-basis="200px"
+	
+></p>
+<p><strong>注意：主协程退出后，子协程会同时跟着退出</strong></p>
+<h5 id="runtime包">runtime包</h5>
+<h6 id="gosched">Gosched()</h6>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-1.png"
+	width="860"
+	height="168"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-1_hu3e8d32dbf2cf3df6f041ef917064e2c6_132929_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-1_hu3e8d32dbf2cf3df6f041ef917064e2c6_132929_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="511"
+		data-flex-basis="1228px"
+	
+></p>
+<p>Gosched()的作用就像linux中的进程优先级一样，<strong>但是如果在A协程中添加了runtime.Gosched()后，A协程会搁置到其他协程完成任务退出协程后再继续进行A协程</strong></p>
+<h6 id="goexit">Goexit()</h6>
+<p>调用runtime.Goexit()将立即终止当前协程的进行，即使写在协程中的调用函数里也会中止当前协程</p>
+<h6 id="gomaxprocs">GOMAXPROCS()</h6>
+<p>调用runtime.GOMAXPROCS()用来设置 可以并发计算 的CPU核数的最大值，并返回之前的值</p>
+<p>n := runtime.GOMAXPROCS(4)  //以四核并发计算，核数可以大于当前系统的最大核数</p>
+<h5 id="channel类型">channel类型</h5>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-9.png"
+	width="853"
+	height="689"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-9_hu17357caa765e79d6ded93d81fc1cf416_527400_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-9_hu17357caa765e79d6ded93d81fc1cf416_527400_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="123"
+		data-flex-basis="297px"
+	
+></p>
+<p>定义了两个函数person1和person2，虽然协程是同时进行的，但是两个公用了一个公共资源，最后打印就会出现这边打印一个字母那边打印一个，就造成了资源竞争问题。channel属于引用传递，即调用的都是同一个channel。</p>
+<p>如果在person2中设置channel堵塞，它就会让此进程一直堵在channel步骤，而person1中先调用公共资源，person2暂停，当person1资源调用完毕后将int=666传入ch,子进程1结束，ch管道中有内容了不再堵塞，此时person2中的同一个ch管道将int传入函数并丢弃，然后继续执行后面的代码来调用公共资源，这样就可以避免资源竞争问题。</p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-8.png"
+	width="1893"
+	height="757"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-8_hu7079e349e5e13e71b27f345305ce179b_606385_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-8_hu7079e349e5e13e71b27f345305ce179b_606385_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="250"
+		data-flex-basis="600px"
+	
+></p>
+<p>如果希望在子协程工作完成后再关闭主协程的话（主协程关闭会导致子协程同时关闭），可以在子协程中设置管道 ch&lt;- &ldquo;子协程完毕&rdquo;，然后主协程接受这段内容并丢弃( &lt;-ch )，这样就可以实现<strong>子协程没有进行到发送信息到管道那一步时，主协程ch永远堵塞</strong>，只有完成子协程任务并关闭后，主协程channel才有信息不堵塞，然后才可以正常完成主协程（channel也可以用于发送接受数据，类似linux的竖线管道）</p>
+<h6 id="无缓存通道和有缓存通道">无缓存通道和有缓存通道</h6>
+<p><strong>channer分为无缓存通道和有缓存通道，无缓存channel没有接收或者没有发送都会造成堵塞，有缓存值的在写满缓存时就会造成堵塞，通道中没值时也无法取数据</strong></p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2.png"
+	width="862"
+	height="265"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2_huae2bd10b2da9e0c541a6ebce2ca61259_214222_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2_huae2bd10b2da9e0c541a6ebce2ca61259_214222_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="325"
+		data-flex-basis="780px"
+	
+></p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-6.png"
+	width="874"
+	height="252"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-6_hu111fe9ffae765b2892247e8d165ec15e_264915_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-6_hu111fe9ffae765b2892247e8d165ec15e_264915_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="346"
+		data-flex-basis="832px"
+	
+></p>
+<p><strong>有缓存cannel属于异步处理，每当接收者从cannel取出一条数据时，cannel中就会丢弃这条数据，将空间闲置出来给新的数据使用，当数据取完或写满时就会造成阻塞</strong></p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image.png"
+	width="855"
+	height="82"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image_hu3ea1afbd6180b9195fb19c52b7803180_81763_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image_hu3ea1afbd6180b9195fb19c52b7803180_81763_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1042"
+		data-flex-basis="2502px"
+	
+></p>
+<p>close(ch)可以关闭通道，接收者可以通过 value,ok := &lt;-ch来获取值，value为管道中的数据，ok在当管道没有关闭时为true，管道关闭了则为false</p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2.png"
+	width="862"
+	height="265"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2_huae2bd10b2da9e0c541a6ebce2ca61259_214222_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2_huae2bd10b2da9e0c541a6ebce2ca61259_214222_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="325"
+		data-flex-basis="780px"
+	
+></p>
+<p>无缓冲通道是指在接收前没有能力保存任何值得通道。</p>
+<p>这种类型的通道要求发送goroutine和接收goroutine同时准备好，才能完成发送和接收操作。如果两个goroutine没有同时准备好，通道会导致先执行发送或接收操作的goroutine阻塞等待。
+这种对通道进行发送和接收的交互行为本身就是同步的，其中任意一个操作都无法离开另一个操作单独存在。</p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-5.png"
+	width="496"
+	height="445"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-5_hu8cfa6edddb46914b23d86b71a8984b00_175091_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-5_hu8cfa6edddb46914b23d86b71a8984b00_175091_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="111"
+		data-flex-basis="267px"
+	
+></p>
+<p>有缓冲通道指通道可以保存多个值。</p>
+<p>如果给定了一个缓冲区容量，那么通道就是异步的，只要缓冲区有未使用空间用于发送数据，或还包含可以接收的数据，那么其通信就会无阻塞地进行</p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2.png"
+	width="862"
+	height="265"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2_huae2bd10b2da9e0c541a6ebce2ca61259_214222_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-2_huae2bd10b2da9e0c541a6ebce2ca61259_214222_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="325"
+		data-flex-basis="780px"
+	
+></p>
+<p>上图所示：</p>
+<ul>
+<li>右侧的goroutine正在从通道接收一个值。</li>
+<li>右侧的goroutine独立完成了接手值得动作，而左侧的goroutine正在发送一个新值到通道里。</li>
+<li>左侧的goroutine还在向通道发送新值，而右侧的goroutine正在从通道接收另一个值。这个步骤里的两个操作既不是同步，也不会互相阻塞。</li>
+<li>所有的发送和接收都完成，而通道里还有几个值，也有一些空间可以存储更多的值</li>
+</ul>
+<p>无缓冲的与有缓冲channel有着重大差别，那就是一个是同步的 一个是非同步的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">比如
+</span></span><span class="line"><span class="cl">c1:=make(chan int) 无缓冲
+</span></span><span class="line"><span class="cl">c2:=make(chan int,1) 有缓冲
+</span></span><span class="line"><span class="cl">c1&lt;-1 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>无缓冲： 不仅仅是向 c1 通道放 1，而是一直要等有别的携程 &lt;-c1 接手了这个参数，那么c1&lt;-1才会继续下去，要不然就一直阻塞着。
+有缓冲： c2&lt;-1 则不会阻塞，因为缓冲大小是1(其实是缓冲大小为0)，只有当放第二个值的时候，第一个还没被人拿走，这时候才会阻塞。</p>
+<h6 id="单项channel管道">单项channel管道</h6>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-4.png"
+	width="871"
+	height="393"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-4_hue0072b5a7f6294aaa067b69400b61679_339546_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-4_hue0072b5a7f6294aaa067b69400b61679_339546_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="221"
+		data-flex-basis="531px"
+	
+></p>
+<p>双向channel可以隐式的转换为单向channel ( var  writeCan  chan&lt;-  int  =  ch ),单向无法转换为双向</p>
+<p>案例：</p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-3.png"
+	width="598"
+	height="715"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-3_hu458a3f7698c383c56ba4e2bf72dccd03_285569_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-3_hu458a3f7698c383c56ba4e2bf72dccd03_285569_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="83"
+		data-flex-basis="200px"
+	
+></p>
+<p><strong>channel可以通过range来依次读取通道内的数据</strong>，它的参数只有num，并非两个值。且必须搭配close(ch)使用，不然继续迭代下去，没有值但是还在进行&lt;-ch，这会造成通道阻塞，出现死锁问题。在写入channel的函数中最后加上 close(ch) 就可以给它发送一个信号，它会在将数据全部写入channel后关闭管道，<strong>关闭一个已经关闭的channel会导致panic</strong>，当对一个关闭后的通道进行取值直到取完后，再进行取值返回的就是类型零值，如int返回的是0</p>
+<p>对一个已经关闭的管道是可以继续取值的，但是取到的值是对应类型的零值，如果管道没关闭继续取值就会造成死锁</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	ch1 := make(chan int, 2)
+</span></span><span class="line"><span class="cl">	ch1 &lt;- 10
+</span></span><span class="line"><span class="cl">	ch1 &lt;- 20
+</span></span><span class="line"><span class="cl">	close(ch1)
+</span></span><span class="line"><span class="cl">	&lt;-ch1
+</span></span><span class="line"><span class="cl">	&lt;-ch1
+</span></span><span class="line"><span class="cl">	x, ok := &lt;-ch1
+</span></span><span class="line"><span class="cl">	fmt.Println(x, ok)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于channel属于引用传递，所以虽然函数的参数是单项通道，但是最终修改的依然是本来的双向通道ch，这可以避免在函数中又读又写造成逻辑混乱</p>
+<h4 id="select-可以监听channel通道的数据流动">Select (可以监听channel通道的数据流动)</h4>
+<p><strong>注意：select如果任意某个通信可以进行，它就执行，其他被忽略。如果同时有多个case满足，它会随机选择一个，都没有满足时会阻塞等待（避免造成饥饿，因为如果某个case一直被满足，它之后的case偶尔满足，我们不能每次都让首个case通过，这样会造成后面的case长期得不到资源的分配）</strong></p>
+<p><img src="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-7.png"
+	width="880"
+	height="638"
+	srcset="/p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-7_hua817e47c3827ca6e6d644e17d38de653_420866_480x0_resize_box_3.png 480w, /p/go%E5%A4%9A%E7%BA%BF%E7%A8%8B/media/image-7_hua817e47c3827ca6e6d644e17d38de653_420866_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="137"
+		data-flex-basis="331px"
+	
+></p>
+<p><strong>注意：如果写了default，即每次都能判定成功，会导致select语句完成判定然后结束，不写就会（一直）阻塞直到case判定成功执行某一个case语句然后结束</strong></p>
+<p>如果select语句不加for循环，那么它只会判定一次并只将数据写入一次管道，监听一次就结束显然不符合监听的目的，所以<strong>需要往select外套一个for死循环来实现监听操作</strong></p>
+<p>第二个case语句，<strong>写入通道的操作必须要有一个读的操作（&lt;-chan2）可以接收它的数据，只有写没有读是不能写成功的，有读没写也是不能读成功，都会造成管道死锁问题，这样就可以通过select实现在外部写入，select中的case读操作就判断成功。</strong></p>
+<p><strong>注意：case不止是判断，它判断后面的语句能否读写成功，那么在判断成功的同时它也会往通道中读写数据</strong></p>
+<h6 id="斐波那契数列">斐波那契数列</h6>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func fibonacci(ch chan&lt;- int, quit &lt;-chan bool) {
+</span></span><span class="line"><span class="cl">	x, y := 1, 1
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		select {
+</span></span><span class="line"><span class="cl">		case ch &lt;- x:
+</span></span><span class="line"><span class="cl">			x, y = y, x+y
+</span></span><span class="line"><span class="cl">		case flag := &lt;-quit:
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	quit := make(chan bool)
+</span></span><span class="line"><span class="cl">	//输出数字
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		for i := 0; i &lt; 8; i++ {
+</span></span><span class="line"><span class="cl">			num := &lt;-ch
+</span></span><span class="line"><span class="cl">			fmt.Println(num)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		quit &lt;- true
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//产生数字，写入管道
+</span></span><span class="line"><span class="cl">	fibonacci(ch, quit)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">输出结果为：1	1	2	3	5	8	13	21
+</span></span><span class="line"><span class="cl">除去第二个数，其他数为前两个数相加
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果select语句不加for循环，那么它只会判定一次并只将数据写入一次管道，而fibonacci函数处于主协程，当判定成功后就会直接完成主协程，那么子协程也会退出，后面的数据都无法继续输出</p>
+<h5 id="用select实现超时退出">用select实现超时退出</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	quit := make(chan bool)
+</span></span><span class="line"><span class="cl">	//监听管道数据
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		for {
+</span></span><span class="line"><span class="cl">			select {
+</span></span><span class="line"><span class="cl">			case num := &lt;-ch:
+</span></span><span class="line"><span class="cl">				fmt.Println(num)
+</span></span><span class="line"><span class="cl">			case &lt;-time.NewTimer(3 * time.Second).C:
+</span></span><span class="line"><span class="cl">				fmt.Println(&#34;3s没有输出数据&#34;)
+</span></span><span class="line"><span class="cl">				quit &lt;- true
+</span></span><span class="line"><span class="cl">				return
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		for i := 0; i &lt; 4; i++ {
+</span></span><span class="line"><span class="cl">			ch &lt;- i
+</span></span><span class="line"><span class="cl">			time.Sleep(time.Second)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		&lt;-quit
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;程序结束&#34;)
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	for {}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当ch中没有数据时，case ch会堵塞，然后三秒后case time会有数据，执行case2，往quit管道中写入数据，最下面的读取quit就不会堵塞，程序就会继续执行，如果不希望主程序结束，可以将quit管道放到一个子协程中（且主程序有for循环之类的不会结束），那么三秒后子协程运行完自动退出，不会波及主协程</p>
+<p><strong>注意：case语句是会执行之后的语句的</strong>，所以time.NewTimer()会在3s后继续有值，且会再输出fmt，然后此时quit管道没接收者，会一直堵塞在这里，子协程会一直存在直到主协程关闭，所以加上return语句让它在第一次就关闭此函数，或者break跳出for循环</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

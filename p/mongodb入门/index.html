@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='适用于mongodb的业务场景： 数据量大 写入操作频繁（读写都很频繁） 价值较低的数据，对事物要求不高（mongodb对于事物的支持不是很好） 什'>
+<title>MongoDB入门</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='MongoDB入门'>
+<meta property='og:description' content='适用于mongodb的业务场景： 数据量大 写入操作频繁（读写都很频繁） 价值较低的数据，对事物要求不高（mongodb对于事物的支持不是很好） 什'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-04-09T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-04-09T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="MongoDB入门">
+<meta name="twitter:description" content="适用于mongodb的业务场景： 数据量大 写入操作频繁（读写都很频繁） 价值较低的数据，对事物要求不高（mongodb对于事物的支持不是很好） 什">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#数据库操作">数据库操作</a>
+      <ol>
+        <li><a href="#显示数据库"><strong>显示数据库</strong></a></li>
+        <li><a href="#选择和创建数据库"><strong>选择和创建数据库</strong></a></li>
+        <li><a href="#删除数据库"><strong>删除数据库</strong></a></li>
+        <li><a href="#默认库的作用">默认库的作用</a></li>
+      </ol>
+    </li>
+    <li><a href="#集合操作">集合操作</a></li>
+    <li><a href="#文档基本crud">文档基本CRUD</a>
+      <ol>
+        <li><a href="#单个文档的插入">单个文档的插入</a></li>
+        <li><a href="#文档的查询">文档的查询</a>
+          <ol>
+            <li><a href="#基本查询">基本查询</a></li>
+            <li><a href="#投影查询">投影查询</a></li>
+            <li><a href="#聚合查询">聚合查询</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#文档的更新">文档的更新</a>
+      <ol>
+        <li><a href="#覆盖修改">覆盖修改</a></li>
+        <li><a href="#局部修改">局部修改</a></li>
+        <li><a href="#批量修改">批量修改</a></li>
+        <li><a href="#列值增长的修改">列值增长的修改</a></li>
+      </ol>
+    </li>
+    <li><a href="#文档的删除">文档的删除</a></li>
+    <li><a href="#文档的分页查询">文档的分页查询</a>
+      <ol>
+        <li><a href="#统计查询">统计查询</a></li>
+        <li><a href="#分页列表查询">分页列表查询</a></li>
+        <li><a href="#排序查询">排序查询</a></li>
+      </ol>
+    </li>
+    <li><a href="#复杂查询">复杂查询</a>
+      <ol>
+        <li><a href="#正则的复杂条件查询">正则的复杂条件查询</a></li>
+        <li><a href="#比较查询">比较查询</a></li>
+        <li><a href="#包含查询">包含查询</a></li>
+        <li><a href="#条件连接查询">条件连接查询</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#索引的查看">索引的查看</a></li>
+    <li><a href="#索引的创建">索引的创建</a></li>
+    <li><a href="#索引的移除">索引的移除</a></li>
+    <li><a href="#执行计划">执行计划</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#分桶设计">分桶设计</a></li>
+    <li><a href="#列转行">列转行</a></li>
+    <li><a href="#版本字段">版本字段</a></li>
+    <li><a href="#近似计算">近似计算</a></li>
+    <li><a href="#预聚合字段">预聚合字段</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#写事物">写事物</a></li>
+    <li><a href="#读事物">读事物</a>
+      <ol>
+        <li><a href="#readpreference-选择读哪个节点的数据">readPreference (选择读哪个节点的数据)</a></li>
+        <li><a href="#readconcern-隔离级别">readConcern (隔离级别)</a></li>
+      </ol>
+    </li>
+    <li><a href="#多文档事物-重要平常代码中使用的事物">多文档事物 (重要，平常代码中使用的事物)</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/mongodb/" >
+                MongoDB
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/mongodb%E5%85%A5%E9%97%A8/">MongoDB入门</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 09, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>适用于mongodb的业务场景：</p>
+<ul>
+<li>数据量大</li>
+<li>写入操作频繁（读写都很频繁）</li>
+<li>价值较低的数据，对事物要求不高（mongodb对于事物的支持不是很好）</li>
+</ul>
+<p>什么时候选择mongodb:</p>
+<ul>
+<li>应用不需要事物及复杂的join支持</li>
+<li>新应用，需求会变，数据模型无法确定，想快速迭代开发</li>
+<li>应用需要高读写速率，需要2000-3000以上的读写QPS</li>
+<li>应用需要TB及PB级别的数据存储（维护成本较mysql低）</li>
+<li>应用要求存储的数据不丢失</li>
+<li>应用需要99.9999…%高可用</li>
+<li>应用需要大量的地理位置查询、文本查询</li>
+</ul>
+<p>如果上述有一个符合就可以考虑使用mongodb，2个以上直接选择使用mongodb就行</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-2.png"
+	width="1386"
+	height="475"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-2_hu3e4263186cc6ae9e7898a81cb987c777_431210_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-2_hu3e4263186cc6ae9e7898a81cb987c777_431210_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="291"
+		data-flex-basis="700px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-13.png"
+	width="2103"
+	height="1266"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-13_hu7f44308c2d509039b6d5eec393574e5b_468198_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-13_hu7f44308c2d509039b6d5eec393574e5b_468198_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="166"
+		data-flex-basis="398px"
+	
+></p>
+<h1 id="基础mongodb命令">基础mongodb命令</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mongod --dbpath=../data/db    // 在debug时可以这样启动
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mongod -f ./mongod.conf		// 以配置文件的方式启动mongodb
+</span></span><span class="line"><span class="cl">mongod --config ./mongod.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mongo 或
+</span></span><span class="line"><span class="cl">mongo --host=127.0.0.1 --port=27017   // 命令行连接mongodb，只mongo则是连接本地27017
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>配置文件内容：</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png"
+	width="2124"
+	height="1056"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">关闭mongodb可以使用kill，但可能会出现数据错误，因此可以进入mongodb来关闭，
+</span></span><span class="line"><span class="cl">mongo --port 27017
+</span></span><span class="line"><span class="cl">use admin
+</span></span><span class="line"><span class="cl">db.shutdownServer()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="crud">CRUD</h1>
+<h2 id="数据库操作">数据库操作</h2>
+<p>在每个集合中都会存在一个 _id，这个是mongdb的主键，它自己生成的</p>
+<h3 id="显示数据库"><strong>显示数据库</strong></h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">show dbs   或者  show databases   显示所有数据库
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">db   显示当前所处数据库
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="选择和创建数据库"><strong>选择和创建数据库</strong></h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">use 数据库名称
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果库不存在则自动创建，有则切换到此库</p>
+<p>要注意的是，在mongodb中，要新建了一个集合后才会真正的创建一个库。</p>
+<p><strong>原因是use后这个库会先存在于内存中，只有当往这个库中写入了数据，mongodb才会持久化这个库到磁盘中。</strong></p>
+<h3 id="删除数据库"><strong>删除数据库</strong></h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.dropDatabase()
+</span></span><span class="line"><span class="cl">删除当前所在的库，因此删除前需要先use
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="默认库的作用">默认库的作用</h3>
+<ul>
+<li><strong>admin:</strong> 从权限的角度来看，这就类似于mysql的root数据库，如果将一个用户添加到这个数据库中，这个用户就自动继承所有数据库的权限。一些特定的服务器命令也只能在这个数据库中运行，比如关闭服务器。</li>
+<li><strong>local:</strong> 这个数据库中的数据永远不会被复制，作用于集群，集群之间是会相互复制彼此的数据，当数据存于这个库中时，数据就不会被集群中的其他库所复制，可以用来存储限于本地单台服务器的任意集合。</li>
+<li><strong>config:</strong> 当mongodb用于分片设置时，config数据库在内部使用，用于保存分片的相关信息。</li>
+</ul>
+<h2 id="集合操作">集合操作</h2>
+<p>集合类似于关系型数据库中的表。它可以显式创建也可以隐式创建。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.createCollection(name)
+</span></span><span class="line"><span class="cl">显式创建名称为name的集合
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">show tables 或 show collections  查看当前库中的表
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当向一个集合中插入一个文档的时候，如果集合不存在，则会自动创建集合。通常使用隐式创建即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.table.drop()
+</span></span><span class="line"><span class="cl">删除名为table的集合,删除成功返回true,反之false
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="文档基本crud">文档基本CRUD</h2>
+<p>文档的数据结构和JSON基本一样，所有存储在集合中的数据都是BSON格式。</p>
+<h3 id="单个文档的插入">单个文档的插入</h3>
+<p>使用insert()或save()方法向集合中插入文档，语法如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># collection代表集合的名称
+</span></span><span class="line"><span class="cl">db.collection.insert(
+</span></span><span class="line"><span class="cl">	&lt;document or array of ducuments&gt;,
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		writeConcern:&lt;document&gt;,
+</span></span><span class="line"><span class="cl">		ordered:&lt;boolean&gt;
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.insertOne({&#34;name&#34;:&#34;zs&#34;,&#34;age&#34;:11})
+</span></span><span class="line"><span class="cl">往comm集合中插入一条数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">db.comm.insertMany([{&#34;name&#34;:&#34;zs&#34;,&#34;age&#34;:11},{&#34;name&#34;:&#34;ww&#34;,&#34;age&#34;:12}])
+</span></span><span class="line"><span class="cl">往comm集合中插入多条数据
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>要注意的是：当插入多条时如果某条数据插入失败，将会终止插入，但已经插入成功的数据不会回滚掉。</p>
+<p>因此批量插入时最好可以加上try-catch来进行异常捕捉处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">try { 
+</span></span><span class="line"><span class="cl">	db.comm.insertMany([{&#34;name&#34;:&#34;zs&#34;,&#34;age&#34;:11},{&#34;name&#34;:&#34;ww&#34;,&#34;age&#34;:12}])
+</span></span><span class="line"><span class="cl">} catch(e){
+</span></span><span class="line"><span class="cl">	print(e)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="文档的查询">文档的查询</h3>
+<h4 id="基本查询">基本查询</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.find()
+</span></span><span class="line"><span class="cl">查询comm中的所有数据
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时会发现在文档中会有一个叫_id的字段，这个相当于MySQL的主键ID，在插入文档时没有指定该字段则MongoDB会自动创建，其类型是ObjectID类型。当然在插入文档时也可以指定_id为自己设置的值，建议不要自己指定_id，因为重复后会很麻烦。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.find({name:&#34;ww&#34;})
+</span></span><span class="line"><span class="cl">根据条件进行查询
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.findOne(name:&#34;ww&#34;)
+</span></span><span class="line"><span class="cl">只获取第一条数据，相当于mysql的limit
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mongodb的find().pretty()
+</span></span><span class="line"><span class="cl">使得查询出来的数据在命令行中更加美观的显示,不至于太紧凑。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png"
+	width="2150"
+	height="1005"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="513px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png"
+	width="2124"
+	height="1056"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="2067"
+	height="989"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="501px"
+	
+></p>
+<h4 id="投影查询">投影查询</h4>
+<p>相当于mysql的select id,name from user，即只显示指定的字段，其中value为1则表示显示此key字段，为0则为不显示，_id默认是显示的，所以必须设置为0让其不显示，其他字段只要没有显式设置，默认都是不显示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.find({},{name:1,_id:0})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="聚合查询">聚合查询</h4>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png"
+	width="2150"
+	height="1005"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="513px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png"
+	width="2150"
+	height="1005"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="513px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-18.png"
+	width="2446"
+	height="923"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-18_hue6f9bbf0307de28f8160b209dbe6421f_556723_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-18_hue6f9bbf0307de28f8160b209dbe6421f_556723_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="265"
+		data-flex-basis="636px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-8.png"
+	width="1460"
+	height="721"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-8_hu33de268e48399b7fb7974dc9e6fae27b_307760_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-8_hu33de268e48399b7fb7974dc9e6fae27b_307760_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="485px"
+	
+></p>
+<h5 id="示例">示例</h5>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="2067"
+	height="989"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="501px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png"
+	width="2124"
+	height="1056"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="2067"
+	height="989"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="501px"
+	
+></p>
+<p><strong>lookup只支持left outer join</strong></p>
+<h2 id="文档的更新">文档的更新</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.collection.update(query,update,options)
+</span></span><span class="line"><span class="cl">query是查询条件，update是修改内容，options是附加的一些选项
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="覆盖修改">覆盖修改</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.update({name:&#34;ww&#34;},{age:11})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>update字段的age可以为文档中不存在的值，此时这个文档除了age和_id，其他字段都不见了，此为覆盖修改</p>
+<h3 id="局部修改">局部修改</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.update({name:&#34;ww&#34;},{$set:{age:123}})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>只修改指定的字段，其他字段不变</p>
+<h3 id="批量修改">批量修改</h3>
+<p>覆盖修改和局部修改都只会修改一个文档，必须使用批量修改来改集合中满足条件的所有文档</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.updateMany({name:&#34;zs&#34;},{$set:{age:12}})
+</span></span><span class="line"><span class="cl">OR
+</span></span><span class="line"><span class="cl">db.comm.update({name:&#34;zs&#34;},{$set:{age:13}},{multi:true})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="列值增长的修改">列值增长的修改</h3>
+<p>如果想对某列值在原有的基础上进行增加和减少，可以使用 $inc 运算符来实现。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.updateMany({name:&#34;ww&#34;},{$inc:{age:2}})
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">将集合中name=ww的所有文档的age加2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="文档的删除">文档的删除</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.deleteOne({agess:165})
+</span></span><span class="line"><span class="cl">删除comm表中age=165的最前面的一条文档
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">db.comm.deleteMany({agess:165})
+</span></span><span class="line"><span class="cl">删除comm表中age=165的所有文档
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.remove({})
+</span></span><span class="line"><span class="cl">删除该集合中的所有文档，慎用！
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="文档的分页查询">文档的分页查询</h2>
+<h3 id="统计查询">统计查询</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.count({age:11})
+</span></span><span class="line"><span class="cl">查询age=11的文档的个数
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">db.comm.count()
+</span></span><span class="line"><span class="cl">查询该集合总共有多少个文档
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="分页列表查询">分页列表查询</h3>
+<p>可以使用limit()方法来读取指定数量的数据，使用skip()方法来跳过指定数量的数据。limit默认是20，skip默认是0</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.find().limit(2).skip(1)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="排序查询">排序查询</h3>
+<p>sort()方法可以通过参数指定排序的字段来对数据进行排序，并用 1和-1来指定排序的方式，其中1为升序排列，-1为降序排列。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.find().sort({age:1})
+</span></span><span class="line"><span class="cl">查询comm所有文档并按照age升序排列
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意：</p>
+<p>skip(),limit(),sort()三个放一起执行的时候，执行顺序是sort(),skip(),limit()，和命令的编写顺序无关。</p>
+<h2 id="复杂查询">复杂查询</h2>
+<h3 id="正则的复杂条件查询">正则的复杂条件查询</h3>
+<p>mongodb的模糊查询是通过正则表达式的方式实现的。其正则是用js的写法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.find(name:/zs/)
+</span></span><span class="line"><span class="cl">查询name中包含zs的文档
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">db.comm.find(name:/^zs/)
+</span></span><span class="line"><span class="cl">查询以zs开头的name的文档
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>name后的value不要加引号，这表示此为字符串，变成等于了</p>
+<h3 id="比较查询">比较查询</h3>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+<h3 id="包含查询">包含查询</h3>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-1.png"
+	width="1025"
+	height="429"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-1_hu87ee13c64eb19af71853ac609a5b2f7d_62833_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-1_hu87ee13c64eb19af71853ac609a5b2f7d_62833_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="573px"
+	
+></p>
+<h3 id="条件连接查询">条件连接查询</h3>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+<h1 id="索引">索引</h1>
+<p>索引支持在mongodb中高效的执行查询。如果没有索引，mongodb必须执行全集合扫描，即扫描集合中的每个文档来选择与查询语句匹配的文档。这种扫描全集合的查询效率是非常低的，尤其是在处理大量数据时，查询可能要花费几十秒甚至几分钟，这对网站的性能是非常致命的。</p>
+<p>如果查询存在适当的索引，mongodb可以使用该索引限制必须检查的文档数。</p>
+<p>索引是特殊的数据结构，它以易于遍历的形式存储集合数据集的一小部分。索引存储特定字段或一组字段的值，按字段值排序。索引项的排序支持有效的相等匹配和基于范围的查询操作。还可以使用索引中的排序返回排序结果。</p>
+<p>mongodb索引使用的是B tree 数据结构，MySQL是B+ tree</p>
+<p>多路动态平衡树，简称b-tree，效率高，尤其是可以最大提高磁盘io效率，所以大部分数据库的存储引擎都用b-tree或者b-tree增强版作为索引的数据存储结构</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-3.png"
+	width="1126"
+	height="515"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-3_hu9822659c10b37422a8295d381d42e701_107937_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-3_hu9822659c10b37422a8295d381d42e701_107937_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="524px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="1154"
+	height="509"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="226"
+		data-flex-basis="544px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+<h2 id="索引的查看">索引的查看</h2>
+<p>返回一个集合中的所有索引的数组。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.conn.getIndexes()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="索引的创建">索引的创建</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.createIndex({userid:1,age:-1},{unique:true})
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">创建一个以userid升序，age降序的复合唯一索引，选项options是可以省略的
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="索引的移除">索引的移除</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.dropIndex(&#34;agess_1_age_-1&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">删除索引名 agess_1_age_-1的索引，也可以通过索引规则删除
+</span></span><span class="line"><span class="cl">db.comm.dropIndex({userid:1})
+</span></span><span class="line"><span class="cl">删除仅以userid为升序的索引
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.dropIndexes()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">删除comm集合中的所有索引，但是mongodb自建的_id索引例外，它不会被删除
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="执行计划">执行计划</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.comm.find(query,options).explain(options)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>分析查询语句，查看是否用上了索引</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-8.png"
+	width="1460"
+	height="721"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-8_hu33de268e48399b7fb7974dc9e6fae27b_307760_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-8_hu33de268e48399b7fb7974dc9e6fae27b_307760_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="485px"
+	
+></p>
+<h1 id="设计模式">设计模式</h1>
+<h2 id="分桶设计">分桶设计</h2>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+<p>每分钟写入一次，如果运行一年则数据量极大，采用分桶模式进行分组，因为展现数据一般不会基于一分钟进行展现，最低级别可能都是一小时，因此将其合为一组即可极大的优化数据容量和读取速度。一般适用于数据点采集频繁，数据量过多的场景中。</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png"
+	width="2308"
+	height="1051"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="2067"
+	height="989"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="501px"
+	
+></p>
+<h2 id="列转行">列转行</h2>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+<p>导致创建新数据时要花费更多的数据，则可以采用列转行的方式，将相似的列变成一个列</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png"
+	width="2124"
+	height="1056"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<h2 id="版本字段">版本字段</h2>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="1154"
+	height="509"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="226"
+		data-flex-basis="544px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-4.png"
+	width="1255"
+	height="687"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-4_hub96ecdf1307927c216cbda75bd14b74d_175285_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-4_hub96ecdf1307927c216cbda75bd14b74d_175285_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="438px"
+	
+></p>
+<h2 id="近似计算">近似计算</h2>
+<p>在所需要的计算非常有挑战性或消耗的资源昂贵（时间、内存、CPU周期）时，<strong>如果精度不是首要考虑因素时</strong>，那么我们就可以使用近似值模式。</p>
+<p>假设现在有一个相当规模的城市，大约有3.9万人。人口的确切数字是相当不稳定的，人们会搬入搬出、有婴儿会出生、有人会死亡。我们也许要花上整天的时间来得到每天确切的居民数量。在应用程序中，我们不需要每次更改都去更新数据库中的人口数。我们可以构建一个计数器，只在每达到100的时候才去更新数据库，这样只用原来1%的时间。在这个例子里，我们的写操作显著减少了99%。还有一种做法是创建一个返回随机数的函数。比如该函数返回一个0到100之间的数字，它在大约1%的时间会返回0。当这个条件满足时，我们就把计数器增加100。</p>
+<p>我们为什么需要关心这个？当数据量很大或用户量很多时，对写操作性能的影响也会变得很明显。规模越大，影响也越大，而当数据有一定规模时，这通常是你最需要关心的。通过减少写操作以及不必要的“完美”，可以极大地提高性能。</p>
+<h2 id="预聚合字段">预聚合字段</h2>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png"
+	width="2150"
+	height="1005"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="513px"
+	
+></p>
+<p>因为计算需要一行一行的扫描进行计算，因此可以采用预聚合模式</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="2377"
+	height="1270"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-14_hu7518c23f0a19eddd177fae0e78a0c6b0_929961_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-14_hu7518c23f0a19eddd177fae0e78a0c6b0_929961_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="449px"
+	
+></p>
+<h1 id="mongodb事物">mongodb事物</h1>
+<h2 id="写事物">写事物</h2>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="1154"
+	height="509"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="226"
+		data-flex-basis="544px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-13.png"
+	width="2103"
+	height="1266"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-13_hu7f44308c2d509039b6d5eec393574e5b_468198_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-13_hu7f44308c2d509039b6d5eec393574e5b_468198_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="166"
+		data-flex-basis="398px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.conn.insert({count:1},{writeConcern:{w:&#34;majority&#34;,wtimeout:3000}})
+</span></span><span class="line"><span class="cl">执行此写入操作时，要落入到大多数节点上后才算成功。如果在某个节点写入时间超时3S则直接返回写入失败。但是数据已经写入到其他成功的节点中了
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png"
+	width="2308"
+	height="1051"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<h2 id="读事物">读事物</h2>
+<h3 id="readpreference-选择读哪个节点的数据">readPreference (选择读哪个节点的数据)</h3>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="2067"
+	height="989"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="501px"
+	
+></p>
+<p>默认是primary，并且这是推荐的做法，因为这样读肯定是读到最新的数据。nearest是根据ping time来决定。</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png"
+	width="2308"
+	height="1051"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="2067"
+	height="989"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="501px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png"
+	width="2308"
+	height="1051"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<h3 id="readconcern-隔离级别">readConcern (隔离级别)</h3>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-19.png"
+	width="2239"
+	height="1107"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-19_hu61debfed50adff225ebf1534d4a69ac0_754923_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-19_hu61debfed50adff225ebf1534d4a69ac0_754923_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="485px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-14.png"
+	width="2377"
+	height="1270"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-14_hu7518c23f0a19eddd177fae0e78a0c6b0_929961_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-14_hu7518c23f0a19eddd177fae0e78a0c6b0_929961_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="449px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-16.png"
+	width="2318"
+	height="1236"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-16_hu60876d0c5562b271d64fe3e87464db1d_662725_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-16_hu60876d0c5562b271d64fe3e87464db1d_662725_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="450px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db.conn.find().readConcern(&#34;local&#34;)
+</span></span><span class="line"><span class="cl">以local的隔离级别进行查询,如果是majority,大多数从节点未同步完,查询就会阻塞，直到大多数从节点同步完数据。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果要使用majority级别必须要在配置文件中配置enableMajorityReadConcern=true (记住所有写操作的位置和状态)</p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image.png"
+	width="710"
+	height="137"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image_hu8a3b479792fc6a7491ec6ecde98c1bdb_60282_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image_hu8a3b479792fc6a7491ec6ecde98c1bdb_60282_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="518"
+		data-flex-basis="1243px"
+	
+></p>
+<h2 id="多文档事物-重要平常代码中使用的事物">多文档事物 (重要，平常代码中使用的事物)</h2>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1362"
+	height="345"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="394"
+		data-flex-basis="947px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png"
+	width="2150"
+	height="1005"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="513px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="2067"
+	height="989"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="501px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png"
+	width="2150"
+	height="1005"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="513px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-7.png"
+	width="2182"
+	height="1297"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-7_hu9862dce131dc42ee82a2f5f862baab6a_801008_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-7_hu9862dce131dc42ee82a2f5f862baab6a_801008_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="168"
+		data-flex-basis="403px"
+	
+></p>
+<h1 id="change-stream-触发器">Change Stream (触发器)</h1>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="1154"
+	height="509"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="226"
+		data-flex-basis="544px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-17.png"
+	width="1418"
+	height="357"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-17_hub00b9ea4cf3b7165bf9fad8dea5a661e_305552_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-17_hub00b9ea4cf3b7165bf9fad8dea5a661e_305552_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="397"
+		data-flex-basis="953px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12.png"
+	width="2124"
+	height="1056"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-12_hufcb831dcd029b75a38f66697d603be6b_780824_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<h1 id="mongodb-代码编写规范">mongodb 代码编写规范</h1>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png"
+	width="2308"
+	height="1051"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11.png"
+	width="2067"
+	height="989"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-11_huc4b44b492b5a042dec81487d63105a95_499300_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="501px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1362"
+	height="345"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="394"
+		data-flex-basis="947px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-7.png"
+	width="2182"
+	height="1297"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-7_hu9862dce131dc42ee82a2f5f862baab6a_801008_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-7_hu9862dce131dc42ee82a2f5f862baab6a_801008_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="168"
+		data-flex-basis="403px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10.png"
+	width="2308"
+	height="1051"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-10_hu78550b44fe073e737ac32898f54c5070_1013031_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5.png"
+	width="2150"
+	height="1005"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-5_huf9eef9cfb8c53c5d84eb6186423ebf5d_452418_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="513px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9.png"
+	width="1154"
+	height="509"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-9_hu19d83bbacfb43451e54a5ec7622d6f64_150571_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="226"
+		data-flex-basis="544px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-6.png"
+	width="1362"
+	height="345"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-6_hufba06ce1f0cabff52db961b755b19423_257186_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="394"
+		data-flex-basis="947px"
+	
+></p>
+<p><img src="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15.png"
+	width="1110"
+	height="528"
+	srcset="/p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_480x0_resize_box_3.png 480w, /p/mongodb%E5%85%A5%E9%97%A8/media/image-15_hube7c15b236cc24075f2e61330266b340_202346_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="504px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

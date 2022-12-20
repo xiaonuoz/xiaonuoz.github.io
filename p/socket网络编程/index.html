@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Socket是BSD UNIX的进程通信机制，通常也称作”套接字”，用于描述IP地址和端口，是一个通信链的句柄。Socket可以理解为TCP/'>
+<title>Socket网络编程</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='Socket网络编程'>
+<meta property='og:description' content='Socket是BSD UNIX的进程通信机制，通常也称作”套接字”，用于描述IP地址和端口，是一个通信链的句柄。Socket可以理解为TCP/'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-10-21T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-10-21T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Socket网络编程">
+<meta name="twitter:description" content="Socket是BSD UNIX的进程通信机制，通常也称作”套接字”，用于描述IP地址和端口，是一个通信链的句柄。Socket可以理解为TCP/">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#cs架构">c/s架构</a>
+      <ol>
+        <li><a href="#服务器部分">服务器部分：</a></li>
+        <li><a href="#客户端部分">客户端部分：</a></li>
+        <li><a href="#如何多个客户端同时连接同一个服务器重要">如何多个客户端同时连接同一个服务器（重要）</a></li>
+        <li><a href="#远程发送文件">远程发送文件：</a></li>
+        <li><a href="#并发聊天服务器">并发聊天服务器</a></li>
+      </ol>
+    </li>
+    <li><a href="#tcp黏包">TCP黏包</a>
+      <ol>
+        <li><a href="#为什么会出现粘包">为什么会出现粘包</a></li>
+        <li><a href="#解决办法">解决办法</a></li>
+      </ol>
+    </li>
+    <li><a href="#bs架构">b/s架构：</a>
+      <ol>
+        <li><a href="#http服务器">http服务器：</a></li>
+        <li><a href="#http客户端">http客户端：</a></li>
+      </ol>
+    </li>
+    <li><a href="#用go写爬虫爬百度贴吧">用go写爬虫爬百度贴吧：</a></li>
+    <li><a href="#go语言实现udp通信">Go语言实现UDP通信</a>
+      <ol>
+        <li><a href="#udp协议">UDP协议</a></li>
+        <li><a href="#udp服务端">UDP服务端</a></li>
+        <li><a href="#udp客户端">UDP客户端</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">Socket网络编程</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 21, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Socket是BSD UNIX的进程通信机制，通常也称作”套接字”，用于描述IP地址和端口，是一个通信链的句柄。Socket可以理解为TCP/IP网络的API，它定义了许多函数或例程，程序员可以用它们来开发TCP/IP网络上的应用程序。电脑上运行的应用程序通常通过”套接字”向网络发出请求或者应答网络请求。</p>
+<p>五层协议只是OSI七层和TCP/IP四层的综合，实际应用还是TCP/IP的四层结构。应用层、传输层、网络层、链路层。</p>
+<p><code>Socket</code>是应用层与TCP/IP协议族通信的中间软件抽象层。在设计模式中，<code>Socket</code><strong>其实就是一个门面模式，它把复杂的TCP/IP协议族隐藏在 <code>Socket</code>后面，对用户来说只需要调用Socket规定的相关函数，让 <code>Socket</code>去组织符合指定的协议数据然后进行通信。</strong></p>
+<h2 id="cs架构">c/s架构</h2>
+<p><img src="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image.png"
+	width="599"
+	height="581"
+	srcset="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image_hu6cd618ec0236d9654fd17275a1b2afd0_124527_480x0_resize_box_3.png 480w, /p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image_hu6cd618ec0236d9654fd17275a1b2afd0_124527_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="103"
+		data-flex-basis="247px"
+	
+></p>
+<h3 id="服务器部分">服务器部分：</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//设置监听，此处及下面都会返回err，为了缩短代码量丢弃了err，工作中不要丢弃
+</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//阻塞等待用户数据
+</span></span><span class="line"><span class="cl">	conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//接收用户请求
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024)
+</span></span><span class="line"><span class="cl">	//用户数据最后返回到了buf切片中，n表示从用户数据那读取的字节数，最大值为切片的长度1024
+</span></span><span class="line"><span class="cl">	n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">	fmt.Println(string(buf[:n]))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//最后处理完数据记得关闭连接
+</span></span><span class="line"><span class="cl">	defer func() {
+</span></span><span class="line"><span class="cl">		listener.Close()
+</span></span><span class="line"><span class="cl">		conn.Close()
+</span></span><span class="line"><span class="cl">	}()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>服务器端先定义一个监听，表示将这个服务器以什么协议放置于什么位置，然后listener.Accept()让服务器阻塞等待用户向服务器端发送数据，用户发送数据后会存入conn中，通过conn.Read()来获取用户输入的数据并放到buf切片中，通过string(buf[:n])强转用户的字节数据为字符串，n表示数据量大于切片则返回切片最大值数据量，小于切片则返回全部数据，<strong>n返回的是Read所读取的总字节量，其值不会超过buf定义的1024字节</strong></p>
+<h3 id="客户端部分">客户端部分：</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//主动连接服务器
+</span></span><span class="line"><span class="cl">	conn, _ := net.Dial(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">	//发送数据
+</span></span><span class="line"><span class="cl">	conn.Write([]byte(&#34;are you ok?&#34;))
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端部分只需要连接服务器并且发送数据，连接服务器需要指定服务器的ip端口和协议，发送的数据是<strong>字节切片类型</strong></p>
+<h3 id="如何多个客户端同时连接同一个服务器重要">如何多个客户端同时连接同一个服务器（重要）</h3>
+<p>服务器端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//conn的类型为net包里的Conn接口
+</span></span><span class="line"><span class="cl">func HandleConn(conn net.Conn) {
+</span></span><span class="line"><span class="cl">	//每个用户使用完毕后关闭协程
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//获取客户端的网络信息,并以ip 端口的形式输出
+</span></span><span class="line"><span class="cl">	addr := conn.RemoteAddr().String()
+</span></span><span class="line"><span class="cl">	fmt.Println(addr, &#34;---连接成功&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//用for循环套住Read()，用户发送一次数据，接收一次并赋值给buf，
+</span></span><span class="line"><span class="cl">	//运行下面的打印和回传，再次循环并阻塞在Read()处等待用户再次发送请求
+</span></span><span class="line"><span class="cl">	//但是这样会让子进程一直存在，除非设置了err不为空时退出实现强制退出
+</span></span><span class="line"><span class="cl">	//因此加一个用户输入exit退出的逻辑
+</span></span><span class="line"><span class="cl">	for{
+</span></span><span class="line"><span class="cl">		n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">		//打印用户发送过来的内容
+</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;%s输入了: %s\n&#34;, addr, string(buf[:n]))
+</span></span><span class="line"><span class="cl">		//把用户信息转为大写发回给用户(先将小写的字节切片转为string，然后变成大写再强转为字节切片)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//n-是因为在windows中输入的语句有一个\r\n换行符，需要-2去除它
+</span></span><span class="line"><span class="cl">		//各个平台都不一样，因此可以在前面通过len(string(buf[:n]))来判断到底多了几个字符
+</span></span><span class="line"><span class="cl">		if string(buf[:n-2]) == &#34;exit&#34; {
+</span></span><span class="line"><span class="cl">			fmt.Println(addr, &#34; exit&#34;)
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		conn.Write([]byte(strings.ToUpper(string(buf[:n]))))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//设置监听，此处及下面都会返回err，为了缩短代码量丢弃了err，工作中不要丢弃
+</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//利用for循环实现多个客户端连接同一个服务器
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//循环阻塞等待用户请求，一个用户请求然后往下走，然后循环继续等下一个用户
+</span></span><span class="line"><span class="cl">		conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//开子协程处理多个用户请求，如果没有用户进入就会阻塞到第一步直到第一个用户请求，
+</span></span><span class="line"><span class="cl">		//然后往下开一个新协程给此用户，继续for循环等待下一个用户请求
+</span></span><span class="line"><span class="cl">		go HandleConn(conn)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer listener.Close()
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//主动连接服务端
+</span></span><span class="line"><span class="cl">	conn, _ := net.Dial(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//从键盘获取输入并发往服务器端
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		str := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">		//用for循环可以实现当os.Stdin.Read()中没有数据时（即没有进行输入），
+</span></span><span class="line"><span class="cl">		//阻塞在这一步，直到用户输入内容才继续向下进行
+</span></span><span class="line"><span class="cl">		for {
+</span></span><span class="line"><span class="cl">	//os.Stdin.Read可以提示键盘输入并且将输入的内容转换为字节切片，并赋值到str中，返回切片的长度
+</span></span><span class="line"><span class="cl">			n, _ := os.Stdin.Read(str)
+</span></span><span class="line"><span class="cl">			//发送给服务器端
+</span></span><span class="line"><span class="cl">			conn.Write(str[:n])
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//从服务器端获取数据
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//for循环实现当服务器未往客户端发送数据时，conn.Read(buf)为空，阻塞在这一步，
+</span></span><span class="line"><span class="cl">		//有数据循环一遍，然后等待下次服务器的数据
+</span></span><span class="line"><span class="cl">		//当服务器端输入exit后，服务器端所对应的子协程结束，conn.Read()返回err，
+</span></span><span class="line"><span class="cl">		//通过return结束主协程，子协程同时结束，退出程序
+</span></span><span class="line"><span class="cl">		n, err := conn.Read(buf)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			fmt.Println(err)
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		fmt.Println(string(buf[:n]))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="远程发送文件">远程发送文件：</h3>
+<p>服务器端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func RecvFile(path string, conn net.Conn) {
+</span></span><span class="line"><span class="cl">	//创建文件
+</span></span><span class="line"><span class="cl">	f, _ := os.Create(path)
+</span></span><span class="line"><span class="cl">	//循环接收文件的内容
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := conn.Read(buf)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			if err == io.EOF {
+</span></span><span class="line"><span class="cl">				fmt.Println(&#34;文件接收完毕&#34;)
+</span></span><span class="line"><span class="cl">			} else {
+</span></span><span class="line"><span class="cl">				fmt.Println(err)
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		//往文件写入内容
+</span></span><span class="line"><span class="cl">		f.Write(buf[:n])
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//建立监听
+</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//阻塞等待用户请求
+</span></span><span class="line"><span class="cl">	conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//接收用户文件名
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024)
+</span></span><span class="line"><span class="cl">	n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">	path := string(buf[:n])
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//返回消息
+</span></span><span class="line"><span class="cl">	conn.Write([]byte(&#34;开始发送&#34;))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//接收文件内容
+</span></span><span class="line"><span class="cl">	RecvFile(path, conn)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer listener.Close()
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func SendFile(path string, conn net.Conn) {
+</span></span><span class="line"><span class="cl">	//打开文件，读取文件
+</span></span><span class="line"><span class="cl">	f, _ := os.Open(path)
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := f.Read(buf)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			if err == io.EOF {
+</span></span><span class="line"><span class="cl">				fmt.Println(&#34;文件传输完成&#34;)
+</span></span><span class="line"><span class="cl">			} else {
+</span></span><span class="line"><span class="cl">				fmt.Println(err)
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		//发送到服务器
+</span></span><span class="line"><span class="cl">		conn.Write(buf[:n])
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer f.Close()
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入文件名：&#34;)
+</span></span><span class="line"><span class="cl">	var path string
+</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;path)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//os.Stat()返回FileInfo类型变量，可以获取文件信息,info.Name()获取文件名,没有此文件则会报错
+</span></span><span class="line"><span class="cl">	info, err := os.Stat(path)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;没有这个文件&#34;, err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//连接服务器,工作中err别丢空
+</span></span><span class="line"><span class="cl">	conn, _ := net.Dial(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//给服务器先发送文件名,err和n都可以丢空
+</span></span><span class="line"><span class="cl">	conn.Write([]byte(info.Name()))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//服务器接收到文件名，向客户端发送消息,客户端进行判断开始进行发送
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	if string(buf[:n]) == &#34;开始发送&#34; {
+</span></span><span class="line"><span class="cl">		SendFile(path, conn)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="并发聊天服务器">并发聊天服务器</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Clinet struct {
+</span></span><span class="line"><span class="cl">	C    chan string //管道string类型，暂存用户发送的数据
+</span></span><span class="line"><span class="cl">	Name string      //用户名
+</span></span><span class="line"><span class="cl">	Addr string      //网络地址
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">var onlineMap = make(map[string]Clinet)
+</span></span><span class="line"><span class="cl">var message = make(chan string)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func WriteMsgToClient(cli Clinet, conn net.Conn) {
+</span></span><span class="line"><span class="cl">	//这个是为了实现cli.C中有数据时向各自客户端发送数据，没有数据时阻塞在这一步
+</span></span><span class="line"><span class="cl">	//且任意用户都会在登录时都会通过Manager()方法向每个用户的cli.C发送登录信息，
+</span></span><span class="line"><span class="cl">	//只要cli.C一有信息，这个子协程就会检测到cli.C不再阻塞，就能向客户端写入新的他人登录信息
+</span></span><span class="line"><span class="cl">	//只要发送处的管道没有关闭，cli.Close()，这个for就不会检测到false，会一直堵塞在这里
+</span></span><span class="line"><span class="cl">	for msg := range cli.C {
+</span></span><span class="line"><span class="cl">		conn.Write([]byte(msg + &#34;\n&#34;))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//将用户存进在线用户变量onlineMap中
+</span></span><span class="line"><span class="cl">func HandleConn(conn net.Conn) {
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">	//获取网络地址
+</span></span><span class="line"><span class="cl">	cliAddr := conn.RemoteAddr().String()
+</span></span><span class="line"><span class="cl">	//创建一个结构体,添加到map中
+</span></span><span class="line"><span class="cl">	cli := Clinet{make(chan string), cliAddr, cliAddr}
+</span></span><span class="line"><span class="cl">	onlineMap[cliAddr] = cli
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//新开一个协程，专门给当前用户发送消息
+</span></span><span class="line"><span class="cl">	go WriteMsgToClient(cli, conn)
+</span></span><span class="line"><span class="cl">	//广播某个人在线
+</span></span><span class="line"><span class="cl">	message &lt;- &#34;[&#34; + cli.Name + &#34;]---login&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//退出进行广播并且关闭子协程
+</span></span><span class="line"><span class="cl">	isQuit := make(chan bool)
+</span></span><span class="line"><span class="cl">	hasData := make(chan bool)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//新开一个协程，接收用户发送过来的请求
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		buf := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">		//for循环可以避免输入一次就不再进行接收信息的问题
+</span></span><span class="line"><span class="cl">		for {
+</span></span><span class="line"><span class="cl">			n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">			if n == 0 { //对方断开或者出问题
+</span></span><span class="line"><span class="cl">				isQuit &lt;- true
+</span></span><span class="line"><span class="cl">				return
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			msg := string(buf[:n-2]) //过滤window末尾的/r/n符号
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			//查询所有用户
+</span></span><span class="line"><span class="cl">			if len(msg) == 3 &amp;&amp; msg == &#34;who&#34; { //避免whoami和who匹配
+</span></span><span class="line"><span class="cl">				//遍历map，给当前用户发送所有成员
+</span></span><span class="line"><span class="cl">				conn.Write([]byte(&#34;user list:\n&#34;))
+</span></span><span class="line"><span class="cl">				for _, tmp := range onlineMap {
+</span></span><span class="line"><span class="cl">					msg = tmp.Name + &#34;-----is online\n&#34;
+</span></span><span class="line"><span class="cl">					conn.Write([]byte(msg))
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">				//给用户重命名，输入rename|mike
+</span></span><span class="line"><span class="cl">			} else if len(msg) &gt;= 8 &amp;&amp; msg[:6] == &#34;rename&#34; {
+</span></span><span class="line"><span class="cl">				name := strings.Split(msg, &#34;|&#34;)[1] //将msg以|分割
+</span></span><span class="line"><span class="cl">				cli.Name = name
+</span></span><span class="line"><span class="cl">				conn.Write([]byte(&#34;u name is rename&#34;))
+</span></span><span class="line"><span class="cl">			} else {
+</span></span><span class="line"><span class="cl">				//message复用来给所有用户广播它发送的消息，包括自己也看见
+</span></span><span class="line"><span class="cl">				message &lt;- cli.Name + &#34;:&#34; + msg
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">			hasData &lt;- true
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//用for循环让此子协程不会结束，避免发送消息后子协程结束，这个用户就通信结束了
+</span></span><span class="line"><span class="cl">	//目的是让用户可以接收到后面登录和发送的信息，所以这个子协程就必须一直存在，除非用户退出
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//通过select检测管道isQuit的流动
+</span></span><span class="line"><span class="cl">		select {
+</span></span><span class="line"><span class="cl">		case &lt;-isQuit:
+</span></span><span class="line"><span class="cl">			//删除用户并且广播谁下线了
+</span></span><span class="line"><span class="cl">			delete(onlineMap, cliAddr)
+</span></span><span class="line"><span class="cl">			message &lt;- cli.Name + &#34;--is login out&#34;
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		case &lt;-hasData: //有数据不作处理
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		case &lt;-time.After(60 * time.Second): //60s后超时执行此case,超时强制退出
+</span></span><span class="line"><span class="cl">			delete(onlineMap, cliAddr)
+</span></span><span class="line"><span class="cl">			message &lt;- cli.Name + &#34;--is time out leave out&#34;
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//新开一个协程，转发消息，只要消息来了就遍历map，给map每个成员都发送此消息
+</span></span><span class="line"><span class="cl">func Manager() {
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//mes为string类型的变量，自动推导类型
+</span></span><span class="line"><span class="cl">		msg := &lt;-message
+</span></span><span class="line"><span class="cl">		//遍历map，给map每个成员都发送此消息
+</span></span><span class="line"><span class="cl">		for _, cli := range onlineMap {
+</span></span><span class="line"><span class="cl">			cli.C &lt;- msg
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//监听
+</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer listener.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	go Manager()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//循环
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//循环阻塞，形成多个客户端共用一个服务器
+</span></span><span class="line"><span class="cl">		conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//处理用户连接
+</span></span><span class="line"><span class="cl">		go HandleConn(conn)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>先是主函数启动子协程HandleConn(conn)，它作用于往map中写入在线成员，并将消息发给管道message,再通过Manager()将message管道发给msg字符串，遍历map，往每个map中的管道写入信息,紧接着通过WriteMsgToClient()中的range向客户端写入消息，且for遍历管道时，没有cli.Close()的存在，它会一直堵塞在此处等待新的信息写进cli.C</p>
+<h2 id="tcp黏包">TCP黏包</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Dial</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:30000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;dial failed, err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">20</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span> <span class="o">:=</span> <span class="s">`Hello, Hello. How are you?`</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">msg</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>将msg输出20次到服务端，可以看到服务端输出结果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">收到client发来的数据： Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?
+</span></span><span class="line"><span class="cl">收到client发来的数据： Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?
+</span></span><span class="line"><span class="cl">收到client发来的数据： Hello, Hello. How are you?Hello, Hello. How are you?
+</span></span><span class="line"><span class="cl">收到client发来的数据： Hello, Hello. How are you?Hello, Hello. How are you?Hello, Hello. How are you?
+</span></span><span class="line"><span class="cl">收到client发来的数据： Hello, Hello. How are you?Hello, Hello. How are you?
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端分20次发送的数据，在服务端并没有成功的输出20次，而是多条数据“粘”到了一起。</p>
+<h3 id="为什么会出现粘包">为什么会出现粘包</h3>
+<p>主要原因就是tcp数据传递模式是流模式，在保持长连接的时候可以进行多次的收和发。</p>
+<p>“粘包”可发生在发送端也可发生在接收端：</p>
+<ol>
+<li>**由Nagle算法造成的发送端的粘包：**Nagle算法是一种改善网络传输效率的算法。简单来说就是当我们提交一段数据给TCP发送时，TCP并不立刻发送此段数据，而是等待一小段时间看看在等待期间是否还有要发送的数据，若有则会一次把这两段数据发送出去。</li>
+<li>**接收端接收不及时造成的接收端粘包：**TCP会把接收到的数据存在自己的缓冲区中，然后通知应用层取数据。当应用层由于某些原因不能及时的把TCP的数据取出来，就会造成TCP缓冲区中存放了几段数据。</li>
+</ol>
+<h3 id="解决办法">解决办法</h3>
+<p>出现”粘包”的关键在于接收方不确定将要传输的数据包的大小，因此我们可以对数据包进行封包和拆包的操作。</p>
+<p>封包：封包就是给一段数据加上包头，这样一来数据包就分为包头和包体两部分内容了(过滤非法包时封包会加入”包尾”内容)。包头部分的长度是固定的，并且它存储了包体的长度，根据包头长度固定以及包头中含有包体长度的变量就能正确的拆分出一个完整的数据包。</p>
+<p>我们可以自己定义一个协议，比如数据包的前4个字节为包头，里面存储的是发送的数据的长度。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">proto</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;bufio&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;bytes&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;encoding/binary&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Encode 将消息编码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Encode</span><span class="p">(</span><span class="nx">message</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 读取消息的长度，转换成int32类型（占4个字节）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">length</span> <span class="p">=</span> <span class="nb">int32</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">message</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">pkg</span> <span class="p">=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 写入消息头
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//LittleEndian：小端，可以百度搜大端小端进行了解，它只是写入内存的顺序不一样
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//只要编码和解码都用小端或大端就没问题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//这段代码的意思就是往pkg字节缓存中写入一个数据，是int32的message长度，int32是32位，8位为一个字节，所以这里就占了4个字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">binary</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">pkg</span><span class="p">,</span> <span class="nx">binary</span><span class="p">.</span><span class="nx">LittleEndian</span><span class="p">,</span> <span class="nx">length</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 写入消息实体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">binary</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">pkg</span><span class="p">,</span> <span class="nx">binary</span><span class="p">.</span><span class="nx">LittleEndian</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">message</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">pkg</span><span class="p">.</span><span class="nf">Bytes</span><span class="p">(),</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Decode 解码消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Decode</span><span class="p">(</span><span class="nx">reader</span> <span class="o">*</span><span class="nx">bufio</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 读取消息的长度，前4个字节就是一条消息的长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">lengthByte</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Peek</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c1">// 读取前4个字节的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">lengthBuff</span> <span class="o">:=</span> <span class="nx">bytes</span><span class="p">.</span><span class="nf">NewBuffer</span><span class="p">(</span><span class="nx">lengthByte</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">length</span> <span class="kt">int32</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//将前4个字节放到length中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">binary</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">lengthBuff</span><span class="p">,</span> <span class="nx">binary</span><span class="p">.</span><span class="nx">LittleEndian</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">length</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Buffered返回缓冲中现有的可读取的字节数。现在发送过来的数据长度是消息的长度信息length加上存放长度信息的包头4个字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nb">int32</span><span class="p">(</span><span class="nx">reader</span><span class="p">.</span><span class="nf">Buffered</span><span class="p">())</span> <span class="p">&lt;</span> <span class="nx">length</span><span class="o">+</span><span class="mi">4</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 读取真正的消息数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">pack</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">4</span><span class="o">+</span><span class="nx">length</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//这里是测试是否能从pack中读出数据，并将读的数据放入pack，读的出就从第5个字节读到尾（下标是从0开始的，因此下标4代表第五个字节）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">pack</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">pack</span><span class="p">[</span><span class="mi">4</span><span class="p">:]),</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来在服务端和客户端分别使用上面定义的 <code>proto</code>包的 <code>Decode</code>和 <code>Encode</code>函数处理数据。</p>
+<p>服务端代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// socket_stick/server2/main.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">process</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">reader</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;decode msg failed, err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;收到client发来的数据：&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">listen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:30000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;listen failed, err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">listen</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listen</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;accept failed, err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">process</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// socket_stick/client2/main.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Dial</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:30000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;dial failed, err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">20</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span> <span class="o">:=</span> <span class="s">`Hello, Hello. How are you?`</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">data</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;encode msg failed, err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="bs架构">b/s架构：</h2>
+<p><img src="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-2.png"
+	width="744"
+	height="517"
+	srcset="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-2_hu8bd04ed6e13fd63ac3dee98b03346bb3_205350_480x0_resize_box_3.png 480w, /p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-2_hu8bd04ed6e13fd63ac3dee98b03346bb3_205350_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="143"
+		data-flex-basis="345px"
+	
+></p>
+<p><img src="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-3.png"
+	width="911"
+	height="233"
+	srcset="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-3_hu912e68d1154eec1c9c19e3483e6b494f_203985_480x0_resize_box_3.png 480w, /p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-3_hu912e68d1154eec1c9c19e3483e6b494f_203985_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="390"
+		data-flex-basis="938px"
+	
+></p>
+<p><img src="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-3.png"
+	width="911"
+	height="233"
+	srcset="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-3_hu912e68d1154eec1c9c19e3483e6b494f_203985_480x0_resize_box_3.png 480w, /p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-3_hu912e68d1154eec1c9c19e3483e6b494f_203985_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="390"
+		data-flex-basis="938px"
+	
+></p>
+<p><img src="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-5.png"
+	width="852"
+	height="623"
+	srcset="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-5_hub26bb446052f23c3274194858211cf4b_259950_480x0_resize_box_3.png 480w, /p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-5_hub26bb446052f23c3274194858211cf4b_259950_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="136"
+		data-flex-basis="328px"
+	
+></p>
+<p><img src="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-4.png"
+	width="1099"
+	height="295"
+	srcset="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-4_hu2aee1affb6060f4967c63fb4e578b717_233772_480x0_resize_box_3.png 480w, /p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-4_hu2aee1affb6060f4967c63fb4e578b717_233772_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="372"
+		data-flex-basis="894px"
+	
+></p>
+<p>但是如果工作中每次都需要向服务器发送一长串的请求包过于繁琐，所以可以使用net/http包来简化</p>
+<p><img src="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-1.png"
+	width="832"
+	height="85"
+	srcset="/p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-1_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/socket%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/media/image-1_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<h3 id="http服务器">http服务器：</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//w为给客户端回复的数据
+</span></span><span class="line"><span class="cl">//req，读取客户端的数据
+</span></span><span class="line"><span class="cl">func HandConn(w http.ResponseWriter, req *http.Request) {
+</span></span><span class="line"><span class="cl">	//给客户端浏览器发送数据
+</span></span><span class="line"><span class="cl">	w.Write([]byte(&#34;hello go&#34;))
+</span></span><span class="line"><span class="cl">	//获取客户端的请求头部参数等
+</span></span><span class="line"><span class="cl">	//在https://studygolang.com/pkgdoc中的net/http中搜type Request可以获取req的所有参数
+</span></span><span class="line"><span class="cl">	fmt.Println(req.URL.Path)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//注册处理函数，用户连接进来自动调用指定的处理函数(即如果域名后面接了/hello则调用后面那个函数)
+</span></span><span class="line"><span class="cl">	//源代码中第二个参数为handler func(ResponseWriter, *Request)
+</span></span><span class="line"><span class="cl">	//即在定义函数时已经定义了这是一个func，且默认已经传了两个参数进去，所以不需要加()来调用，
+</span></span><span class="line"><span class="cl">	//自己写HandConn函数时也不再需要想办法获取ResponseWriter和*http.Request的值了
+</span></span><span class="line"><span class="cl">	http.HandleFunc(&#34;/hello&#34;, HandConn)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//该方法用于在指定的网络地址进行监听，然后调用服务端处理程序来处理传入的连接请求
+</span></span><span class="line"><span class="cl">	//该方法有两个参数：第一个为监听地址；第二个参数表示服务器端处理程序，通常为空
+</span></span><span class="line"><span class="cl">	//第二个参数为空意味着服务端调用http.DefaultServerMux进行处理
+</span></span><span class="line"><span class="cl">	http.ListenAndServe(&#34;127.0.0.1:8000&#34;, nil)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="http客户端">http客户端：</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//获取从百度回传回来的请求包，http是必须要加的
+</span></span><span class="line"><span class="cl">	resp, _ := http.Get(&#34;http://www.baidu.com&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//body是从服务器端读取资源(类似于conn.Read())，最后是需要进行关闭的
+</span></span><span class="line"><span class="cl">	defer resp.Body.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;Status =&#34;, resp.Status)
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;StatusCode =&#34;, resp.StatusCode)
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;Header =&#34;, resp.Header)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//获取baidu.com中的数据Read()，然后赋值给buf，最后追加到tmp中
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">	var tmp string
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := resp.Body.Read(buf)
+</span></span><span class="line"><span class="cl">		if n == 0 {
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;read err =&#34;, err)
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		tmp += string(buf[:n])
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	fmt.Println(tmp)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>参考文档 <a class="link" href="https://www.liwenzhou.com/posts/Go/go_http/"  target="_blank" rel="noopener"
+    >https://www.liwenzhou.com/posts/Go/go_http/</a></p>
+<h2 id="用go写爬虫爬百度贴吧">用go写爬虫爬百度贴吧：</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func SpiderPage(i int, page chan int) {
+</span></span><span class="line"><span class="cl">	//寻找网址规律，每页pn加50,用for循环获取每个网址
+</span></span><span class="line"><span class="cl">	url := &#34;http://tieba.baidu.com/f?kw=%E6%8A%97%E5%8E%8B%E8%83%8C%E9%94%85&amp;ie=utf-8&amp;pn=&#34; + strconv.Itoa((i-1)*50)
+</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;正在爬取第%d页网页%s\n&#34;, i, url)
+</span></span><span class="line"><span class="cl">	result, _ := HttpGet(url)
+</span></span><span class="line"><span class="cl">	//将内容写到文件中
+</span></span><span class="line"><span class="cl">	f, _ := os.Create(strconv.Itoa(i) + &#34;.html&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	f.Write([]byte(result))
+</span></span><span class="line"><span class="cl">	f.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	page &lt;- i
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func HttpGet(url string) (result string, err error) {
+</span></span><span class="line"><span class="cl">	rep, _ := http.Get(url)
+</span></span><span class="line"><span class="cl">	defer rep.Body.Close()
+</span></span><span class="line"><span class="cl">	//爬取
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := rep.Body.Read(buf)
+</span></span><span class="line"><span class="cl">		if n == 0 {
+</span></span><span class="line"><span class="cl">			fmt.Println(err)
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		result += string(buf[:n])
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func DoWork(start, end int) {
+</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;正在爬取 %d到%d的页面。。。&#34;, start, end)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//建立一个管道，避免主进程结束导致子进程结束
+</span></span><span class="line"><span class="cl">	page := make(chan int)
+</span></span><span class="line"><span class="cl">	//获取地址
+</span></span><span class="line"><span class="cl">	for i := start; i &lt;= end; i++ {
+</span></span><span class="line"><span class="cl">		//建立子协程，让多个爬虫同时进行
+</span></span><span class="line"><span class="cl">		go SpiderPage(i, page)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	for i := start; i &lt;= end; i++ {
+</span></span><span class="line"><span class="cl">		//避免协程结束影响子协程
+</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;第%d页已经读取完毕&#34;, &lt;-page)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	var start, end int
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入起始页&#34;)
+</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;start)
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入结束页&#34;)
+</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;end)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	DoWork(start, end)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此方法可以爬取每页内容（包括html内容）存到新建的.html中，如果要爬取需要的内容，可以查看源代码然后通过正则表达式爬出来再存入文件中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">如爬取每个帖子的某段内容，先在每个主页查看源代码爬取出每个帖子的url，
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&lt;a rel=&#34;noreferrer&#34; href=&#34;/p/6978750013&#34; title=&#34;老马是真的叼，剪辑的更吊！！！&#34; target=&#34;_blank&#34; class=&#34;j_th_tit &#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">用正则表达式  (`&lt;a rel=&#34;noreferrer&#34; href=&#34;(?s:(.*?))&#34; title=`)  来爬取出网页链接，
+</span></span><span class="line"><span class="cl">regexp的FindAllStringSubmatch会返回一个二维切片，切片中的里切片第一个值是通过表达式过滤出的内容，
+</span></span><span class="line"><span class="cl">第二个值是正则表达式代表的内容，即/p/6978750013，给它拼接上贴吧网址即可访问
+</span></span><span class="line"><span class="cl">通过range迭代外切片然后在里面调用里切片[1]即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">然后在range中用http.Get爬取内容，依然是查看源代码找到对应的内容进行过滤
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">过来出来的内容可能会有些\t  &lt;br /&gt;之类的，可以用strings.Replace(text,&#34;\t&#34;,&#34;&#34;,-1)去掉
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最后写入文件，如果多标题多内容，可以分开存入到两个切片中，然后后面一口气写进文件中
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果不用子协程来爬取，它就是单协程的程序，它会爬完一个再爬下一个，开了子协程后它可以同时爬取多个，节省了大量时间，但是要注意子协程开启后主协程不能关闭，这样会导致子协程也同时消失，可以使用切片来阻塞主协程，直到爬取完毕</p>
+<h2 id="go语言实现udp通信">Go语言实现UDP通信</h2>
+<h3 id="udp协议">UDP协议</h3>
+<p>UDP协议（User Datagram Protocol）中文名称是用户数据报协议，是OSI（Open System Interconnection，开放式系统互联）参考模型中一种<strong>无连接</strong>的传输层协议，不需要建立连接就能直接进行数据发送和接收，属于不可靠的、没有时序的通信，但是UDP协议的实时性比较好，通常用于视频直播相关领域。</p>
+<h3 id="udp服务端">UDP服务端</h3>
+<p>使用Go语言的 <code>net</code>包实现的UDP服务端代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// UDP/server/main.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// UDP server端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">listen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">ListenUDP</span><span class="p">(</span><span class="s">&#34;udp&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">net</span><span class="p">.</span><span class="nx">UDPAddr</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">IP</span><span class="p">:</span>   <span class="nx">net</span><span class="p">.</span><span class="nf">IPv4</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Port</span><span class="p">:</span> <span class="mi">30000</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;listen failed, err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">listen</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">var</span> <span class="nx">data</span> <span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">byte</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//addr就是发送端的地址类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">n</span><span class="p">,</span> <span class="nx">addr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listen</span><span class="p">.</span><span class="nf">ReadFromUDP</span><span class="p">(</span><span class="nx">data</span><span class="p">[:])</span> <span class="c1">// 接收数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;read udp failed, err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;data:%v addr:%v count:%v\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">[:</span><span class="nx">n</span><span class="p">]),</span> <span class="nx">addr</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">listen</span><span class="p">.</span><span class="nf">WriteToUDP</span><span class="p">(</span><span class="nx">data</span><span class="p">[:</span><span class="nx">n</span><span class="p">],</span> <span class="nx">addr</span><span class="p">)</span> <span class="c1">// 发送数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;write to udp failed, err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="udp客户端">UDP客户端</h3>
+<p>使用Go语言的 <code>net</code>包实现的UDP客户端代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// UDP 客户端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">socket</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">DialUDP</span><span class="p">(</span><span class="s">&#34;udp&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">net</span><span class="p">.</span><span class="nx">UDPAddr</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">IP</span><span class="p">:</span>   <span class="nx">net</span><span class="p">.</span><span class="nf">IPv4</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Port</span><span class="p">:</span> <span class="mi">30000</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;连接服务端失败，err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//close要写在err判断后面，避免真的出错直接结束，导致直接执行defer造成问题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">defer</span> <span class="nx">socket</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">sendData</span> <span class="o">:=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Hello server&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">socket</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">sendData</span><span class="p">)</span> <span class="c1">// 发送数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;发送数据失败，err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">data</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">4096</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">n</span><span class="p">,</span> <span class="nx">remoteAddr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">socket</span><span class="p">.</span><span class="nf">ReadFromUDP</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="c1">// 接收数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;接收数据失败，err:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;recv:%v addr:%v count:%v\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">[:</span><span class="nx">n</span><span class="p">]),</span> <span class="nx">remoteAddr</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

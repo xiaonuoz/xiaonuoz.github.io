@@ -1,0 +1,3681 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='包的导入 go语言中导入包是从 $GOPATH/src/后开始计算的，使用 /进行路径分隔。Go语言中禁止循环导入包（A导B，B导C，C导A），原'>
+<title>golang学习笔记</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='golang学习笔记'>
+<meta property='og:description' content='包的导入 go语言中导入包是从 $GOPATH/src/后开始计算的，使用 /进行路径分隔。Go语言中禁止循环导入包（A导B，B导C，C导A），原'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-09-09T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-09-09T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="golang学习笔记">
+<meta name="twitter:description" content="包的导入 go语言中导入包是从 $GOPATH/src/后开始计算的，使用 /进行路径分隔。Go语言中禁止循环导入包（A导B，B导C，C导A），原">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#包的导入">包的导入</a></li>
+    <li><a href="#iota常量自动生成">iota常量自动生成</a></li>
+    <li><a href="#for函数别名匿名函数指针">for、函数别名、匿名函数、指针</a></li>
+    <li><a href="#数组">数组</a></li>
+    <li><a href="#随机数产生">随机数产生</a></li>
+    <li><a href="#切片">切片</a>
+      <ol>
+        <li><a href="#切片与底层数组的关系重要">切片与底层数组的关系（重要）：</a></li>
+      </ol>
+    </li>
+    <li><a href="#map">map</a></li>
+    <li><a href="#结构体类型多个变量合成一个变量">结构体类型（多个变量合成一个变量）</a></li>
+    <li><a href="#匿名字段类似java中的继承">匿名字段（类似java中的继承）</a></li>
+    <li><a href="#方法类似java封装">方法（类似java封装）</a>
+      <ol>
+        <li><a href="#方法集">方法集</a></li>
+        <li><a href="#方法的继承和重写">方法的继承和重写</a></li>
+      </ol>
+    </li>
+    <li><a href="#接口">接口</a>
+      <ol>
+        <li><a href="#如何判断一个空接口变量中值的类型valueint">如何判断一个空接口变量中值的类型（value.(int)）</a></li>
+        <li><a href="#error错误接口的应用错误抛出不致命错误使用这种">error错误接口的应用（错误抛出，不致命错误使用这种）</a></li>
+        <li><a href="#panic错误接口的调用致命错误">panic错误接口的调用（致命错误）</a></li>
+        <li><a href="#recover错误接口的调用拦截panic异常恢复程序运行流程">recover错误接口的调用（拦截panic异常，恢复程序运行流程）</a></li>
+      </ol>
+    </li>
+    <li><a href="#文本和文件处理">文本和文件处理</a>
+      <ol>
+        <li><a href="#字符串处理">字符串处理</a></li>
+      </ol>
+    </li>
+    <li><a href="#正则表达式的使用导入包regexp">正则表达式的使用（导入包regexp）</a></li>
+    <li><a href="#json处理需要encodingjson包">JSON处理(需要encoding/json包)</a>
+      <ol>
+        <li><a href="#通过结构体生成json文件">通过结构体生成json文件</a></li>
+        <li><a href="#通过map生成json文件">通过map生成json文件</a></li>
+        <li><a href="#json解析到结构体json解码">json解析到结构体(json解码)</a></li>
+        <li><a href="#json解析到map">json解析到map</a></li>
+      </ol>
+    </li>
+    <li><a href="#文件操作需要os包">文件操作（需要os包）</a>
+      <ol>
+        <li><a href="#文件的创建和写入">文件的创建和写入</a></li>
+        <li><a href="#文件的读取">文件的读取</a></li>
+        <li><a href="#如何一行一行的进行读取且务必读完文件的全部内容不论大小">如何一行一行的进行读取且务必读完文件的全部内容（不论大小）</a></li>
+        <li><a href="#实例拷贝文件">实例：拷贝文件</a></li>
+      </ol>
+    </li>
+    <li><a href="#go语言多线程">go语言多线程</a>
+      <ol>
+        <li><a href="#goroutine协程">goroutine(协程)</a></li>
+        <li><a href="#runtime包">runtime包</a>
+          <ol>
+            <li><a href="#gosched">Gosched()</a></li>
+            <li><a href="#goexit">Goexit()</a></li>
+            <li><a href="#gomaxprocs">GOMAXPROCS()</a></li>
+          </ol>
+        </li>
+        <li><a href="#channel类型">channel类型</a>
+          <ol>
+            <li><a href="#无缓存通道和有缓存通道">无缓存通道和有缓存通道</a></li>
+            <li><a href="#单项channel管道">单项channel管道</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#定时器">定时器</a>
+      <ol>
+        <li><a href="#timer类似一次性闹钟">Timer(类似一次性闹钟)</a></li>
+        <li><a href="#ticker类似循环闹钟">Ticker（类似循环闹钟）</a></li>
+      </ol>
+    </li>
+    <li><a href="#select-可以监听channel通道的数据流动">Select (可以监听channel通道的数据流动)</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#斐波那契数列">斐波那契数列</a></li>
+          </ol>
+        </li>
+        <li><a href="#用select实现超时退出">用select实现超时退出</a></li>
+      </ol>
+    </li>
+    <li><a href="#socket网络编程需要net包">Socket网络编程（需要net包）</a>
+      <ol>
+        <li><a href="#cs架构">c/s架构</a>
+          <ol>
+            <li><a href="#服务器部分">服务器部分：</a></li>
+            <li><a href="#客户端部分">客户端部分：</a></li>
+            <li><a href="#如何多个客户端同时连接同一个服务器重要">如何多个客户端同时连接同一个服务器（重要）</a></li>
+            <li><a href="#远程发送文件">远程发送文件：</a></li>
+            <li><a href="#并发聊天服务器">并发聊天服务器</a></li>
+          </ol>
+        </li>
+        <li><a href="#bs架构">b/s架构：</a>
+          <ol>
+            <li><a href="#http服务器">http服务器：</a></li>
+            <li><a href="#http客户端">http客户端：</a></li>
+            <li><a href="#用go写爬虫爬百度贴吧">用go写爬虫爬百度贴吧：</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#常见知识点">常见知识点</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">golang学习笔记</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 09, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="包的导入">包的导入</h2>
+<p>go语言中导入包是从 <code>$GOPATH/src/</code>后开始计算的，使用 <code>/</code>进行路径分隔。Go语言中禁止循环导入包（A导B，B导C，C导A），原因看此连接，<a class="link" href="" >https://www.jianshu.com/p/ea76c0d1b609</a>，禁用虽然会导致写代码的时候麻烦点，但是可以让依赖整洁，开发高效。</p>
+<p>包名可以自定义，<code>ca &quot;github.com/calc&quot;</code></p>
+<p>在Go语言程序执行时导入包语句会自动触发<strong>包内部 <code>init()</code>函数的调用</strong>。需要注意的是： <code>init()</code>函数没有参数也没有返回值。 <code>init()</code>函数在程序运行时自动被调用执行，不能在代码中主动调用它。运行自己的包也会执行自己的init函数，可以借此使用匿名包来只调用init函数，多用于自动加载配置文件等情况</p>
+<h2 id="iota常量自动生成">iota常量自动生成</h2>
+<p>const() 括号中的为一个常量组，后一个不赋值默认与上一行值相同，因此可以只写一个iota</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-1.png"
+	width="405"
+	height="137"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-1_hu3175b3861382be8ae2094ac5b5cd272c_5027_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-1_hu3175b3861382be8ae2094ac5b5cd272c_5027_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="295"
+		data-flex-basis="709px"
+	
+></p>
+<p>iota是常量的自动生成器，他每新增一行常量声明（即使新增的不是Iota）就自动累加1，只适用于常量，const出现的时候iota被置为0，如果iota第一次使用不是在const的第一行，如它在第五行，那iota第一次的值就为4</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-4.png"
+	width="282"
+	height="136"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-4_hudce2befa6b5ae67ff83b38f2d0ccedf1_28709_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-4_hudce2befa6b5ae67ff83b38f2d0ccedf1_28709_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="207"
+		data-flex-basis="497px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12.png"
+	width="870"
+	height="424"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+>       <img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image.png"
+	width="161"
+	height="96"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image_hu59a002a944e490c60eba9318f821880f_1178_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image_hu59a002a944e490c60eba9318f821880f_1178_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="167"
+		data-flex-basis="402px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3.png"
+	width="469"
+	height="188"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3_hu967d70ce2e2243e3f0588541b8d265f0_57628_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3_hu967d70ce2e2243e3f0588541b8d265f0_57628_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="249"
+		data-flex-basis="598px"
+	
+></p>
+<p>如果c3不赋值为iota，那它的值为100（和上一行值相同）</p>
+<p>如果下面重新定义const内的iota，它会重置为0，也可以只写一个iota</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2.png"
+	width="277"
+	height="135"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2_hu284a2c02ecd1c63628adf066017725ae_24124_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2_hu284a2c02ecd1c63628adf066017725ae_24124_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<p>如果是同一行，值就都一样</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3.png"
+	width="469"
+	height="188"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3_hu967d70ce2e2243e3f0588541b8d265f0_57628_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3_hu967d70ce2e2243e3f0588541b8d265f0_57628_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="249"
+		data-flex-basis="598px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2.png"
+	width="277"
+	height="135"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2_hu284a2c02ecd1c63628adf066017725ae_24124_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2_hu284a2c02ecd1c63628adf066017725ae_24124_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<p>&laquo;表示把1左移十位，后面接0，即kb等于1然后十个0，但这是二进制，转换为十进制就是1024，mb就是移20位，就是1024*1024，即为1M</p>
+<h2 id="for函数别名匿名函数指针">for、函数别名、匿名函数、指针</h2>
+<p>go语言在switch语句中默认保留了break，但是默认是不用写的</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-4.png"
+	width="282"
+	height="136"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-4_hudce2befa6b5ae67ff83b38f2d0ccedf1_28709_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-4_hudce2befa6b5ae67ff83b38f2d0ccedf1_28709_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="207"
+		data-flex-basis="497px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p>golang中函数名首字母大写表示公有的，小写表示私有的</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8.png"
+	width="594"
+	height="520"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="114"
+		data-flex-basis="274px"
+	
+></p>
+<p>可以由此实现多态</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-9.png"
+	width="968"
+	height="571"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-9_huad0f21fde93698e47759b1528413a6a8_367414_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-9_huad0f21fde93698e47759b1528413a6a8_367414_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="169"
+		data-flex-basis="406px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<p>如果有多个defer，遵循先进后出原则，即先定义的defer在最后输出，defer由最下面的defer语句开始向上执行直到第一个defer语句，中间如果有defer执行失败，后面的defer语句依然会继续执行，但是如果main函数中有非defer语句执行失败导致脚本退出，那就无法继续执行后面的defer语句和普通语句</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22.png"
+	width="880"
+	height="638"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22_hua817e47c3827ca6e6d644e17d38de653_420866_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22_hua817e47c3827ca6e6d644e17d38de653_420866_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="137"
+		data-flex-basis="331px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10.png"
+	width="832"
+	height="85"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15.png"
+	width="860"
+	height="168"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15_hu3e8d32dbf2cf3df6f041ef917064e2c6_132929_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15_hu3e8d32dbf2cf3df6f041ef917064e2c6_132929_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="511"
+		data-flex-basis="1228px"
+	
+></p>
+<p>go有自动的垃圾回收机制，我们只需要创建内存即可。</p>
+<h2 id="数组">数组</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10.png"
+	width="832"
+	height="85"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<p>数组比较只支持等于和不等于，比较的是两个数组的每一个元素是否都一样，且比较的两个数组类型要一样</p>
+<p>二维数组定义则为</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12.png"
+	width="870"
+	height="424"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<p>当数组通过函数传递过去后，如果在主函数中没有值可以接收return的话，它就会释放，即传过去的值无论怎么修改都和主函数中的数组没关系</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<p><strong>如何将数组通过地址传递呢？</strong></p>
+<p>首先方法的参数为(a  *[5]int),这样就可以将数组的指针实参传递给方法，然后操作原数组的某一个下标值就可以使用 ( *a)[3]=22来改变原数组某个下标值，*a必须要用圆括号合成一个整体</p>
+<h2 id="随机数产生">随机数产生</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12.png"
+	width="870"
+	height="424"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<h2 id="切片">切片</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12.png"
+	width="870"
+	height="424"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<p><strong>array := [5]int{1,2,3,4,5}
+slice := array[1:3:5]
+其中第一个数表示从数组的下标几开始切（下标的起点）；第二个数表示为从何处结束（下标的终点，不包括此下标），切边的长度为第二个数减去第一个数，遵循左闭右开原则；第三个数可以自己定义，最小等于第二个数（即容量等于长度），不写默认为父级（被切的那个数组或切片）的len(），容量为第三个数减去第一个数</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14.png"
+	width="884"
+	height="134"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14_hu196dd7a3319f9f8c8503de23e11e0317_111238_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14_hu196dd7a3319f9f8c8503de23e11e0317_111238_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="659"
+		data-flex-basis="1583px"
+	
+></p>
+<p><strong>切片和数组的区别：</strong></p>
+<p>数组[]里面的长度是一个固定的常量，设定后便不能进行修改；</p>
+<p>a := [5]int{}   (现在数组元素为5个0)</p>
+<p>切片,[]里面为空或者为&hellip;，切片的长度可以不固定，可以通过append方法给切片末尾追加一个成员</p>
+<p>s := []int{}     （{}中没有值，0元素，也可以像数组一样进行添加{1,2,3}）</p>
+<p>s=append(s,11)</p>
+<p><strong>所以可以根据[]的值来判断是切片还是数组</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15.png"
+	width="860"
+	height="168"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15_hu3e8d32dbf2cf3df6f041ef917064e2c6_132929_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15_hu3e8d32dbf2cf3df6f041ef917064e2c6_132929_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="511"
+		data-flex-basis="1228px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-25.png"
+	width="900"
+	height="468"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-25_hu9b8a16678515978a45364aba3ddd504b_323372_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-25_hu9b8a16678515978a45364aba3ddd504b_323372_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="192"
+		data-flex-basis="461px"
+	
+></p>
+<h3 id="切片与底层数组的关系重要">切片与底层数组的关系（重要）：</h3>
+<p>对一个数组或切片进行切片操作后，它并不是和数组传参一样拷贝一个新数组使用，如果在新切片中对某个值重新定义，它会反映到最初那个数组或切片中</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22.png"
+	width="880"
+	height="638"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22_hua817e47c3827ca6e6d644e17d38de653_420866_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22_hua817e47c3827ca6e6d644e17d38de653_420866_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="137"
+		data-flex-basis="331px"
+	
+></p>
+<p>切片copy的作用为将一个切片复制到另一个切片，对应下标，不会改变容量，即如果参数交换，最终也是{6,6},使用copy是因为如果直接使用等号最后操作的依然是初始切片</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<h2 id="map">map</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2.png"
+	width="277"
+	height="135"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2_hu284a2c02ecd1c63628adf066017725ae_24124_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-2_hu284a2c02ecd1c63628adf066017725ae_24124_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<p>map是无序的键值对，可以通过range进行遍历，range还可以用于数组切片等</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10.png"
+	width="832"
+	height="85"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">map定义:
+</span></span><span class="line"><span class="cl">m :=map[int]string{1:&#34;value&#34;,2:&#34;value1&#34;}
+</span></span><span class="line"><span class="cl">m :=make(map[int]string,10)   #10为长度
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">map赋值：  
+</span></span><span class="line"><span class="cl">m[&#34;key&#34;]=&#34;value&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">map删除：
+</span></span><span class="line"><span class="cl">delete(m,1)   #删除key为1的内容
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">map作为函数参数传过去时属于引用传参，即在函数中修改了map的值，原值也会修改（切片也是）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="结构体类型多个变量合成一个变量">结构体类型（多个变量合成一个变量）</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12.png"
+	width="870"
+	height="424"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-19.png"
+	width="875"
+	height="240"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-19_huf5fcf2d1c8c248c6f82530126c71c847_206153_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-19_huf5fcf2d1c8c248c6f82530126c71c847_206153_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="364"
+		data-flex-basis="875px"
+	
+></p>
+<p>也可以用s1.name=&ldquo;mike&quot;来进行部分成员初始化或者获取成员的值</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11.png"
+	width="441"
+	height="277"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="159"
+		data-flex-basis="382px"
+	
+></p>
+<p><strong>这样就可以和Java操作对象一样使用，虽然new返回的是一个内存指针，但是在结构体类型中*p2.id和p2.id指向的都是同一块内存，所以可以直接p2.id来对新申请的结构体成员赋值</strong></p>
+<p>同一个结构体的不同变量可以进行赋值以及  等于和不等于的比较（它会比较两者每一个成员是否相等）</p>
+<p>结构体的函数传参属于值传递，它在另一个函数中值改变并不会影响到本函数的值</p>
+<p>引用传参才会对同一个值进行修改，如果要改为引用传参，则需要使用指针*和&amp;进行指针传递</p>
+<p><strong>go语言只分为可见和不可见，当函数名、结构体、结构体成员名首字母为大写时，它为可见的，其他包可以进行调用，调用方法为包名.函数名、包名.结构体名，如果首字母为小写则只有自己包内的其他文件可以调用</strong></p>
+<h2 id="匿名字段类似java中的继承">匿名字段（类似java中的继承）</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18.png"
+	width="885"
+	height="468"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18_hu5f5085614a05796347098b9750bbcb98_433791_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18_hu5f5085614a05796347098b9750bbcb98_433791_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="189"
+		data-flex-basis="453px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13.png"
+	width="863"
+	height="168"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13_hu3530020d017dc3f905fd95aab7883219_142084_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13_hu3530020d017dc3f905fd95aab7883219_142084_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="513"
+		data-flex-basis="1232px"
+	
+></p>
+<p><strong>对于父级的变量部分初始化首先需要子集中的名字Person，然后是修改父级中的某一个成员，需要再加一个Person</strong></p>
+<p>我比较喜欢用st :=st{}先进行初始化（或者用var st student先声明），然后再用st.name（可以直接调用父级的元素）来进行赋值</p>
+<p>也可以用st.Person=Person{&ldquo;go&rdquo;,18}或者st.Person.name这种来对父级元素进行赋值</p>
+<p>如果父级和子级有同名成员(如name)，那么就根据就近原则，默认调用的为子级的name成员，想调用父级的name就需要用显式调用 st.Person.name来赋值</p>
+<p><strong>当使用type定义了一个普通类型的别名后，用别名定义的变量和普通类型定义的变量是不同的类型，go将他们认作两个不同的类型</strong></p>
+<h2 id="方法类似java封装">方法（类似java封装）</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14.png"
+	width="884"
+	height="134"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14_hu196dd7a3319f9f8c8503de23e11e0317_111238_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14_hu196dd7a3319f9f8c8503de23e11e0317_111238_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="659"
+		data-flex-basis="1583px"
+	
+></p>
+<p><strong>这样就可以通过定义的结构体元素（甚至是普通类型起别名后）调用属于它的方法，只要定义了一个对应类型的变量，就可以调用这个类型的方法（就和java中new一个新对象一样），但是方法实际上依然是函数，所以如果对象是结构体或数组，它传参依然是值传参，可以通过对方法中绑定的实例设置为实例的指针来进行引用传参</strong></p>
+<p>接收者类型本身不能是指针，*int之类的可以使用，但是如果在其他地方定义别名 type long *int，再将此long作为接收者的话就不能编译通过</p>
+<p>只要接收者类型不一样，就算方法同名也属于不同方法</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3.png"
+	width="469"
+	height="188"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3_hu967d70ce2e2243e3f0588541b8d265f0_57628_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3_hu967d70ce2e2243e3f0588541b8d265f0_57628_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="249"
+		data-flex-basis="598px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8.png"
+	width="594"
+	height="520"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="114"
+		data-flex-basis="274px"
+	
+></p>
+<h3 id="方法集">方法集</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8.png"
+	width="594"
+	height="520"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="114"
+		data-flex-basis="274px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13.png"
+	width="863"
+	height="168"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13_hu3530020d017dc3f905fd95aab7883219_142084_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13_hu3530020d017dc3f905fd95aab7883219_142084_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="513"
+		data-flex-basis="1232px"
+	
+></p>
+<p><strong>即一个变量或变量指针调用方法不受接收者类型的约束，只要接受者类型是同种自定义类型的值或者指针都可以进行调用（它在执行方法时，内部会先自动将指针转换成变量或者反之）</strong></p>
+<h3 id="方法的继承和重写">方法的继承和重写</h3>
+<p><strong>子级不仅可以继承父级的结构体成员，还会继承父级的方法（直接调用就行）</strong></p>
+<p>重写就是将接收者改为子级的自定义函数，其他参数和变量名相同，go语言会采用就近原则，先调用同作用域的方法，如果同作用域没有该方法就会调用父级的，如果需要调用父级的方法，可以采用显式调用，<strong>st.Person.PrintInfo()</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14.png"
+	width="884"
+	height="134"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14_hu196dd7a3319f9f8c8503de23e11e0317_111238_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-14_hu196dd7a3319f9f8c8503de23e11e0317_111238_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="659"
+		data-flex-basis="1583px"
+	
+></p>
+<p>方法值：保存方法的入口地址。调用方法时无需再传递接收者，因为它已经隐藏了接受者  pFunc := p.SetInfo()，下次直接pFunc()就可以直接调用</p>
+<p>方法表达式：通过自定义类型来显式的把接收者传递过去，pFunc := (Person).SetInfo，调用的时候就可以使用pFunc(p)来进行调用，这里p变量可以指针和变量通用，但是Person必须和方法对应，方法是指针就需要输入 *Person</p>
+<h2 id="接口">接口</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-26.png"
+	width="852"
+	height="267"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-26_hu54c53fba4a39cf9e877cc84b8802474b_259012_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-26_hu54c53fba4a39cf9e877cc84b8802474b_259012_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="319"
+		data-flex-basis="765px"
+	
+></p>
+<p><strong>接口命名习惯以er结尾，只有方法声明，没有实现也没有数据字段，但是方法是可以添加参数的</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p>然后在main函数中声明一个接口类型，<strong>var i Humaner</strong>,然后让 i 等于其他接收者的自定义类型，当 i 等于某个接收者类型它就会调用那个类型的同名方法，<strong>但是i等于其他接收者时，i只能调用属于i接口的方法，专属于接收者的方法以及其变量，接口都不能调用</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//定义接口类型
+</span></span><span class="line"><span class="cl">type Hunmaner interface {
+</span></span><span class="line"><span class="cl">	sayhi()
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">//定义学生结构体类型
+</span></span><span class="line"><span class="cl">type student struct {
+</span></span><span class="line"><span class="cl">	name string
+</span></span><span class="line"><span class="cl">	id   int
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">//定义学生方法
+</span></span><span class="line"><span class="cl">func (student) sayhi() {
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;student say hi&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">//定义老师结构体类型
+</span></span><span class="line"><span class="cl">type teacher struct {
+</span></span><span class="line"><span class="cl">	name  string
+</span></span><span class="line"><span class="cl">	addre string
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">//定义老师方法
+</span></span><span class="line"><span class="cl">func (teacher) sayhi() {
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;teacher say hi&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//实现多态，定义一个接口的方法，方法参数为接口类型，将其他接收者类型的实参传进去就可以实现调用不同方法
+</span></span><span class="line"><span class="cl">func whoSayhi(i Hunmaner){
+</span></span><span class="line"><span class="cl">	i.sayhi()
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//i等于学生结构体，i就可以调用学生的方法
+</span></span><span class="line"><span class="cl">	var i Hunmaner
+</span></span><span class="line"><span class="cl">	i = student{name: &#34;mike&#34;}
+</span></span><span class="line"><span class="cl">	i.sayhi()
+</span></span><span class="line"><span class="cl">	//输出学生方法中的语句
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//通过接口实现不同的方法
+</span></span><span class="line"><span class="cl">	whoSayhi(student{name: &#34;mike&#34;})
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	i = teacher{name: &#34;laoshi&#34;}
+</span></span><span class="line"><span class="cl">	i.sayhi()
+</span></span><span class="line"><span class="cl">	//输出老师方法中的语句
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>也可以通过切片同时实现多种接收者的同名的方法</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8.png"
+	width="594"
+	height="520"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="114"
+		data-flex-basis="274px"
+	
+></p>
+<p>接口也可以实现继承（使用匿名字段），当定义一个Personer变量时，它可以调用父级的sayhi()方法也可以调用自身的sing()方法</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8.png"
+	width="594"
+	height="520"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="114"
+		data-flex-basis="274px"
+	
+></p>
+<p>父级可以等于子级的值，反过来则不可以（由多的向少的转换）,如 定义一个父级i，让i等于子级iPro，i=iPro是可以的，<strong>注意语法是 父级=子级，这个作用于设置子级的值，然后将子级的值赋给父级使用，父级只能使用属于父级的方法，子级的方法无法使用</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12.png"
+	width="870"
+	height="424"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<h3 id="如何判断一个空接口变量中值的类型valueint">如何判断一个空接口变量中值的类型（value.(int)）</h3>
+<p>,ok模式常用于测试map的对应key是否有值，有值ok为ture，没有则为false，value用于存放为true时的值，为false时为空</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	i := map[int]string{1: &#34;a&#34;}
+</span></span><span class="line"><span class="cl">	value, ok := i[1]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>还有另外五种用法（https://zhuanlan.zhihu.com/p/129220255）</p>
+<p>有一种用法是判断空接口类型变量的type（<strong>切片和数组无法使用这个，因为它们两个在定义之初就已经确定了类型</strong>）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	i := make([]interface{}, 3)
+</span></span><span class="line"><span class="cl">	i[0] = 1
+</span></span><span class="line"><span class="cl">	i[1] = &#34;str&#34;
+</span></span><span class="line"><span class="cl">	i[2] = stu{&#34;mike&#34;}
+</span></span><span class="line"><span class="cl">	for _, deta := range i {
+</span></span><span class="line"><span class="cl">		if value, ok := deta.(int); ok == true {
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;这是一个整型&#34;, value)
+</span></span><span class="line"><span class="cl">		} else if value, ok := deta.(string); ok == true {
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;这是一个字符串&#34;, value)
+</span></span><span class="line"><span class="cl">		} else if value, ok := deta.(stu); ok == true {
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;这是一个结构体类型&#34;, value)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//也可以使用switch方法，用此方法时括号中为type
+</span></span><span class="line"><span class="cl">	for _, deta := range i {
+</span></span><span class="line"><span class="cl">		switch value := deta.(type) {
+</span></span><span class="line"><span class="cl">		case int:
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;这是一个整型&#34;, value)
+</span></span><span class="line"><span class="cl">		case string:
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;这是一个字符串&#34;, value)
+</span></span><span class="line"><span class="cl">		case stu:
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;这是一个结构体类型&#34;, value)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="error错误接口的应用错误抛出不致命错误使用这种">error错误接口的应用（错误抛出，不致命错误使用这种）</h3>
+<p>在工作中error常用于普通错误，这样可以自建一个错误信息抛出，error是默认值为nil   （空值）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//要先导入包errors，import &#34;errors&#34;
+</span></span><span class="line"><span class="cl">func Mydiv(a, b int) (result int, err error) {
+</span></span><span class="line"><span class="cl">	if b == 0 {
+</span></span><span class="line"><span class="cl">		err = errors.New(&#34;分母不能为0&#34;)
+</span></span><span class="line"><span class="cl">	} else {
+</span></span><span class="line"><span class="cl">		result = a / b
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	result, err := Mydiv(10, 0)
+</span></span><span class="line"><span class="cl">	fmt.Println(result)  //值为默认值0
+</span></span><span class="line"><span class="cl">	fmt.Println(err)     //值为自己定义的错误值
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="panic错误接口的调用致命错误">panic错误接口的调用（致命错误）</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18.png"
+	width="885"
+	height="468"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18_hu5f5085614a05796347098b9750bbcb98_433791_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18_hu5f5085614a05796347098b9750bbcb98_433791_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="189"
+		data-flex-basis="453px"
+	
+></p>
+<p>自己调用panic属于显式调用，但在数组越界，空指针引用等情况发生时，go也会抛出panic异常，因为它有自己隐式调用了默认定义的panic异常</p>
+<h3 id="recover错误接口的调用拦截panic异常恢复程序运行流程">recover错误接口的调用（拦截panic异常，恢复程序运行流程）</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12.png"
+	width="870"
+	height="424"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func test01(x int) {
+</span></span><span class="line"><span class="cl">	//使用数组下标越界生成panic异常
+</span></span><span class="line"><span class="cl">	//recover必须和defer一起存在，recover()会拦截panic异常并返回panic的异常信息
+</span></span><span class="line"><span class="cl">	//如果未发生panic异常，recover()会返回一个nil
+</span></span><span class="line"><span class="cl">	//程序会继续运行,但是出错的函数会跳过
+</span></span><span class="line"><span class="cl">	defer func() {
+</span></span><span class="line"><span class="cl">		if err := recover(); err != nil {
+</span></span><span class="line"><span class="cl">			fmt.Println(err)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">	var a [10]int
+</span></span><span class="line"><span class="cl">	a[x] = 111
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">func test02() {
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;正常输出的一个方法&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	test01(11)
+</span></span><span class="line"><span class="cl">	test02()
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">运行结果：
+</span></span><span class="line"><span class="cl">runtime error: index out of range [11] with length 10
+</span></span><span class="line"><span class="cl">正常输出的一个方法
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="文本和文件处理">文本和文件处理</h2>
+<h3 id="字符串处理">字符串处理</h3>
+<p>字符串操作：(需要导入包strings)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Contains(查看是否包含某一字串，包含返回true)
+</span></span><span class="line"><span class="cl">	strings.Contains(&#34;hello&#34;, &#34;he&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Join(字符串拼接，参数为一个切片和一个string，返回结果为he@ta@ssss)
+</span></span><span class="line"><span class="cl">	s := []string{&#34;he&#34;, &#34;ta&#34;, &#34;ssss&#34;}
+</span></span><span class="line"><span class="cl">	fmt.Println(strings.Join(s, &#34;@&#34;))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Index(在字符串s中查找sep所在的位置，返回位置值，找不到返回-1，如果ken第二个值为t，返回的就是-1)
+</span></span><span class="line"><span class="cl">	strings.Index(&#34;chicken&#34;,&#34;ken&#34;)    返回4
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Repeat(重复字符串n次，最后返回重复的字符串)
+</span></span><span class="line"><span class="cl">	strings.Repeat(&#34;na&#34;,2)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Replace(替换,2表示替换几个，-1表示全部替换)
+</span></span><span class="line"><span class="cl">	strings.Replace(&#34;ok ok ok&#34;,&#34;k&#34;,&#34;t&#34;,2)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Split(分离，把字符串按某个字符进行分割，返回分割后的值，返回值是一个切片)
+</span></span><span class="line"><span class="cl">	strings.Split(&#34;a,b,c&#34;,&#34;,&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Trim(在s字符串的头部和尾部去除指定的字符串,最后三个感叹号都会去除，如果结尾没有感叹号就只去除开头的)
+</span></span><span class="line"><span class="cl">	strings.Trim(&#34;!!!Anan!!!&#34;,&#34;!&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Fields(去除s字符串的空格符，并且按照空格分割返回一个切片类型,任意个空格都会去除)
+</span></span><span class="line"><span class="cl">	strings.Fields(&#34;    a  b    c &#34;)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>字符串转换：(需要导入包strconv)</p>
+<p>Append系列函数将<strong>整数等</strong>转换为字符串后，添加到现有的<strong>字节</strong>数组中<img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-16.png"
+	width="736"
+	height="215"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-16_hu8254b72c6e5eb049fe25917f3aed785e_141691_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-16_hu8254b72c6e5eb049fe25917f3aed785e_141691_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="342"
+		data-flex-basis="821px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11.png"
+	width="441"
+	height="277"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="159"
+		data-flex-basis="382px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p>Parse系列函数把字符串转换为其他类型</p>
+<p><strong>Parse系列函数的返回值有两个，第一个是转换的值，第二个是error值，当转换失败时error会抛出错误，如转布尔值输入的是tr11ue</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8.png"
+	width="594"
+	height="520"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-8_hu0073155c2d9ee473b7895fe256676be2_226078_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="114"
+		data-flex-basis="274px"
+	
+></p>
+<h2 id="正则表达式的使用导入包regexp">正则表达式的使用（导入包regexp）</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	buf := &#34;abc adc aac a88 k8s&#34;
+</span></span><span class="line"><span class="cl">	//1.解释规则，它会解析正则表达式，如果成功返回解释器，失败返回nil
+</span></span><span class="line"><span class="cl">	reg1 := regexp.MustCompile(`a.c`) //括号中可以用双引号和反引号，推荐反引号
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//2.根据规则提取关键信息，-1表示匹配所有，1表示只匹配一个，返回的值是一个切片类型
+</span></span><span class="line"><span class="cl">	result := reg1.FindAllStringSubmatch(buf, -1)
+</span></span><span class="line"><span class="cl">	fmt.Println(result, result[2])
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17.png"
+	width="793"
+	height="187"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17_hueeb1ac505d4964f5849adc5516fc6ea2_124210_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17_hueeb1ac505d4964f5849adc5516fc6ea2_124210_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="424"
+		data-flex-basis="1017px"
+	
+></p>
+<h2 id="json处理需要encodingjson包">JSON处理(需要encoding/json包)</h2>
+<h3 id="通过结构体生成json文件">通过结构体生成json文件</h3>
+<p>默认情况下从结构体生成json格式，结构体的成员首字母必须大写，<strong>结构体名可以小写，因为在本包使用 <code>Marshal</code>方法是从本包传结构体到json的包让它编码，它肯定能访问到结构体，但是成员如果小写，json的包就无法调用到</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type person struct {
+</span></span><span class="line"><span class="cl">	Name string
+</span></span><span class="line"><span class="cl">	Age  int
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	p1 := person{&#34;张三&#34;,19}
+</span></span><span class="line"><span class="cl">	b, _ := json.Marshal(p1)
+</span></span><span class="line"><span class="cl">	fmt.Println(string(b))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	var p2 person
+</span></span><span class="line"><span class="cl">	json.Unmarshal(b, &amp;p2)	//结构体是值传递，如果不使用指针就只会修改副本，不会修改p2原有的内容
+</span></span><span class="line"><span class="cl">	fmt.Println(p2)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Marshal()会返回两个值，一个json内容一个错误值，可以用If语句接受错误，然后用return让main函数中断，<strong>return在函数中的意义：如果函数返回值有定义，则return表示返回数据，如果没有定义返回值，return就表示退出此函数，在main函数中有return就表示中断程序但是不会报错</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-24.png"
+	width="1211"
+	height="579"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-24_hu602ad7df09f680c7877fa53f5c683f05_376352_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-24_hu602ad7df09f680c7877fa53f5c683f05_376352_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="501px"
+	
+></p>
+<p>buf获得的值是一个<strong>字节切片类型</strong>，可以直接string(buf)强转成string类型</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12.png"
+	width="870"
+	height="424"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-12_hu87bc5bece7906e4e7bd6c9cc3e6db360_344016_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<p>转换成string后输出的是一个整体值，无法再用切片[0]来调用任意一个成员</p>
+<h3 id="通过map生成json文件">通过map生成json文件</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17.png"
+	width="793"
+	height="187"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17_hueeb1ac505d4964f5849adc5516fc6ea2_124210_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17_hueeb1ac505d4964f5849adc5516fc6ea2_124210_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="424"
+		data-flex-basis="1017px"
+	
+></p>
+<p>MarshalIndent()的第三个参数为一个TAB键字符串</p>
+<h3 id="json解析到结构体json解码">json解析到结构体(json解码)</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17.png"
+	width="793"
+	height="187"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17_hueeb1ac505d4964f5849adc5516fc6ea2_124210_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-17_hueeb1ac505d4964f5849adc5516fc6ea2_124210_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="424"
+		data-flex-basis="1017px"
+	
+></p>
+<p>json的变量名是小写，而结构体的首字母是大写，所以可以通过对结构体二次编码来关联上，<strong>不建议将结构体的首字母变成小写</strong>，因为如果变成小写的话，以后又需要生成json就会失败，并且如果程序其他地方有使用到这个结构体，成员名赋值也需要修改</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10.png"
+	width="832"
+	height="85"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<p>Unmarshal()有两个参数，<strong>一个是byte切片类型（通过强转jsonBuf获得），一个是结构体的指针</strong>，放指针是因为给函数传结构体变量<strong>属于值传递</strong>，并不会修改本身结构体的内容，是拷贝了一份新的结构体给函数，只有通过指针实现引用传递才可以修改本身结构体内容，这个函数的返回值只有error</p>
+<p>如果只需要部分解析，可以重新定义一个只含有部分成员的结构体来接受解析内容</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3.png"
+	width="469"
+	height="188"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3_hu967d70ce2e2243e3f0588541b8d265f0_57628_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-3_hu967d70ce2e2243e3f0588541b8d265f0_57628_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="249"
+		data-flex-basis="598px"
+	
+></p>
+<h3 id="json解析到map">json解析到map</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<p><strong>map也需要传递指针过去，这里原理不太清楚，但是测试过发现不加指针&amp;就无法对原值进行修改，尽管map属于引用传递</strong></p>
+<p>如果通过map接受解析的值，它接受到的值类型都属于<strong>空接口类型</strong>，对其强转string(m[&ldquo;test&rdquo;])是无法成功的，需要使用switch断言来回推类型进行赋值</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-20.png"
+	width="1261"
+	height="466"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-20_hu9dc1b063808fa77db2424dfe2b1dd20f_462860_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-20_hu9dc1b063808fa77db2424dfe2b1dd20f_462860_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="270"
+		data-flex-basis="649px"
+	
+></p>
+<p><strong>switch可以在赋值的同时进行判断，即 switch a := 3; 判断的是st的值，空接口类型断言隐性的将data的类型放在了判断上面，且将data空接口类型自动转换成适合它的类型</strong></p>
+<p><strong>推荐使用结构体来解析，因为map如果要确定值的类型就需要断言，过于麻烦</strong></p>
+<h2 id="文件操作需要os包">文件操作（需要os包）</h2>
+<p>设备文件有屏幕键盘等，标准输出就是屏幕，可以通过os.Stdout.Close()来阻止后面的程序输出内容，可以通过os.Stdint.Close()来阻止后面的程序通过键盘获取输入内容</p>
+<h3 id="文件的创建和写入">文件的创建和写入</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	path := &#34;./test.txt&#34;
+</span></span><span class="line"><span class="cl">	//创建文件，如果文件存在则打开文件且清空文件内容,它返回一个file的指针和一个error
+</span></span><span class="line"><span class="cl">	f, err := os.Create(path)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		//如果有错误就输出错误信息并且中止函数
+</span></span><span class="line"><span class="cl">		fmt.Println(err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	//使用完毕记得要关闭文件，使用defer就可以在函数结束的前一刹那进行关闭
+</span></span><span class="line"><span class="cl">	defer f.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//Sprintln()可以将一行信息赋值给一个变量
+</span></span><span class="line"><span class="cl">	buf := fmt.Sprintln(&#34;我往文件内写入东西&#34;)
+</span></span><span class="line"><span class="cl">	//往文件内写入字符串，f代表文件的指针，WriteString就可以将内容追加到文件，注意是追加
+</span></span><span class="line"><span class="cl">	//它返回两个值，一个是写入的字节数，另一个是error
+</span></span><span class="line"><span class="cl">	n, err := f.WriteString(buf)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="文件的读取">文件的读取</h3>
+<p>下面的代码可以实现指定读取多少内容，如果想直接读完整个文件，只需要在读取那里加一个for循环，它就会一直往下读取直到结尾出现error抛出EOF错误（EOF表示结尾），注意：<strong>抛出EOF的if语句要写到err !=nil中，因为EOF错误是它的子集</strong>，在err不为空中加return，而EOF中只需要加break，因为break触发后直接跳出循环了，就不会触发return了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	if err1 != nil {
+</span></span><span class="line"><span class="cl">		if err1 == io.EOF{
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		fmt.Println(err1)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	path := &#34;./test.txt&#34;
+</span></span><span class="line"><span class="cl">	//打开文件,返回一个文件指针和一个error
+</span></span><span class="line"><span class="cl">	f, err := os.Open(path)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(err)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//函数运行结束时关闭文件
+</span></span><span class="line"><span class="cl">	defer f.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//创建一个2k长度的字节切片，表示读取的总量
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*10)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//Read返回两个值，一个是字节数，一个是error
+</span></span><span class="line"><span class="cl">	//n是读取了多少文件字节数，如果buf大于文件总字节数，n返回总字节数。
+</span></span><span class="line"><span class="cl">	//如果总字节数大于buf，则n等于buf，即最多只能读取buf字节的内容，如果想多读取点就只能增大buf的长度值
+</span></span><span class="line"><span class="cl">	//Read()方法会将读取的内容放入buf中，后面查看buf内容即是查看文件内容
+</span></span><span class="line"><span class="cl">	n, err1 := f.Read(buf)
+</span></span><span class="line"><span class="cl">	if err1 != nil &amp;&amp; err1 != io.EOF {	//文件出错并且没有读到结尾
+</span></span><span class="line"><span class="cl">		fmt.Println(err1)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//可以用m:n来读取buf中间内容，n不能大于buf前面设定的值（即不能大于总长度），否则会报错
+</span></span><span class="line"><span class="cl">	//n可以设置常量，即表示查看buf容量中从m到n的内容
+</span></span><span class="line"><span class="cl">	//设置n则可以实现当文件总字节数小于buf量全部读取，大于则读取设置的最大值
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;buf:&#34;, string(buf[:n]))
+</span></span><span class="line"><span class="cl">	//buf中的值都是字节型的，可以通过强转变成string
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="如何一行一行的进行读取且务必读完文件的全部内容不论大小">如何一行一行的进行读取且务必读完文件的全部内容（不论大小）</h3>
+<p>bufio包有一个NewReader函数可以为文件的读取创建一个缓冲区并返回一个缓冲区的指针</p>
+<p>ReadBytes是缓冲区 *Reader的方法，读取缓冲区直到第一次遇到delim字节（即指定的关键值&rsquo;\n&rsquo;等），读取出一次后缓冲区中对应的内容就会消失，因此可以用for死循环来读取多行缓冲区内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	path := &#34;./test.txt&#34;
+</span></span><span class="line"><span class="cl">	//打开文件,返回一个文件指针和一个error
+</span></span><span class="line"><span class="cl">	f, err := os.Open(path)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(err)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	//函数运行结束时关闭文件
+</span></span><span class="line"><span class="cl">	defer f.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//新建一个缓冲区，先把内容放进缓冲区里
+</span></span><span class="line"><span class="cl">	r := bufio.NewReader(f)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//遇到\n就结束读取,buf为读取到的数据,这种会将\n也读取进去，所以使用Printf()
+</span></span><span class="line"><span class="cl">		buf, err1 := r.ReadBytes(&#39;\n&#39;)
+</span></span><span class="line"><span class="cl">		//当读到结尾即退出循环
+</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;%v&#34;, string(buf))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		/*把err判断放到打印后面的原因是如果将它放在前面，它会先判断是否是最后一行，当处于最后
+</span></span><span class="line"><span class="cl">		一行时它直接跳出循环，最后一行的输出语句就不会进行，那么就会少输出一行
+</span></span><span class="line"><span class="cl">		*/
+</span></span><span class="line"><span class="cl">		if err1 != nil {
+</span></span><span class="line"><span class="cl">			if err1 == io.EOF {
+</span></span><span class="line"><span class="cl">				break
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">			fmt.Println(err1)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="实例拷贝文件">实例：拷贝文件</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//获取命令行参数，判断是否为3个
+</span></span><span class="line"><span class="cl">	list := os.Args
+</span></span><span class="line"><span class="cl">	if len(list) != 3 {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;拷贝格式为xx.exe src dst&#34;)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//比较目标文件和源文件是否同名
+</span></span><span class="line"><span class="cl">	srcName := list[1]
+</span></span><span class="line"><span class="cl">	dstName := list[2]
+</span></span><span class="line"><span class="cl">	if srcName == dstName {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;源文件和目标文件不能相等&#34;)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//只读方式打开源文件
+</span></span><span class="line"><span class="cl">	sf, err1 := os.Open(srcName)
+</span></span><span class="line"><span class="cl">	if err1 != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(err1)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//新建目标文件
+</span></span><span class="line"><span class="cl">	df, err2 := os.Create(dstName)
+</span></span><span class="line"><span class="cl">	if err2 != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(err2)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//操作完毕要关闭文件
+</span></span><span class="line"><span class="cl">	defer sf.Close()
+</span></span><span class="line"><span class="cl">	defer df.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//读源文件
+</span></span><span class="line"><span class="cl">		buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">		n, err3 := sf.Read(buf) //从源文件读取内容
+</span></span><span class="line"><span class="cl">		if err3 != nil {
+</span></span><span class="line"><span class="cl">			if err3 == io.EOF { //源文件读取完毕
+</span></span><span class="line"><span class="cl">				break
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">			fmt.Println(err3)
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//写入目标文件，读多少写多少
+</span></span><span class="line"><span class="cl">		_, err4 := df.Write(buf[:n])
+</span></span><span class="line"><span class="cl">		if err4 != nil {
+</span></span><span class="line"><span class="cl">			fmt.Println(err3)
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="go语言多线程">go语言多线程</h2>
+<p><strong>Go从语言层面就支持了并发，虽然并发程序的内存管理是非常复杂的，但是GO提供了自动垃圾回收机制</strong></p>
+<p>并行和并发的区别：并行指在同一时刻有多条指令在<strong>多个处理器</strong>上同时进行，并发指虽然在单个处理器上同一时刻只能有一条指令执行，但多个进程指令被快速的轮换执行，使得在宏观上具有多个进程同时执行的效果</p>
+<h3 id="goroutine协程">goroutine(协程)</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-7.png"
+	width="736"
+	height="145"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-7_hubbb9a7d11db5e0436d7c2b278ababe92_158692_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-7_hubbb9a7d11db5e0436d7c2b278ababe92_158692_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="507"
+		data-flex-basis="1218px"
+	
+></p>
+<p>通常main函数在一个单独的协程中运行，成为主协程，新的goroutine用go语句来创建，称为子协程，<strong>如果主协程中有for死循环，子协程要在死循环前建立，否则一直死循环就无法运行到创建子协程的语句</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13.png"
+	width="863"
+	height="168"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13_hu3530020d017dc3f905fd95aab7883219_142084_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-13_hu3530020d017dc3f905fd95aab7883219_142084_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="513"
+		data-flex-basis="1232px"
+	
+></p>
+<p><strong>注意：主协程退出后，子协程会同时跟着退出</strong></p>
+<h3 id="runtime包">runtime包</h3>
+<h4 id="gosched">Gosched()</h4>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15.png"
+	width="860"
+	height="168"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15_hu3e8d32dbf2cf3df6f041ef917064e2c6_132929_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-15_hu3e8d32dbf2cf3df6f041ef917064e2c6_132929_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="511"
+		data-flex-basis="1228px"
+	
+></p>
+<p>Gosched()的作用就像linux中的进程优先级一样，<strong>但是如果在A协程中添加了runtime.Gosched()后，A协程会搁置到其他协程完成任务退出协程后再继续进行A协程</strong></p>
+<h4 id="goexit">Goexit()</h4>
+<p>调用runtime.Goexit()将立即终止当前协程的进行，即使写在协程中的调用函数里也会中止当前协程</p>
+<h4 id="gomaxprocs">GOMAXPROCS()</h4>
+<p>调用runtime.GOMAXPROCS()用来设置 可以并发计算 的CPU核数的最大值，并返回之前的值</p>
+<p>n := runtime.GOMAXPROCS(4)  //以四核并发计算，核数可以大于当前系统的最大核数</p>
+<h3 id="channel类型">channel类型</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p>定义了两个函数person1和person2，虽然协程是同时进行的，但是两个公用了一个公共资源，最后打印就会出现这边打印一个字母那边打印一个，就造成了资源竞争问题。channel属于引用传递，即调用的都是同一个channel。</p>
+<p>如果在person2中设置channel堵塞，它就会让此进程一直堵在channel步骤，而person1中先调用公共资源，person2暂停，当person1资源调用完毕后将int=666传入ch,子进程1结束，ch管道中有内容了不再堵塞，此时person2中的同一个ch管道将int传入函数并丢弃，然后继续执行后面的代码来调用公共资源，这样就可以避免资源竞争问题。</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11.png"
+	width="441"
+	height="277"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="159"
+		data-flex-basis="382px"
+	
+></p>
+<p>如果希望在子协程工作完成后再关闭主协程的话（主协程关闭会导致子协程同时关闭），可以在子协程中设置管道 ch&lt;- &ldquo;子协程完毕&rdquo;，然后主协程接受这段内容并丢弃( &lt;-ch )，这样就可以实现<strong>子协程没有进行到发送信息到管道那一步时，主协程ch永远堵塞</strong>，只有完成子协程任务并关闭后，主协程channel才有信息不堵塞，然后才可以正常完成主协程（channel也可以用于发送接受数据，类似linux的竖线管道）</p>
+<h4 id="无缓存通道和有缓存通道">无缓存通道和有缓存通道</h4>
+<p><strong>channer分为无缓存通道和有缓存通道，无缓存channel没有接收或者没有发送都会造成堵塞，有缓存值的在写满缓存时就会造成堵塞，通道中没值时也无法取数据</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-23.png"
+	width="874"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-23_hu111fe9ffae765b2892247e8d165ec15e_264915_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-23_hu111fe9ffae765b2892247e8d165ec15e_264915_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="346"
+		data-flex-basis="832px"
+	
+></p>
+<p><strong>有缓存cannel属于异步处理，每当接收者从cannel取出一条数据时，cannel中就会丢弃这条数据，将空间闲置出来给新的数据使用，当数据取完或写满时就会造成阻塞</strong></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-5.png"
+	width="855"
+	height="82"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-5_hu3ea1afbd6180b9195fb19c52b7803180_81763_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-5_hu3ea1afbd6180b9195fb19c52b7803180_81763_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1042"
+		data-flex-basis="2502px"
+	
+></p>
+<p>close(ch)可以关闭通道，接收者可以通过 value,ok := &lt;-ch来获取值，value为管道中的数据，ok在当管道没有关闭时为true，管道关闭了则为false</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<h4 id="单项channel管道">单项channel管道</h4>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p>双向channel可以隐式的转换为单向channel ( var  writeCan  chan&lt;-  int  =  ch ),单向无法转换为双向</p>
+<p>案例：</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p><strong>channel可以通过range来依次读取通道内的数据</strong>，它的参数只有num，并非两个值。且必须搭配close(ch)使用，不然继续迭代下去，没有值但是还在进行&lt;-ch，这会造成通道阻塞，出现死锁问题。在写入channel的函数中最后加上 close(ch) 就可以给它发送一个信号，它会在读取完全部值后退出for循环</p>
+<p>由于channel属于引用传递，所以虽然函数的参数是单项通道，但是最终修改的依然是本来的双向通道ch，这可以避免在函数中又读又写造成逻辑混乱</p>
+<h2 id="定时器">定时器</h2>
+<h3 id="timer类似一次性闹钟">Timer(类似一次性闹钟)</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10.png"
+	width="832"
+	height="85"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<p>NewTimer只是返回了一个2s后的Timer指针变量，如果需要真的延时2s，必须使用 &lt;-timer.C来将通道数据丢弃或赋值，因为它是在2s后接受数据并传入变量，在2s之前这个通道都是堵塞的（通道内没有数据），程序不会向下运行</p>
+<p>NewTimer函数返回一个Timer的指针，Timer只会响应一次，过后不会再响应（一次性闹钟），即只会向cannel写一次2s后的时间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;-time.After(2 * time.Second)  定时程序2s,2s后产生一个事件，往channerl中写入时间（2s后那个时间点）数据
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">timer.Stop()    停止定时器
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">timer.Reset(1 * time.Second)  重新设置为1s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ticker类似循环闹钟">Ticker（类似循环闹钟）</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10.png"
+	width="832"
+	height="85"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6.png"
+	width="970"
+	height="252"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-6_hud4b0b5687d0cb7d66dbcc31aa9826184_198701_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<h2 id="select-可以监听channel通道的数据流动">Select (可以监听channel通道的数据流动)</h2>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22.png"
+	width="880"
+	height="638"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22_hua817e47c3827ca6e6d644e17d38de653_420866_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-22_hua817e47c3827ca6e6d644e17d38de653_420866_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="137"
+		data-flex-basis="331px"
+	
+></p>
+<p><strong>注意：如果写了default，即每次都能判定成功，会导致select语句完成判定然后结束，不写就会（一直）阻塞直到case判定成功执行某一个case语句然后结束</strong></p>
+<p>如果select语句不加for循环，那么它只会判定一次并只将数据写入一次管道，监听一次就结束显然不符合监听的目的，所以<strong>需要往select外套一个for死循环来实现监听操作</strong></p>
+<p>第二个case语句，<strong>写入通道的操作必须要有一个读的操作（&lt;-chan2）可以接收它的数据，只有写没有读是不能写成功的，有读没写也是不能读成功，都会造成管道死锁问题，这样就可以通过select实现在外部写入，select中的case读操作就判断成功。</strong></p>
+<p><strong>注意：case不止是判断，它判断后面的语句能否读写成功，那么在判断成功的同时它也会往通道中读写数据</strong></p>
+<h4 id="斐波那契数列">斐波那契数列</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func fibonacci(ch chan&lt;- int, quit &lt;-chan bool) {
+</span></span><span class="line"><span class="cl">	x, y := 1, 1
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		select {
+</span></span><span class="line"><span class="cl">		case ch &lt;- x:
+</span></span><span class="line"><span class="cl">			x, y = y, x+y
+</span></span><span class="line"><span class="cl">		case flag := &lt;-quit:
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	quit := make(chan bool)
+</span></span><span class="line"><span class="cl">	//输出数字
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		for i := 0; i &lt; 8; i++ {
+</span></span><span class="line"><span class="cl">			num := &lt;-ch
+</span></span><span class="line"><span class="cl">			fmt.Println(num)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		quit &lt;- true
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//产生数字，写入管道
+</span></span><span class="line"><span class="cl">	fibonacci(ch, quit)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">输出结果为：1	1	2	3	5	8	13	21
+</span></span><span class="line"><span class="cl">除去第二个数，其他数为前两个数相加
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果select语句不加for循环，那么它只会判定一次并只将数据写入一次管道，而fibonacci函数处于主协程，当判定成功后就会直接完成主协程，那么子协程也会退出，后面的数据都无法继续输出</p>
+<h3 id="用select实现超时退出">用select实现超时退出</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	quit := make(chan bool)
+</span></span><span class="line"><span class="cl">	//监听管道数据
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		for {
+</span></span><span class="line"><span class="cl">			select {
+</span></span><span class="line"><span class="cl">			case num := &lt;-ch:
+</span></span><span class="line"><span class="cl">				fmt.Println(num)
+</span></span><span class="line"><span class="cl">			case &lt;-time.NewTimer(3 * time.Second).C:
+</span></span><span class="line"><span class="cl">				fmt.Println(&#34;3s没有输出数据&#34;)
+</span></span><span class="line"><span class="cl">				quit &lt;- true
+</span></span><span class="line"><span class="cl">				return
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		for i := 0; i &lt; 4; i++ {
+</span></span><span class="line"><span class="cl">			ch &lt;- i
+</span></span><span class="line"><span class="cl">			time.Sleep(time.Second)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		&lt;-quit
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;程序结束&#34;)
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	for {}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当ch中没有数据时，case ch会堵塞，然后三秒后case time会有数据，执行case2，往quit管道中写入数据，最下面的读取quit就不会堵塞，程序就会继续执行，如果不希望主程序结束，可以将quit管道放到一个子协程中（且主程序有for循环之类的不会结束），那么三秒后子协程运行完自动退出，不会波及主协程</p>
+<p><strong>注意：case语句是会执行之后的语句的</strong>，所以time.NewTimer()会在3s后继续有值，且会再输出fmt，然后此时quit管道没接收者，会一直堵塞在这里，子协程会一直存在直到主协程关闭，所以加上return语句让它在第一次就关闭此函数，或者break跳出for循环</p>
+<h2 id="socket网络编程需要net包">Socket网络编程（需要net包）</h2>
+<h3 id="cs架构">c/s架构</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11.png"
+	width="441"
+	height="277"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="159"
+		data-flex-basis="382px"
+	
+></p>
+<h4 id="服务器部分">服务器部分：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//设置监听，此处及下面都会返回err，为了缩短代码量丢弃了err，工作中不要丢弃
+</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//阻塞等待用户数据
+</span></span><span class="line"><span class="cl">	conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//接收用户请求
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024)
+</span></span><span class="line"><span class="cl">	//用户数据最后返回到了buf切片中，n表示从用户数据那读取的字节数，最大值为切片的长度1024
+</span></span><span class="line"><span class="cl">	n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">	fmt.Println(string(buf[:n]))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//最后处理完数据记得关闭连接
+</span></span><span class="line"><span class="cl">	defer func() {
+</span></span><span class="line"><span class="cl">		listener.Close()
+</span></span><span class="line"><span class="cl">		conn.Close()
+</span></span><span class="line"><span class="cl">	}()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>服务器端先定义一个监听，表示将这个服务器以什么协议放置于什么位置，然后listener.Accept()让服务器阻塞等待用户向服务器端发送数据，用户发送数据后会存入conn中，通过conn.Read()来获取用户输入的数据并放到buf切片中，通过string(buf[:n])强转用户的字节数据为字符串，n表示数据量大于切片则返回切片最大值数据量，小于切片则返回全部数据，<strong>n返回的是Read所读取的总字节量，其值不会超过buf定义的1024字节</strong></p>
+<h4 id="客户端部分">客户端部分：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//主动连接服务器
+</span></span><span class="line"><span class="cl">	conn, _ := net.Dial(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">	//发送数据
+</span></span><span class="line"><span class="cl">	conn.Write([]byte(&#34;are you ok?&#34;))
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端部分只需要连接服务器并且发送数据，连接服务器需要指定服务器的ip端口和协议，发送的数据是<strong>字节切片类型</strong></p>
+<h4 id="如何多个客户端同时连接同一个服务器重要">如何多个客户端同时连接同一个服务器（重要）</h4>
+<p>服务器端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//conn的类型为net包里的Conn接口
+</span></span><span class="line"><span class="cl">func HandleConn(conn net.Conn) {
+</span></span><span class="line"><span class="cl">	//每个用户使用完毕后关闭协程
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//获取客户端的网络信息,并以ip 端口的形式输出
+</span></span><span class="line"><span class="cl">	addr := conn.RemoteAddr().String()
+</span></span><span class="line"><span class="cl">	fmt.Println(addr, &#34;---连接成功&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//用for循环套住Read()，用户发送一次数据，接收一次并赋值给buf，
+</span></span><span class="line"><span class="cl">	//运行下面的打印和回传，再次循环并阻塞在Read()处等待用户再次发送请求
+</span></span><span class="line"><span class="cl">	//但是这样会让子进程一直存在，除非设置了err不为空时退出实现强制退出
+</span></span><span class="line"><span class="cl">	//因此加一个用户输入exit退出的逻辑
+</span></span><span class="line"><span class="cl">	for{
+</span></span><span class="line"><span class="cl">		n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">		//打印用户发送过来的内容
+</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;%s输入了: %s\n&#34;, addr, string(buf[:n]))
+</span></span><span class="line"><span class="cl">		//把用户信息转为大写发回给用户(先将小写的字节切片转为string，然后变成大写再强转为字节切片)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//n-是因为在windows中输入的语句有一个\r\n换行符，需要-2去除它
+</span></span><span class="line"><span class="cl">		//各个平台都不一样，因此可以在前面通过len(string(buf[:n]))来判断到底多了几个字符
+</span></span><span class="line"><span class="cl">		if string(buf[:n-2]) == &#34;exit&#34; {
+</span></span><span class="line"><span class="cl">			fmt.Println(addr, &#34; exit&#34;)
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		conn.Write([]byte(strings.ToUpper(string(buf[:n]))))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//设置监听，此处及下面都会返回err，为了缩短代码量丢弃了err，工作中不要丢弃
+</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//利用for循环实现多个客户端连接同一个服务器
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//循环阻塞等待用户请求，一个用户请求然后往下走，然后循环继续等下一个用户
+</span></span><span class="line"><span class="cl">		conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//开子协程处理多个用户请求，如果没有用户进入就会阻塞到第一步直到第一个用户请求，
+</span></span><span class="line"><span class="cl">		//然后往下开一个新协程给此用户，继续for循环等待下一个用户请求
+</span></span><span class="line"><span class="cl">		go HandleConn(conn)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer listener.Close()
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//主动连接服务端
+</span></span><span class="line"><span class="cl">	conn, _ := net.Dial(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//从键盘获取输入并发往服务器端
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		str := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">		//用for循环可以实现当os.Stdin.Read()中没有数据时（即没有进行输入），
+</span></span><span class="line"><span class="cl">		//阻塞在这一步，直到用户输入内容才继续向下进行
+</span></span><span class="line"><span class="cl">		for {
+</span></span><span class="line"><span class="cl">	//os.Stdin.Read可以提示键盘输入并且将输入的内容转换为字节切片，并赋值到str中，返回切片的长度
+</span></span><span class="line"><span class="cl">			n, _ := os.Stdin.Read(str)
+</span></span><span class="line"><span class="cl">			//发送给服务器端
+</span></span><span class="line"><span class="cl">			conn.Write(str[:n])
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//从服务器端获取数据
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//for循环实现当服务器未往客户端发送数据时，conn.Read(buf)为空，阻塞在这一步，
+</span></span><span class="line"><span class="cl">		//有数据循环一遍，然后等待下次服务器的数据
+</span></span><span class="line"><span class="cl">		//当服务器端输入exit后，服务器端所对应的子协程结束，conn.Read()返回err，
+</span></span><span class="line"><span class="cl">		//通过return结束主协程，子协程同时结束，退出程序
+</span></span><span class="line"><span class="cl">		n, err := conn.Read(buf)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			fmt.Println(err)
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		fmt.Println(string(buf[:n]))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="远程发送文件">远程发送文件：</h4>
+<p>服务器端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func RecvFile(path string, conn net.Conn) {
+</span></span><span class="line"><span class="cl">	//创建文件
+</span></span><span class="line"><span class="cl">	f, _ := os.Create(path)
+</span></span><span class="line"><span class="cl">	//循环接收文件的内容
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := conn.Read(buf)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			if err == io.EOF {
+</span></span><span class="line"><span class="cl">				fmt.Println(&#34;文件接收完毕&#34;)
+</span></span><span class="line"><span class="cl">			} else {
+</span></span><span class="line"><span class="cl">				fmt.Println(err)
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		//往文件写入内容
+</span></span><span class="line"><span class="cl">		f.Write(buf[:n])
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//建立监听
+</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//阻塞等待用户请求
+</span></span><span class="line"><span class="cl">	conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//接收用户文件名
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024)
+</span></span><span class="line"><span class="cl">	n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">	path := string(buf[:n])
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//返回消息
+</span></span><span class="line"><span class="cl">	conn.Write([]byte(&#34;开始发送&#34;))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//接收文件内容
+</span></span><span class="line"><span class="cl">	RecvFile(path, conn)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer listener.Close()
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func SendFile(path string, conn net.Conn) {
+</span></span><span class="line"><span class="cl">	//打开文件，读取文件
+</span></span><span class="line"><span class="cl">	f, _ := os.Open(path)
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := f.Read(buf)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			if err == io.EOF {
+</span></span><span class="line"><span class="cl">				fmt.Println(&#34;文件传输完成&#34;)
+</span></span><span class="line"><span class="cl">			} else {
+</span></span><span class="line"><span class="cl">				fmt.Println(err)
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		//发送到服务器
+</span></span><span class="line"><span class="cl">		conn.Write(buf[:n])
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer f.Close()
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入文件名：&#34;)
+</span></span><span class="line"><span class="cl">	var path string
+</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;path)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//os.Stat()返回FileInfo类型变量，可以获取文件信息,info.Name()获取文件名,没有此文件则会报错
+</span></span><span class="line"><span class="cl">	info, err := os.Stat(path)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;没有这个文件&#34;, err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//连接服务器,工作中err别丢空
+</span></span><span class="line"><span class="cl">	conn, _ := net.Dial(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//给服务器先发送文件名,err和n都可以丢空
+</span></span><span class="line"><span class="cl">	conn.Write([]byte(info.Name()))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//服务器接收到文件名，向客户端发送消息,客户端进行判断开始进行发送
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	if string(buf[:n]) == &#34;开始发送&#34; {
+</span></span><span class="line"><span class="cl">		SendFile(path, conn)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="并发聊天服务器">并发聊天服务器</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Clinet struct {
+</span></span><span class="line"><span class="cl">	C    chan string //管道string类型，暂存用户发送的数据
+</span></span><span class="line"><span class="cl">	Name string      //用户名
+</span></span><span class="line"><span class="cl">	Addr string      //网络地址
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">var onlineMap = make(map[string]Clinet)
+</span></span><span class="line"><span class="cl">var message = make(chan string)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func WriteMsgToClient(cli Clinet, conn net.Conn) {
+</span></span><span class="line"><span class="cl">	//这个是为了实现cli.C中有数据时向各自客户端发送数据，没有数据时阻塞在这一步
+</span></span><span class="line"><span class="cl">	//且任意用户都会在登录时都会通过Manager()方法向每个用户的cli.C发送登录信息，
+</span></span><span class="line"><span class="cl">	//只要cli.C一有信息，这个子协程就会检测到cli.C不再阻塞，就能向客户端写入新的他人登录信息
+</span></span><span class="line"><span class="cl">	//只要发送处的管道没有关闭，cli.Close()，这个for就不会检测到false，会一直堵塞在这里
+</span></span><span class="line"><span class="cl">	for msg := range cli.C {
+</span></span><span class="line"><span class="cl">		conn.Write([]byte(msg + &#34;\n&#34;))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//将用户存进在线用户变量onlineMap中
+</span></span><span class="line"><span class="cl">func HandleConn(conn net.Conn) {
+</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">	//获取网络地址
+</span></span><span class="line"><span class="cl">	cliAddr := conn.RemoteAddr().String()
+</span></span><span class="line"><span class="cl">	//创建一个结构体,添加到map中
+</span></span><span class="line"><span class="cl">	cli := Clinet{make(chan string), cliAddr, cliAddr}
+</span></span><span class="line"><span class="cl">	onlineMap[cliAddr] = cli
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//新开一个协程，专门给当前用户发送消息
+</span></span><span class="line"><span class="cl">	go WriteMsgToClient(cli, conn)
+</span></span><span class="line"><span class="cl">	//广播某个人在线
+</span></span><span class="line"><span class="cl">	message &lt;- &#34;[&#34; + cli.Name + &#34;]---login&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//退出进行广播并且关闭子协程
+</span></span><span class="line"><span class="cl">	isQuit := make(chan bool)
+</span></span><span class="line"><span class="cl">	hasData := make(chan bool)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//新开一个协程，接收用户发送过来的请求
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		buf := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">		//for循环可以避免输入一次就不再进行接收信息的问题
+</span></span><span class="line"><span class="cl">		for {
+</span></span><span class="line"><span class="cl">			n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">			if n == 0 { //对方断开或者出问题
+</span></span><span class="line"><span class="cl">				isQuit &lt;- true
+</span></span><span class="line"><span class="cl">				return
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			msg := string(buf[:n-2]) //过滤window末尾的/r/n符号
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			//查询所有用户
+</span></span><span class="line"><span class="cl">			if len(msg) == 3 &amp;&amp; msg == &#34;who&#34; { //避免whoami和who匹配
+</span></span><span class="line"><span class="cl">				//遍历map，给当前用户发送所有成员
+</span></span><span class="line"><span class="cl">				conn.Write([]byte(&#34;user list:\n&#34;))
+</span></span><span class="line"><span class="cl">				for _, tmp := range onlineMap {
+</span></span><span class="line"><span class="cl">					msg = tmp.Name + &#34;-----is online\n&#34;
+</span></span><span class="line"><span class="cl">					conn.Write([]byte(msg))
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">				//给用户重命名，输入rename|mike
+</span></span><span class="line"><span class="cl">			} else if len(msg) &gt;= 8 &amp;&amp; msg[:6] == &#34;rename&#34; {
+</span></span><span class="line"><span class="cl">				name := strings.Split(msg, &#34;|&#34;)[1] //将msg以|分割
+</span></span><span class="line"><span class="cl">				cli.Name = name
+</span></span><span class="line"><span class="cl">				conn.Write([]byte(&#34;u name is rename&#34;))
+</span></span><span class="line"><span class="cl">			} else {
+</span></span><span class="line"><span class="cl">				//message复用来给所有用户广播它发送的消息，包括自己也看见
+</span></span><span class="line"><span class="cl">				message &lt;- cli.Name + &#34;:&#34; + msg
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">			hasData &lt;- true
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//用for循环让此子协程不会结束，避免发送消息后子协程结束，这个用户就通信结束了
+</span></span><span class="line"><span class="cl">	//目的是让用户可以接收到后面登录和发送的信息，所以这个子协程就必须一直存在，除非用户退出
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//通过select检测管道isQuit的流动
+</span></span><span class="line"><span class="cl">		select {
+</span></span><span class="line"><span class="cl">		case &lt;-isQuit:
+</span></span><span class="line"><span class="cl">			//删除用户并且广播谁下线了
+</span></span><span class="line"><span class="cl">			delete(onlineMap, cliAddr)
+</span></span><span class="line"><span class="cl">			message &lt;- cli.Name + &#34;--is login out&#34;
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		case &lt;-hasData: //有数据不作处理
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		case &lt;-time.After(60 * time.Second): //60s后超时执行此case,超时强制退出
+</span></span><span class="line"><span class="cl">			delete(onlineMap, cliAddr)
+</span></span><span class="line"><span class="cl">			message &lt;- cli.Name + &#34;--is time out leave out&#34;
+</span></span><span class="line"><span class="cl">			return
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">//新开一个协程，转发消息，只要消息来了就遍历map，给map每个成员都发送此消息
+</span></span><span class="line"><span class="cl">func Manager() {
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//mes为string类型的变量，自动推导类型
+</span></span><span class="line"><span class="cl">		msg := &lt;-message
+</span></span><span class="line"><span class="cl">		//遍历map，给map每个成员都发送此消息
+</span></span><span class="line"><span class="cl">		for _, cli := range onlineMap {
+</span></span><span class="line"><span class="cl">			cli.C &lt;- msg
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//监听
+</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	defer listener.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	go Manager()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//循环
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		//循环阻塞，形成多个客户端共用一个服务器
+</span></span><span class="line"><span class="cl">		conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		//处理用户连接
+</span></span><span class="line"><span class="cl">		go HandleConn(conn)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>先是主函数启动子协程HandleConn(conn)，它作用于往map中写入在线成员，并将消息发给管道message,再通过Manager()将message管道发给msg字符串，遍历map，往每个map中的管道写入信息,紧接着通过WriteMsgToClient()中的range向客户端写入消息，且for遍历管道时，没有cli.Close()的存在，它会一直堵塞在此处等待新的信息写进cli.C</p>
+<h3 id="bs架构">b/s架构：</h3>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18.png"
+	width="885"
+	height="468"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18_hu5f5085614a05796347098b9750bbcb98_433791_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-18_hu5f5085614a05796347098b9750bbcb98_433791_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="189"
+		data-flex-basis="453px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10.png"
+	width="832"
+	height="85"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21.png"
+	width="655"
+	height="332"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-21_hu803d2c2398247fb6958bc351ca594148_109912_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11.png"
+	width="441"
+	height="277"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="159"
+		data-flex-basis="382px"
+	
+></p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11.png"
+	width="441"
+	height="277"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-11_hue535b767129c89c65acbcb178be54eb5_116251_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="159"
+		data-flex-basis="382px"
+	
+></p>
+<p>但是如果工作中每次都需要向服务器发送一长串的请求包过于繁琐，所以可以使用net/http包来简化</p>
+<p><img src="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10.png"
+	width="832"
+	height="85"
+	srcset="/p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_480x0_resize_box_3.png 480w, /p/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/media/image-10_hudbb3cc75865c7ca6a6dd0afe567d006d_85491_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="978"
+		data-flex-basis="2349px"
+	
+></p>
+<h4 id="http服务器">http服务器：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//w为给客户端回复的数据
+</span></span><span class="line"><span class="cl">//req，读取客户端的数据
+</span></span><span class="line"><span class="cl">func HandConn(w http.ResponseWriter, req *http.Request) {
+</span></span><span class="line"><span class="cl">	//给客户端浏览器发送数据
+</span></span><span class="line"><span class="cl">	w.Write([]byte(&#34;hello go&#34;))
+</span></span><span class="line"><span class="cl">	//获取客户端的请求头部参数等
+</span></span><span class="line"><span class="cl">	//在https://studygolang.com/pkgdoc中的net/http中搜type Request可以获取req的所有参数
+</span></span><span class="line"><span class="cl">	fmt.Println(req.URL.Path)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	//注册处理函数，用户连接进来自动调用指定的处理函数(即如果域名后面接了/hello则调用后面那个函数)
+</span></span><span class="line"><span class="cl">	//源代码中第二个参数为handler func(ResponseWriter, *Request)
+</span></span><span class="line"><span class="cl">	//即在定义函数时已经定义了这是一个func，且默认已经传了两个参数进去，所以不需要加()来调用，
+</span></span><span class="line"><span class="cl">	//自己写HandConn函数时也不再需要想办法获取ResponseWriter和*http.Request的值了
+</span></span><span class="line"><span class="cl">	http.HandleFunc(&#34;/hello&#34;, HandConn)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//该方法用于在指定的网络地址进行监听，然后调用服务端处理程序来处理传入的连接请求
+</span></span><span class="line"><span class="cl">	//该方法有两个参数：第一个为监听地址；第二个参数表示服务器端处理程序，通常为空
+</span></span><span class="line"><span class="cl">	//第二个参数为空意味着服务端调用http.DefaultServerMux进行处理
+</span></span><span class="line"><span class="cl">	http.ListenAndServe(&#34;127.0.0.1:8000&#34;, nil)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="http客户端">http客户端：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//获取从百度回传回来的请求包，http是必须要加的
+</span></span><span class="line"><span class="cl">	resp, _ := http.Get(&#34;http://www.baidu.com&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//body是从服务器端读取资源(类似于conn.Read())，最后是需要进行关闭的
+</span></span><span class="line"><span class="cl">	defer resp.Body.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;Status =&#34;, resp.Status)
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;StatusCode =&#34;, resp.StatusCode)
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;Header =&#34;, resp.Header)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//获取baidu.com中的数据Read()，然后赋值给buf，最后追加到tmp中
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">	var tmp string
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := resp.Body.Read(buf)
+</span></span><span class="line"><span class="cl">		if n == 0 {
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;read err =&#34;, err)
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		tmp += string(buf[:n])
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	fmt.Println(tmp)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="用go写爬虫爬百度贴吧">用go写爬虫爬百度贴吧：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func SpiderPage(i int, page chan int) {
+</span></span><span class="line"><span class="cl">	//寻找网址规律，每页pn加50,用for循环获取每个网址
+</span></span><span class="line"><span class="cl">	url := &#34;http://tieba.baidu.com/f?kw=%E6%8A%97%E5%8E%8B%E8%83%8C%E9%94%85&amp;ie=utf-8&amp;pn=&#34; + strconv.Itoa((i-1)*50)
+</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;正在爬取第%d页网页%s\n&#34;, i, url)
+</span></span><span class="line"><span class="cl">	result, _ := HttpGet(url)
+</span></span><span class="line"><span class="cl">	//将内容写到文件中
+</span></span><span class="line"><span class="cl">	f, _ := os.Create(strconv.Itoa(i) + &#34;.html&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	f.Write([]byte(result))
+</span></span><span class="line"><span class="cl">	f.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	page &lt;- i
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func HttpGet(url string) (result string, err error) {
+</span></span><span class="line"><span class="cl">	rep, _ := http.Get(url)
+</span></span><span class="line"><span class="cl">	defer rep.Body.Close()
+</span></span><span class="line"><span class="cl">	//爬取
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := rep.Body.Read(buf)
+</span></span><span class="line"><span class="cl">		if n == 0 {
+</span></span><span class="line"><span class="cl">			fmt.Println(err)
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		result += string(buf[:n])
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func DoWork(start, end int) {
+</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;正在爬取 %d到%d的页面。。。&#34;, start, end)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//建立一个管道，避免主进程结束导致子进程结束
+</span></span><span class="line"><span class="cl">	page := make(chan int)
+</span></span><span class="line"><span class="cl">	//获取地址
+</span></span><span class="line"><span class="cl">	for i := start; i &lt;= end; i++ {
+</span></span><span class="line"><span class="cl">		//建立子协程，让多个爬虫同时进行
+</span></span><span class="line"><span class="cl">		go SpiderPage(i, page)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	for i := start; i &lt;= end; i++ {
+</span></span><span class="line"><span class="cl">		//避免协程结束影响子协程
+</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;第%d页已经读取完毕&#34;, &lt;-page)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	var start, end int
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入起始页&#34;)
+</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;start)
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入结束页&#34;)
+</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;end)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	DoWork(start, end)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此方法可以爬取每页内容（包括html内容）存到新建的.html中，如果要爬取需要的内容，可以查看源代码然后通过正则表达式爬出来再存入文件中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">如爬取每个帖子的某段内容，先在每个主页查看源代码爬取出每个帖子的url，
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&lt;a rel=&#34;noreferrer&#34; href=&#34;/p/6978750013&#34; title=&#34;老马是真的叼，剪辑的更吊！！！&#34; target=&#34;_blank&#34; class=&#34;j_th_tit &#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">用正则表达式  (`&lt;a rel=&#34;noreferrer&#34; href=&#34;(?s:(.*?))&#34; title=`)  来爬取出网页链接，
+</span></span><span class="line"><span class="cl">regexp的FindAllStringSubmatch会返回一个二维切片，切片中的里切片第一个值是通过表达式过滤出的内容，
+</span></span><span class="line"><span class="cl">第二个值是正则表达式代表的内容，即/p/6978750013，给它拼接上贴吧网址即可访问
+</span></span><span class="line"><span class="cl">通过range迭代外切片然后在里面调用里切片[1]即可
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">然后在range中用http.Get爬取内容，依然是查看源代码找到对应的内容进行过滤
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">过来出来的内容可能会有些\t  &lt;br /&gt;之类的，可以用strings.Replace(text,&#34;\t&#34;,&#34;&#34;,-1)去掉
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最后写入文件，如果多标题多内容，可以分开存入到两个切片中，然后后面一口气写进文件中
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果不用子协程来爬取，它就是单协程的程序，它会爬完一个再爬下一个，开了子协程后它可以同时爬取多个，节省了大量时间，但是要注意子协程开启后主协程不能关闭，这样会导致子协程也同时消失，可以使用切片来阻塞主协程，直到爬取完毕</p>
+<h2 id="常见知识点">常见知识点</h2>
+<ol>
+<li>switch中隐式含有break，但是select中必须要用break或continue跳出循环</li>
+<li>结构体实现接口时不需要导入接口所在的包</li>
+<li>一个go文件中可以包含多个init同名函数，他属于官方在内存中定义的函数，自上而下运行，自己定义的函数不能同名</li>
+<li>变量定义可以用中文，会转换成ASCII码，变量名中不能有$</li>
+<li>string不能用nil，它的空值为“”空字符串</li>
+<li>make([]int,0)初始化切片的时候，必须要指定容量，即使是0，不指定会报错</li>
+<li>golang的自增自减++  &ndash;  只有后置，没有前置</li>
+<li>只要两个接口拥有相同的方法列表，那么它们就是等价的，可以相互赋值。</li>
+<li>cap函数（容量大小）只能传数组，切片，管道</li>
+<li>recover()在func()外运行是无法阻止异常的，必须要写func(){recover()}才能处理异常</li>
+<li>指针、数组、切片、map字典、结构体都属于复合类型</li>
+<li>new()返回*T，只分配内存，不初始化。make返回T，分配并初始化，只适用于map,slice,chan</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

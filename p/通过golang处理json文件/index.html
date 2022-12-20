@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='通过结构体生成json文件 默认情况下从结构体生成json格式，结构体的成员首字母必须大写，结构体名可以小写，因为在本包使用 Marshal方法'>
+<title>通过golang处理json文件</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='通过golang处理json文件'>
+<meta property='og:description' content='通过结构体生成json文件 默认情况下从结构体生成json格式，结构体的成员首字母必须大写，结构体名可以小写，因为在本包使用 Marshal方法'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-10-01T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-10-01T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="通过golang处理json文件">
+<meta name="twitter:description" content="通过结构体生成json文件 默认情况下从结构体生成json格式，结构体的成员首字母必须大写，结构体名可以小写，因为在本包使用 Marshal方法">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#通过结构体生成json文件">通过结构体生成json文件</a></li>
+    <li><a href="#通过map生成json文件">通过map生成json文件</a></li>
+    <li><a href="#json解析到结构体json解码">json解析到结构体(json解码)</a></li>
+    <li><a href="#json解析到map">json解析到map</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/">通过golang处理json文件</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 01, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="通过结构体生成json文件">通过结构体生成json文件</h2>
+<p>默认情况下从结构体生成json格式，结构体的成员首字母必须大写，<strong>结构体名可以小写，因为在本包使用 <code>Marshal</code>方法是从本包传结构体到json的包让它编码，它肯定能访问到结构体，但是成员如果小写，json的包就无法调用到</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type person struct {
+</span></span><span class="line"><span class="cl">	Name string
+</span></span><span class="line"><span class="cl">	Age  int
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	p1 := person{&#34;张三&#34;,19}
+</span></span><span class="line"><span class="cl">	b, _ := json.Marshal(p1)
+</span></span><span class="line"><span class="cl">	fmt.Println(string(b))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	var p2 person
+</span></span><span class="line"><span class="cl">	json.Unmarshal(b, &amp;p2)	//结构体是值传递，如果不使用指针就只会修改副本，不会修改p2原有的内容
+</span></span><span class="line"><span class="cl">	fmt.Println(p2)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Marshal()会返回两个值，一个json内容一个错误值，可以用If语句接受错误，然后用return让main函数中断，<strong>return在函数中的意义：如果函数返回值有定义，则return表示返回数据，如果没有定义返回值，return就表示退出此函数，在main函数中有return就表示中断程序但是不会报错</strong></p>
+<p><img src="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3.png"
+	width="1211"
+	height="579"
+	srcset="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3_hu602ad7df09f680c7877fa53f5c683f05_376352_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3_hu602ad7df09f680c7877fa53f5c683f05_376352_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="501px"
+	
+></p>
+<p>buf获得的值是一个<strong>字节切片类型</strong>，可以直接string(buf)强转成string类型</p>
+<p><img src="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-1.png"
+	width="793"
+	height="187"
+	srcset="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-1_hueeb1ac505d4964f5849adc5516fc6ea2_124210_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-1_hueeb1ac505d4964f5849adc5516fc6ea2_124210_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="424"
+		data-flex-basis="1017px"
+	
+></p>
+<p>转换成string后输出的是一个整体值，无法再用切片[0]来调用任意一个成员</p>
+<h2 id="通过map生成json文件">通过map生成json文件</h2>
+<p><img src="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-2.png"
+	width="915"
+	height="424"
+	srcset="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-2_hud84fc0549f1c9bba1792c3f714d6db67_259875_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-2_hud84fc0549f1c9bba1792c3f714d6db67_259875_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="517px"
+	
+></p>
+<p>MarshalIndent()的第三个参数为一个TAB键字符串</p>
+<h2 id="json解析到结构体json解码">json解析到结构体(json解码)</h2>
+<p><img src="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-1.png"
+	width="793"
+	height="187"
+	srcset="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-1_hueeb1ac505d4964f5849adc5516fc6ea2_124210_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-1_hueeb1ac505d4964f5849adc5516fc6ea2_124210_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="424"
+		data-flex-basis="1017px"
+	
+></p>
+<p>json的变量名是小写，而结构体的首字母是大写，所以可以通过对结构体二次编码来关联上，<strong>不建议将结构体的首字母变成小写</strong>，因为如果变成小写的话，以后又需要生成json就会失败，并且如果程序其他地方有使用到这个结构体，成员名赋值也需要修改</p>
+<p><img src="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3.png"
+	width="1211"
+	height="579"
+	srcset="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3_hu602ad7df09f680c7877fa53f5c683f05_376352_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3_hu602ad7df09f680c7877fa53f5c683f05_376352_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="501px"
+	
+></p>
+<p>Unmarshal()有两个参数，<strong>一个是byte切片类型（通过强转jsonBuf获得），一个是结构体的指针</strong>，放指针是因为给函数传结构体变量<strong>属于值传递</strong>，并不会修改本身结构体的内容，是拷贝了一份新的结构体给函数，只有通过指针实现引用传递才可以修改本身结构体内容，这个函数的返回值只有error</p>
+<p>如果只需要部分解析，可以重新定义一个只含有部分成员的结构体来接受解析内容</p>
+<p><img src="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image.png"
+	width="800"
+	height="113"
+	srcset="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image_huaf8dc92603c54e56be4d47d5cbd2c3f4_51668_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image_huaf8dc92603c54e56be4d47d5cbd2c3f4_51668_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="707"
+		data-flex-basis="1699px"
+	
+></p>
+<h2 id="json解析到map">json解析到map</h2>
+<p><img src="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3.png"
+	width="1211"
+	height="579"
+	srcset="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3_hu602ad7df09f680c7877fa53f5c683f05_376352_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-3_hu602ad7df09f680c7877fa53f5c683f05_376352_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="501px"
+	
+></p>
+<p><strong>map也需要传递指针过去，这里原理不太清楚，但是测试过发现不加指针&amp;就无法对原值进行修改，尽管map属于引用传递</strong></p>
+<p>如果通过map接受解析的值，它接受到的值类型都属于<strong>空接口类型</strong>，对其强转string(m[&ldquo;test&rdquo;])是无法成功的，需要使用switch断言来回推类型进行赋值</p>
+<p><img src="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-4.png"
+	width="1261"
+	height="466"
+	srcset="/p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-4_hu9dc1b063808fa77db2424dfe2b1dd20f_462860_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87golang%E5%A4%84%E7%90%86json%E6%96%87%E4%BB%B6/media/image-4_hu9dc1b063808fa77db2424dfe2b1dd20f_462860_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="270"
+		data-flex-basis="649px"
+	
+></p>
+<p><strong>switch可以在赋值的同时进行判断，即 switch a := 3; 判断的是st的值，空接口类型断言隐性的将data的类型放在了判断上面，且将data空接口类型自动转换成适合它的类型</strong></p>
+<p><strong>推荐使用结构体来解析，因为map如果要确定值的类型就需要断言，过于麻烦</strong></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

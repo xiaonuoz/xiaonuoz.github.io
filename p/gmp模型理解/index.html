@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Golang调度器的由来 N:1的模型是在用户态有多个routine对应核心态一个线程，这导致它并不适应现在的多核情况，只能在一个CPU中进行'>
+<title>GMP模型理解</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='GMP模型理解'>
+<meta property='og:description' content='Golang调度器的由来 N:1的模型是在用户态有多个routine对应核心态一个线程，这导致它并不适应现在的多核情况，只能在一个CPU中进行'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-04-03T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-04-03T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="GMP模型理解">
+<meta name="twitter:description" content="Golang调度器的由来 N:1的模型是在用户态有多个routine对应核心态一个线程，这导致它并不适应现在的多核情况，只能在一个CPU中进行">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/">GMP模型理解</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 03, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="golang调度器的由来">Golang调度器的由来</h1>
+<p><img src="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-2.png"
+	width="1712"
+	height="817"
+	srcset="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-2_hue1f6cda8357536d403b6435ec9ff1bde_599541_480x0_resize_box_3.png 480w, /p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-2_hue1f6cda8357536d403b6435ec9ff1bde_599541_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="502px"
+	
+></p>
+<p>N:1的模型是在用户态有多个routine对应核心态一个线程，这导致它并不适应现在的多核情况，只能在一个CPU中进行调度，可能这个CPU很忙，但其他CPU还是空闲状态，因此出现了M:N的情况。而M:N重点在于我们无法对核心态进行优化，那么只能在语言层面优化，因此调度器的优化就显得尤为重要。</p>
+<p>早期的Goroutine调度器比较传统，它只有一个全局的队列，轮询给核心态thread去调用，那假如在这个Goroutine中还有Goroutine那该给哪个thread去调用，给其他的会导致上下文切换消耗，造成额外的系统负载，自己正在运行一个Goroutine无法分配，并且公共的队列会存在thread对队列锁的竞争，以及多个thread处于不同的内核中，频繁的切换，增加阻塞和取消阻塞增加了系统的开销。</p>
+<h1 id="gmp模型">GMP模型</h1>
+<p><img src="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image.png"
+	width="1353"
+	height="793"
+	srcset="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image_hu01a8e589a1e9b2dc09ad7ba8c701567f_145041_480x0_resize_box_3.png 480w, /p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image_hu01a8e589a1e9b2dc09ad7ba8c701567f_145041_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="170"
+		data-flex-basis="409px"
+	
+></p>
+<ul>
+<li><code>G</code> 协程，很好理解，就是个goroutine的，里面除了存放本goroutine信息外 还有与所在P的绑定等信息。</li>
+<li><code>P</code> 处理器，管理着一组goroutine队列，P里面会存储当前goroutine运行的上下文环境（函数指针，堆栈地址及地址边界），P会对自己管理的goroutine队列做一些调度（比如把占用CPU时间较长的goroutine暂停、运行后续的goroutine等等）当自己的队列消费完了就去全局队列里取，如果全局队列里也消费完了会去其他P的队列里抢任务。</li>
+<li><code>M（machine）</code>内核线程，是Go运行时（runtime）对操作系统内核线程的虚拟， M与内核线程一般是一一映射的关系， 一个groutine最终是要放到M上执行的；</li>
+</ul>
+<p><img src="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-1.png"
+	width="1523"
+	height="1411"
+	srcset="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-1_hu1fd9b5f1a62e55dec832415025429813_449609_480x0_resize_box_3.png 480w, /p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-1_hu1fd9b5f1a62e55dec832415025429813_449609_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="107"
+		data-flex-basis="259px"
+	
+></p>
+<p>同一时刻并行的G数量就是P的数量，P会从队列中拿出G交给M执行，执行完一个时间片后再放回队列栈顶</p>
+<p>P的本地队列是存放当前P即将要执行的G，且P是有数量限制的，一般不超过256个G</p>
+<p>当新开一个G协程时，会优先分配给任意P的本地队列中，如果P队列满了才会尝试把这个G协程加这个本地队列中的前一半G一起放到全局队列中</p>
+<p>P列表是在程序启动时创建，最多有GOMAXPROCS配置的个数。M列表则是操作系统分配给当前Go程序的内核线程数。</p>
+<p>在同一时刻运行的总Goroutine数量最大等于CPU核心数，这也是为什么GOMAXPROCS默认值就是CPU核心数</p>
+<h1 id="调度器的设计策略">调度器的设计策略</h1>
+<ul>
+<li>复用线程：避免频繁的创建、销毁线程，主要是对线程的复用。
+<ul>
+<li>
+<p>work stealing 机制：类似于偷取，如有两个P存在，第一个P中有两个G，然而第二个没有G，且全局G队列中没有G，此时1P有G可以运行，而2P是空闲的，为了避免2P的线程被销毁，2P就会尝试从1P中偷取G过来运行，偷取的是1P队列长度的后一半，它会将1P等分取后一半，偷队头万一即将执行呢。要注意的是这里的一半是总长度的后一半，并不是偷取1P中G总数的一半，假如容量为8，有6个G，它等分后偷取的是后两个。</p>
+</li>
+<li>
+<p>hand off 机制： 分离机制，如果一个P上的G长久阻塞，那么Go会唤醒一个新的M，将原本的P和它的队列跟新的M绑定。此时阻塞的G直接和M绑定，M处于睡眠/销毁状态。</p>
+<ul>
+<li>如果G在执行过程中阻塞，则会根据hand off 机制重新从休眠M队列(程序启动时分配的)获取，如果休眠M队列中没有M了，则会创建一个M，和原本的P进行绑定。然后将阻塞的那个G和原先的M进行绑定等待阻塞结束。</li>
+<li>当G阻塞结束后，与G绑定的M会优先去寻找原本绑定的P是否和其他M绑定，如已和其他M绑定，则会去空闲P队列中寻找有没有空闲的P，两者任意一个满足则会获取P来执行这个恢复阻塞的G。如果都不满足的话，G会重新加入全局队列，全局队列满则会随机加入任意一个P本地队列，而M则放回休眠M队列，M队列满了则进行销毁。而M队列中的M如果长期没有被唤醒也会被销毁。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>利用并行：通过GOMAXPROCS来限定P的个数，默认等于CPU的核心数，最好只用CPU核心数的一半，剩下的一半给其他程序运行</li>
+<li>抢占：时间片到期则被其他G抢占运行</li>
+<li>全局G队列：当P本地队列中没有G时，P会先从全局队列中拿取G，如果全局也没有则会从其他P中偷取。全局G队列是有锁的，拿取需要解锁，速度会慢一点。</li>
+</ul>
+<p><img src="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-3.png"
+	width="1790"
+	height="1374"
+	srcset="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-3_hu30f04530e92744b757f771d3ed630d92_482704_480x0_resize_box_3.png 480w, /p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-3_hu30f04530e92744b757f771d3ed630d92_482704_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="130"
+		data-flex-basis="312px"
+	
+></p>
+<p>在放入时优先放入执行go func函数的那个线程的P的本地队列中，如果是主函数则先放主函数的线程中，如果满了，则会打乱本地队列前一半的G，加这个线程一起放入全局队列中。</p>
+<p><img src="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-5.png"
+	width="2192"
+	height="1268"
+	srcset="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-5_hu25e058dba443bba6a2aa47a9e339210f_714803_480x0_resize_box_3.png 480w, /p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-5_hu25e058dba443bba6a2aa47a9e339210f_714803_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="172"
+		data-flex-basis="414px"
+	
+></p>
+<p>main函数也是一个协程，它在M0上，但不是M0的G0，G0是只负责调度的。</p>
+<p>M0的G0存放在全局变量中，其他M的G0放在自己的局部变量中。</p>
+<h1 id="gmp可视化调试">GMP可视化调试</h1>
+<p><img src="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-7.png"
+	width="1666"
+	height="882"
+	srcset="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-7_hu767347b441c8e27551a08d26528196e7_556762_480x0_resize_box_3.png 480w, /p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-7_hu767347b441c8e27551a08d26528196e7_556762_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="453px"
+	
+></p>
+<p><img src="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-6.png"
+	width="1745"
+	height="782"
+	srcset="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-6_hua97952389ffa58e963ff3b35d0035f27_719557_480x0_resize_box_3.png 480w, /p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-6_hua97952389ffa58e963ff3b35d0035f27_719557_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="223"
+		data-flex-basis="535px"
+	
+></p>
+<h1 id="g的创建时">G的创建时</h1>
+<p>开辟G时，它会优先放入本地队列，假如本地队列此时已满，则会将本地队列等分切割。将队首的多个G打乱然后加上新增的G一起放入全局队列中。这样的好处是负载均衡，避免一个P满而其他P为空或极少的情况，全局队列的G大概率会被不同的核运行，打乱顺序，能降低不同核同时修改同一缓存行的概率，且本地队列也会空出来一半。防止饥饿。</p>
+<p><strong>当每次创建一个G时，它会尝试从休眠线程队列中唤醒一个M，如果有的话，M被唤醒，然后M会寻找有没有尚未绑定M的P(没有和M绑定的P会存在于空闲P队列中)，没有就会再次返回休眠，找到P之后两者进行绑定并初始化本地队列，此时称为自旋线程（没有G但为运行状态的线程），它会不断的寻找G，先从全局中找，全局没有则会去其他P队列中偷取。先从全局中取是避免一直偷取其他队列让全局中的G饥饿。虽然自旋也会浪费CPU的资源，但是如果不采用这种策略会导致线程销毁，更浪费资源。</strong></p>
+<p>并且自旋线程的数量要满足  自旋线程+执行中线程&lt;=GOMAXPROCS ，因为GOMAXPROCS指的是P的数量，即使有多余的M被G开辟出来，它也没有多余的P可供使用，即使开辟出M也会被放回休眠线程队列。</p>
+<p><img src="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-4.png"
+	width="1582"
+	height="1203"
+	srcset="/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-4_hua4ac71d6258bc8132f04276e48c778fa_420400_480x0_resize_box_3.png 480w, /p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/media/image-4_hua4ac71d6258bc8132f04276e48c778fa_420400_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="131"
+		data-flex-basis="315px"
+	
+></p>
+<p>GQ是全局队列的容量值</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

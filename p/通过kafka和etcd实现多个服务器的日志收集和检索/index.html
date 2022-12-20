@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='组件介绍 LogAgent:日志收集客户端，用来收集服务器上所有服务的日志，然后发往kafka。它根据配置项来收集日志，将配置项存储etcd中'>
+<title>通过kafka和etcd实现多个服务器的日志收集和检索</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='通过kafka和etcd实现多个服务器的日志收集和检索'>
+<meta property='og:description' content='组件介绍 LogAgent:日志收集客户端，用来收集服务器上所有服务的日志，然后发往kafka。它根据配置项来收集日志，将配置项存储etcd中'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-11-02T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-11-02T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="通过kafka和etcd实现多个服务器的日志收集和检索">
+<meta name="twitter:description" content="组件介绍 LogAgent:日志收集客户端，用来收集服务器上所有服务的日志，然后发往kafka。它根据配置项来收集日志，将配置项存储etcd中">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#组件介绍">组件介绍</a></li>
+    <li><a href="#消息队列的两种通信模式">消息队列的两种通信模式</a>
+      <ol>
+        <li><a href="#点对点模式queue">点对点模式（queue）</a></li>
+        <li><a href="#发布订阅模式topic">发布/订阅模式（topic）</a></li>
+      </ol>
+    </li>
+    <li><a href="#kafka">Kafka</a>
+      <ol>
+        <li><a href="#工作流程">工作流程</a></li>
+        <li><a href="#选择partition的原则">选择partition的原则</a></li>
+        <li><a href="#ack应答机制">ACK应答机制</a></li>
+        <li><a href="#topic和数据日志">Topic和数据日志</a></li>
+        <li><a href="#partition结构">Partition结构</a></li>
+      </ol>
+    </li>
+    <li><a href="#etcd">etcd</a>
+      <ol>
+        <li><a href="#etcd使用场景">etcd使用场景</a></li>
+        <li><a href="#etcd原理">etcd原理</a></li>
+        <li><a href="#etcd的搭建">etcd的搭建</a></li>
+        <li><a href="#etcd的下载启动">etcd的下载启动</a></li>
+        <li><a href="#etcd的续期">etcd的续期</a></li>
+      </ol>
+    </li>
+    <li><a href="#elasticsearch和kibana">Elasticsearch和Kibana</a></li>
+    <li><a href="#logagent实现源代码">logAgent实现源代码：</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/">通过kafka和etcd实现多个服务器的日志收集和检索</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 02, 2020</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5.png"
+	width="1422"
+	height="851"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="167"
+		data-flex-basis="401px"
+	
+></p>
+<h2 id="组件介绍">组件介绍</h2>
+<p>LogAgent:日志收集客户端，用来收集服务器上所有服务的日志，然后发往kafka。它根据配置项来收集日志，将配置项存储etcd中。用web管理页面来管理配置项，当扩容或增加服务时只需要在web上设置就行</p>
+<p>Kafka:高吞吐量的分布式队列</p>
+<p>ElasticSearch:开源的搜索引擎，提供基于HTTP RESTful的web接口，给日志信息提供索引，让日志支持检索</p>
+<p>Kibaa:开源的ES数据分析和可视化工具。</p>
+<p>Hadoop:分布式计算框架，能够对大量数据进行分布式处理的平台</p>
+<p>Storm:一个免费并开源的分布式实时计算系统</p>
+<p>通过Hadoop和Storm可以进行实时数据计算，来分析数据。</p>
+<h2 id="消息队列的两种通信模式">消息队列的两种通信模式</h2>
+<h3 id="点对点模式queue">点对点模式（queue）</h3>
+<p>消息生产者生产消息发送到queue中，然后消息消费者从queue中取出并且消费消息。一条消息被消费以后，queue中就没有了，不存在重复消费。</p>
+<h3 id="发布订阅模式topic">发布/订阅模式（topic）</h3>
+<p>消息生产者（发布）将消息发布到topic中，同时有多个消费者（订阅）消费该消息。和点对点方式不同，发布到topic的消息会被所有订阅者消费（类似于关注了微信公众号的人都能收到推送的文章）</p>
+<p>注意：发布订阅模式下，如果发布者发布的消息量很大时，单个订阅者的处理能力是不足的（接受缓慢）。因此在现实场景中是多个订阅者节点组成一个订阅组负载均衡来消费topic消息**（分组订阅）**，这样订阅者很容易实现消费能力线性扩展。<strong>可以看成是一个topic下有多个Queue，每个Queue是点对点的方式，Queue之间是发布订阅方式（这样每个Queue都轮询接受topic的消息，每个Queue接受部分消息）</strong></p>
+<h2 id="kafka">Kafka</h2>
+<p>Kafka是一个分布式的数据流平台，可以运行在单台服务器上，也可以在多台服务器上部署形成集群，它提供了发布和订阅功能，使用者可以发送数据到Kafka中，也可以从Kafka中读取数据（以便进行后续的处理），Kafka具有高吞吐、低延迟、高容错等特点</p>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10.png"
+	width="1471"
+	height="757"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10_hu532e345a0bf679f229228c5120b0a3aa_762029_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10_hu532e345a0bf679f229228c5120b0a3aa_762029_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="466px"
+	
+></p>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-7.png"
+	width="1546"
+	height="511"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-7_hu9a555016690519b49582f31fec267f50_809879_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-7_hu9a555016690519b49582f31fec267f50_809879_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="302"
+		data-flex-basis="726px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-9.png"
+	width="1492"
+	height="244"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-9_hu3dbc2542c6408993f47eca8e69a8d279_381495_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-9_hu3dbc2542c6408993f47eca8e69a8d279_381495_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="611"
+		data-flex-basis="1467px"
+	
+></p>
+<h3 id="工作流程">工作流程</h3>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-6.png"
+	width="1463"
+	height="862"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-6_hucfd725bd6894070014865c87c9d9e16e_464404_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-6_hucfd725bd6894070014865c87c9d9e16e_464404_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="169"
+		data-flex-basis="407px"
+	
+></p>
+<p>一定要记住：Producer在写入数据的时候是把数据写入到leader中，不会直接将数据写入follower。</p>
+<h3 id="选择partition的原则">选择partition的原则</h3>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5.png"
+	width="1422"
+	height="851"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="167"
+		data-flex-basis="401px"
+	
+></p>
+<h3 id="ack应答机制">ACK应答机制</h3>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-7.png"
+	width="1546"
+	height="511"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-7_hu9a555016690519b49582f31fec267f50_809879_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-7_hu9a555016690519b49582f31fec267f50_809879_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="302"
+		data-flex-basis="726px"
+	
+></p>
+<h3 id="topic和数据日志">Topic和数据日志</h3>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-1.png"
+	width="1559"
+	height="127"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-1_huc12465a47c28a09c1b6a82c9879c297e_187858_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-1_huc12465a47c28a09c1b6a82c9879c297e_187858_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1227"
+		data-flex-basis="2946px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5.png"
+	width="1422"
+	height="851"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="167"
+		data-flex-basis="401px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-11.png"
+	width="1540"
+	height="570"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-11_hudf0f7796b5e44cc86c31f5e089a6b6cb_996274_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-11_hudf0f7796b5e44cc86c31f5e089a6b6cb_996274_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="270"
+		data-flex-basis="648px"
+	
+></p>
+<h3 id="partition结构">Partition结构</h3>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5.png"
+	width="1422"
+	height="851"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="167"
+		data-flex-basis="401px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-2.png"
+	width="1192"
+	height="657"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-2_hu4749e4fefa15bdeb2553fca06c47f150_295589_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-2_hu4749e4fefa15bdeb2553fca06c47f150_295589_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="435px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10.png"
+	width="1471"
+	height="757"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10_hu532e345a0bf679f229228c5120b0a3aa_762029_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10_hu532e345a0bf679f229228c5120b0a3aa_762029_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="466px"
+	
+></p>
+<p>logAgent读取配置文件版：<a class="link" href="https://github.com/XiaoNuoZ/logAgentByConfig"  target="_blank" rel="noopener"
+    >https://github.com/XiaoNuoZ/logAgentByConfig</a></p>
+<h2 id="etcd">etcd</h2>
+<p>etcd是使用Go语言开发的一个开源的、高可用的分布式key-value存储系统，可以用于配置共享和服务的注册和发现（微服务）</p>
+<p>etcd具有以下特点：</p>
+<ul>
+<li>完全复制：集群中的每个节点都可以使用完整的存档</li>
+<li>高可用性：etcd可用于避免硬件的单点故障或网络问题</li>
+<li>一致性：每次读取都会返回跨多主机的最新写入</li>
+<li>简单：包括一个定义良好、面向用户的API（gRPC）</li>
+<li>安全：实现了带有可选的客户端证书身份验证的自动化TLS</li>
+<li>快速：每秒10000次写入的基准速度</li>
+<li>可靠：使用Raft算法实现了强一致、高可用</li>
+</ul>
+<h3 id="etcd使用场景">etcd使用场景</h3>
+<p>将配置信息放到etcd上集中管理的使用方式：应用在启动的时候主动从etcd获取一次配置信息，同时在etcd节点上注册一个Watcher并等待，以后每次配置有更新的时候，etcd都会实时通知订阅者，一次达到获取最新配置信息的目的</p>
+<p>etcd也经常用于服务发现，即在同一个分布式集群中的进程或服务，要如何才能找到对方并建立连接？本质上来说，服务发现就是了解集群中是否有进程在监听udp或tcp端口，并且通过名字就可以查找和连接</p>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10.png"
+	width="1471"
+	height="757"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10_hu532e345a0bf679f229228c5120b0a3aa_762029_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-10_hu532e345a0bf679f229228c5120b0a3aa_762029_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="466px"
+	
+></p>
+<h3 id="etcd原理">etcd原理</h3>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-8.png"
+	width="1061"
+	height="534"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-8_hue9ebac07fe0525de0e4c06963a4214e4_654778_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-8_hue9ebac07fe0525de0e4c06963a4214e4_654778_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="476px"
+	
+></p>
+<p>Raft协议：<a class="link" href="https://zhuanlan.zhihu.com/p/91288179"  title="Raft协议"
+     target="_blank" rel="noopener"
+    >Raft协议原理详解</a></p>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5.png"
+	width="1422"
+	height="851"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-5_hu29bea252fb0b94a072b6391f5eacbdc4_335558_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="167"
+		data-flex-basis="401px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-2.png"
+	width="1192"
+	height="657"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-2_hu4749e4fefa15bdeb2553fca06c47f150_295589_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-2_hu4749e4fefa15bdeb2553fca06c47f150_295589_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="435px"
+	
+></p>
+<h3 id="etcd的搭建">etcd的搭建</h3>
+<p><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-1.png"
+	width="1559"
+	height="127"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-1_huc12465a47c28a09c1b6a82c9879c297e_187858_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-1_huc12465a47c28a09c1b6a82c9879c297e_187858_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1227"
+		data-flex-basis="2946px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-4.png"
+	width="846"
+	height="485"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-4_hufbe3574c63440dcdb5714a2c715b6536_388270_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-4_hufbe3574c63440dcdb5714a2c715b6536_388270_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="174"
+		data-flex-basis="418px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-3.png"
+	width="854"
+	height="264"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-3_hueaff3b5c707ff1e7c28125daf1900d6d_202268_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image-3_hueaff3b5c707ff1e7c28125daf1900d6d_202268_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="323"
+		data-flex-basis="776px"
+	
+><img src="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image.png"
+	width="849"
+	height="263"
+	srcset="/p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image_hubb9231407f2f9a0bcfaf22f17dcce602_132743_480x0_resize_box_3.png 480w, /p/%E9%80%9A%E8%BF%87kafka%E5%92%8Cetcd%E5%AE%9E%E7%8E%B0%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%92%8C%E6%A3%80%E7%B4%A2/media/image_hubb9231407f2f9a0bcfaf22f17dcce602_132743_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="322"
+		data-flex-basis="774px"
+	
+></p>
+<p>为了避免在生产环境中有多个集群，因此使用token来区分，CLUSTER_STATE是状态的意思，new表示新建一个节点，CLUSTER表示它属于哪个集群</p>
+<h3 id="etcd的下载启动">etcd的下载启动</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">下载：https://github.com/etcd-io/etcd/releases
+</span></span><span class="line"><span class="cl">启动：解压后直接对etcd.exe右键管理员运行即可（普通的cmd不是管理员运行，可能会出错）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意：连接etcd时，默认的etcdctl使用的是v2版本的命令，需要设置环境变量 <code>SET ETCDCTL_API=3</code> 来使用v3版本的API，而默认的 <code>ETCDCTL_API=2</code>是使用v2版本的API（针对老版本，最新版已修复）</p>
+<p>etcd的常用的有put(设值)、get(取值)、watch(监听)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">etcdctl.exe --endpoints=http://127.0.0.1:2379 put xiaonuo 23		//设置key和value
+</span></span><span class="line"><span class="cl">etcdctl.exe --endpoints=http://127.0.0.1:2379 get xiaonuo		//通过Key取值
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>watch用来获取未来更改 的通知，当值发生改变便会通知</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import (
+</span></span><span class="line"><span class="cl">	&#34;context&#34;
+</span></span><span class="line"><span class="cl">	&#34;fmt&#34;
+</span></span><span class="line"><span class="cl">	&#34;go.etcd.io/etcd/clientv3&#34;
+</span></span><span class="line"><span class="cl">	&#34;time&#34;
+</span></span><span class="line"><span class="cl">)
+</span></span><span class="line"><span class="cl">func main(){
+</span></span><span class="line"><span class="cl">	//etcd连接
+</span></span><span class="line"><span class="cl">	cli,err:=clientv3.New(clientv3.Config{
+</span></span><span class="line"><span class="cl">		Endpoints: []string{&#34;127.0.0.1:2379&#34;},	//连接对象
+</span></span><span class="line"><span class="cl">		DialTimeout: 5*time.Second,		//5秒没连接上就超时返回err
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	if err!=nil{
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;connect to etcd faild,err:&#34;,err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	defer cli.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//etcd Put
+</span></span><span class="line"><span class="cl">	ctx,cancel:=context.WithTimeout(context.Background(),time.Second)
+</span></span><span class="line"><span class="cl">	_,err=cli.Put(ctx,&#34;xiaonuo&#34;,&#34;23&#34;)
+</span></span><span class="line"><span class="cl">	//这里没开携程，因此会put执行完才执行cancel()，put如果一秒后还没有成功就会自动结束上下文，cancel()是避免等待直到垃圾回收结束它。
+</span></span><span class="line"><span class="cl">	cancel()
+</span></span><span class="line"><span class="cl">	if err!=nil{
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;put to etcd faild,err:&#34;,err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//etcd Get
+</span></span><span class="line"><span class="cl">	ctx,cancel=context.WithTimeout(context.Background(),time.Second)
+</span></span><span class="line"><span class="cl">	//Get(ctx context.Context, key string, opts ...OpOption)中的第三个选项是clientv3.WithPrefix()，它可以给key定义一个前缀，方便整理
+</span></span><span class="line"><span class="cl">	resp,err:=cli.Get(ctx,&#34;xiaonuo&#34;)
+</span></span><span class="line"><span class="cl">	cancel()
+</span></span><span class="line"><span class="cl">	if err!=nil{
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;get to etcd faild,err:&#34;,err)
+</span></span><span class="line"><span class="cl">		return
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	for _,ev:=range resp.Kvs{
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;key:&#34;,string(ev.Key),&#34;----value:&#34;,string(ev.Value))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	//etcd Watch，watch会派一个哨兵一直监听着key的value的变化(新增、修改、删除)
+</span></span><span class="line"><span class="cl">	//watch返回的是一个channel,&lt;-chan WatchResponse
+</span></span><span class="line"><span class="cl">	//也可以设置WithTimeout()来让它监视一个固定时间或设置条件让其取消监视（不过还是建议让其一直监视着）
+</span></span><span class="line"><span class="cl">	rch:=cli.Watch(context.Background(),&#34;xiaonuo&#34;)
+</span></span><span class="line"><span class="cl">	//从通道尝试取值，range会在没值的时候阻塞，有值后执行内部代码，然后循环回来继续阻塞等待下一个值
+</span></span><span class="line"><span class="cl">	for wresp:=range rch{
+</span></span><span class="line"><span class="cl">		for _,ev:=range wresp.Events{
+</span></span><span class="line"><span class="cl">			//type可以取到类型，是删除修改还是新增
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;type:&#34;,string(ev.Type),&#34;----key:&#34;,string(ev.Kv.Key),&#34;----value:&#34;,string(ev.Kv.Value))
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="etcd的续期">etcd的续期</h3>
+<p>etcd可以设置续期，如果续期时间超过则直接数据失效</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cli, err := clientv3.New(clientv3.Config{
+</span></span><span class="line"><span class="cl">      Endpoints:   []string{&#34;127.0.0.1:2379&#34;},
+</span></span><span class="line"><span class="cl">      DialTimeout: time.Second,
+</span></span><span class="line"><span class="cl">   })
+</span></span><span class="line"><span class="cl">   if err != nil {
+</span></span><span class="line"><span class="cl">      log.Fatal(err)
+</span></span><span class="line"><span class="cl">   }
+</span></span><span class="line"><span class="cl">   defer cli.Close()
+</span></span><span class="line"><span class="cl">   //设置续期5秒
+</span></span><span class="line"><span class="cl">   resp, err := cli.Grant(context.TODO(), 5)
+</span></span><span class="line"><span class="cl">   if err != nil {
+</span></span><span class="line"><span class="cl">      log.Fatal(err)
+</span></span><span class="line"><span class="cl">   }
+</span></span><span class="line"><span class="cl">   // 将 k-v 设置到etcd
+</span></span><span class="line"><span class="cl">   _, err = cli.Put(context.TODO(), &#34;root&#34;, &#34;admin&#34;, clientv3.WithLease(resp.ID))
+</span></span><span class="line"><span class="cl">   if err != nil {
+</span></span><span class="line"><span class="cl">      log.Fatal(err)
+</span></span><span class="line"><span class="cl">   }
+</span></span><span class="line"><span class="cl">   // 若想一直有效，设置自动续期,关闭此程序后数据5s后消失
+</span></span><span class="line"><span class="cl">   ch, err := cli.KeepAlive(context.TODO(), resp.ID)
+</span></span><span class="line"><span class="cl">   if err != nil {
+</span></span><span class="line"><span class="cl">      log.Fatal(err)
+</span></span><span class="line"><span class="cl">   }
+</span></span><span class="line"><span class="cl">   for {
+</span></span><span class="line"><span class="cl">      //返回续期信息
+</span></span><span class="line"><span class="cl">      c := &lt;-ch
+</span></span><span class="line"><span class="cl">      fmt.Println(&#34;c:&#34;, c)
+</span></span><span class="line"><span class="cl">   }
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="elasticsearch和kibana">Elasticsearch和Kibana</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">https://www.elastic.co/cn/elasticsearch/
+</span></span><span class="line"><span class="cl">https://www.elastic.co/cn/kibana
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>要注意的是：es和kibana版本要一致，否则可能出现不兼容的问题</strong></p>
+<p>kibana是一个开源的分析和可视化平台，设计出来用于和Eleasticsearch一起工作。</p>
+<p>它可以查看、搜索并和存储在Eleastucsearch索引中的数据进行交互。以各种图标、表格和地图的形式可视化数据</p>
+<p>es解压后可以直接启动elasticsearch.bat。</p>
+<p>kibana解压后要先更改配置文件kibana.yml，将里面的elasticsearch.hosts设置为自己的elasticsearch的地址，然后修改i18n.locale的值为zh-CN</p>
+<h2 id="logagent实现源代码">logAgent实现源代码：</h2>
+<p><a class="link" href="https://github.com/XiaoNuoZ/logAgentByConfig"  target="_blank" rel="noopener"
+    >https://github.com/XiaoNuoZ/logAgentByConfig</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>
