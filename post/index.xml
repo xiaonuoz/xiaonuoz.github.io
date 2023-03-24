@@ -7,17 +7,18 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <lastBuildDate>Fri, 24 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaonuoz.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>golang 代码优化思路</title>
-        <link>https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E6%80%9D%E8%B7%AF/</link>
+        <title>golang 代码优化</title>
+        <link>https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/</link>
         <pubDate>Fri, 24 Mar 2023 00:00:00 +0000</pubDate>
         
-        <guid>https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E6%80%9D%E8%B7%AF/</guid>
+        <guid>https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/</guid>
         <description>&lt;p&gt;此文介绍从各个方向优化golang代码，让golang运行更流畅，内存消耗更少。&lt;/p&gt;
 &lt;h2 id=&#34;字符串拼接&#34;&gt;字符串拼接&lt;/h2&gt;
 &lt;p&gt;在Go语言中，字符串只是可读的，它无法被修改，拼接字符串实际上是创建了一个新的字符串对象。因此如果频繁的拼接字符串，就意味着在频繁的分配内存，会对性能造成严重的影响。&lt;/p&gt;
 &lt;p&gt;当使用 + 拼接 2 个字符串时，生成一个新的字符串，那么就需要开辟一段新的空间，新空间的大小是原来两个字符串的大小之和。拼接第三个字符串时，再开辟一段新空间，新空间大小是三个字符串大小之和，以此类推。&lt;/p&gt;
 &lt;p&gt;而 &lt;code&gt;strings.Builder&lt;/code&gt;，&lt;code&gt;bytes.Buffer&lt;/code&gt;，包括切片 []byte 的内存是以倍数申请的。例如，初始大小为 0，当第一次写入大小为 10 byte 的字符串时，则会申请大小为 16 byte 的内存（恰好大于 10 byte 的 2 的指数），第二次写入 10 byte 时，内存不够，则申请 32 byte 的内存，第三次写入内存足够，则不申请新的，以此类推。在实际过程中，超过一定大小，申请策略上会有些许调整。&lt;/p&gt;
 &lt;p&gt;官方推荐的字符串拼接方法是&lt;code&gt;strings.Builder&lt;/code&gt;,它的性能比&lt;code&gt;bytes.Buffer&lt;/code&gt;略快10%,一个比较重要的区别在于,&lt;code&gt;bytes.Buffer&lt;/code&gt; 转化为字符串时重新申请了一块空间，存放生成的字符串变量，而 &lt;code&gt;strings.Builder&lt;/code&gt; 直接将底层的 []byte 转换成了字符串类型返回了回来。&lt;/p&gt;
+&lt;p&gt;最快的是使用[]byte来拼接，因为它一次性分配完了所需要的内存，通过append来拼接字符串，但是这个有一个很大的缺陷就是，在日常开发中，很多时候并不知道给这个字符串分配有多大的内存。&lt;strong&gt;而且&lt;code&gt;strings.Builder&lt;/code&gt;也有 &lt;code&gt;Grow()&lt;/code&gt; 方法可以进行预分配内存。&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;bytes.Buffer&lt;/li&gt;
 &lt;/ul&gt;
