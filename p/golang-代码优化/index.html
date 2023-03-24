@@ -267,7 +267,7 @@
 <p>当使用 + 拼接 2 个字符串时，生成一个新的字符串，那么就需要开辟一段新的空间，新空间的大小是原来两个字符串的大小之和。拼接第三个字符串时，再开辟一段新空间，新空间大小是三个字符串大小之和，以此类推。</p>
 <p>而 <code>strings.Builder</code>，<code>bytes.Buffer</code>，包括切片 []byte 的内存是以倍数申请的。例如，初始大小为 0，当第一次写入大小为 10 byte 的字符串时，则会申请大小为 16 byte 的内存（恰好大于 10 byte 的 2 的指数），第二次写入 10 byte 时，内存不够，则申请 32 byte 的内存，第三次写入内存足够，则不申请新的，以此类推。在实际过程中，超过一定大小，申请策略上会有些许调整。</p>
 <p>官方推荐的字符串拼接方法是<code>strings.Builder</code>,它的性能比<code>bytes.Buffer</code>略快10%,一个比较重要的区别在于,<code>bytes.Buffer</code> 转化为字符串时重新申请了一块空间，存放生成的字符串变量，而 <code>strings.Builder</code> 直接将底层的 []byte 转换成了字符串类型返回了回来。</p>
-<p>速度最快的是使用[]byte来拼接，因为它一次性分配完了所需要的内存，通过append来拼接字符串，但是这个有一个很大的缺陷就是，在日常开发中，很多时候并不知道给这个字符串分配有多大的内存。<strong>而且<code>strings.Builder</code>也有 <code>Grow()</code> 方法可以进行预分配内存。</strong></p>
+<p>速度最快的是用[]byte来拼接，因为它一次性分配完了所需要的内存，通过append来拼接字符串，但是这个有一个很大的缺陷就是，在日常开发中，很多时候并不知道给这个字符串分配有多大的内存。<strong>而且<code>strings.Builder</code>也有 <code>Grow()</code> 方法可以进行预分配内存。</strong></p>
 <ul>
 <li>bytes.Buffer</li>
 </ul>
