@@ -3,10 +3,19 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://xiaonuoz.github.io/</loc>
-    <lastmod>2021-04-09T00:00:00+00:00</lastmod>
+    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://xiaonuoz.github.io/categories/</loc>
-    <lastmod>2021-04-09T00:00:00+00:00</lastmod>
+    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xiaonuoz.github.io/categories/golang/</loc>
+    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E6%80%9D%E8%B7%AF/</loc>
+    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xiaonuoz.github.io/post/</loc>
+    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://xiaonuoz.github.io/categories/mongodb/</loc>
     <lastmod>2021-04-09T00:00:00+00:00</lastmod>
@@ -14,13 +23,7 @@
     <loc>https://xiaonuoz.github.io/p/mongodb%E5%85%A5%E9%97%A8/</loc>
     <lastmod>2021-04-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://xiaonuoz.github.io/post/</loc>
-    <lastmod>2021-04-09T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://xiaonuoz.github.io/p/gmp%E6%A8%A1%E5%9E%8B%E7%90%86%E8%A7%A3/</loc>
-    <lastmod>2021-04-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://xiaonuoz.github.io/categories/golang/</loc>
     <lastmod>2021-04-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://xiaonuoz.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</loc>
