@@ -195,6 +195,14 @@
 &lt;p&gt;因为FieldByName()相比于Field()有一个数量级的性能劣化。那么在实际应用中就要避免之间调用FieldByName。因此就可以通过map来实现，先使用for循环遍历typ.NumField()，将所有的字段通过Field()的方法存到一个map中，然后后续使用时再从map中取。&lt;/p&gt;
 &lt;p&gt;map的value尽量存储对应字段的索引,直接存储对应结构体的话，它为Type的StructField结构体，无法获取到对应具体实例该字段的值。&lt;/p&gt;
 &lt;p&gt;使用map可以让FieldByName消耗的时间从原本的10倍缩小到2倍左右。&lt;/p&gt;
+&lt;h2 id=&#34;使用空结构体节省内存&#34;&gt;使用空结构体节省内存&lt;/h2&gt;
+&lt;p&gt;空结构体 struct{} 实例不占据任何的内存空间，可以通过unsafe.Sizeof 计算出一个数据类型实例需要占用的字节数。&lt;/p&gt;
+&lt;p&gt;因为空结构体不占据内存空间，因此被广泛作为各种场景下的占位符使用。一是节省资源，二是空结构体本身就具备很强的语义，即这里不需要任何值，仅作为占位符&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将空结构体作为map的值使用，实现set类型。&lt;/li&gt;
+&lt;li&gt;作为不发送数据的信道，只用来通知子协程(goroutine)执行任务，或只用来控制协程并发度。&lt;/li&gt;
+&lt;li&gt;作为仅包含方法的结构体，主要用来给一系列函数进行分组。&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         </item>
         <item>
