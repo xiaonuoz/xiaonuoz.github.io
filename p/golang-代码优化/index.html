@@ -202,6 +202,13 @@
       </ol>
     </li>
     <li><a href="#使用空结构体节省内存">使用空结构体节省内存</a></li>
+    <li><a href="#内存对齐">内存对齐</a>
+      <ol>
+        <li><a href="#unsafealignof">unsafe.Alignof()</a></li>
+        <li><a href="#合理布局减少内存占用">合理布局减少内存占用</a></li>
+        <li><a href="#空结构体struct-的对齐">空结构体struct{} 的对齐</a></li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -458,7 +465,151 @@
 <li>作为不发送数据的信道，只用来通知子协程(goroutine)执行任务，或只用来控制协程并发度。</li>
 <li>作为仅包含方法的结构体，主要用来给一系列函数进行分组。</li>
 </ul>
-
+<h2 id="内存对齐">内存对齐</h2>
+<p>CPU访问内存时并不是逐个字节的访问，而是以字长为单位进行访问。而32位的cpu字长为(32/8) 4字节，即cpu每次访问内存的单位也是4字节。</p>
+<p>这么设计的目的主要是减少CPU访问内存的次数，加大CPU访问内存的吞吐量。</p>
+<p><img src="/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-1.png"
+	width="1130"
+	height="674"
+	srcset="/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-1_huefaf2885a9b6222efd88d25e25f0d796_65827_480x0_resize_box_3.png 480w, /p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-1_huefaf2885a9b6222efd88d25e25f0d796_65827_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="内存对齐-1.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="167"
+		data-flex-basis="402px"
+	
+>
+如此图中，如果不进行内存对齐，访问b变量时就需要进行2次内存访问。第一次访问得到b变量的第1个字节，第二次访问得到b变量的后两个字节。</p>
+<p>并且内存对齐对实现变量的原子性操作也是有好处的，如果变量的大小不超过字长，那么内存对齐后，对该变量的访问就是原子的。</p>
+<p><strong>总结：合理的内存对齐可以提高内存读写的性能，并且便于实现变量操作的原子性。</strong></p>
+<h3 id="unsafealignof">unsafe.Alignof()</h3>
+<p>可以根据此方法计算内存对齐遵守的规律。它会返回一个类型的对齐值，也可以叫做对齐系数或者对齐倍数。</p>
+<p>其实例占据的空间必须是对齐值的整数倍，例如一个结构体有一个int16和int32成员，那么它的内存就是2+4=6，但是通过Alignof()得到它的对齐系数为4，因此最终的内存占用值就为8。</p>
+<p>它的对齐系数取决于其结构体中占用内存最大的那个成员的对齐系数。</p>
+<ul>
+<li>对于任意类型的变量 x ，unsafe.Alignof(x) 至少为 1</li>
+<li>对于 struct 结构体类型的变量 x，计算 x 每一个字段 f 的 unsafe.Alignof(x.f)，unsafe.Alignof(x) 等于其中的最大值</li>
+<li>对于 array 数组类型的变量 x，unsafe.Alignof(x) 等于构成数组的元素类型的对齐倍数(例如切片组成为 cap、len和指向底层数组的指针ptr)，对齐倍数取三者中占用内存最大的那个成员的对齐系数即可</li>
+</ul>
+<h3 id="合理布局减少内存占用">合理布局减少内存占用</h3>
+<p>对齐系数只是用来推算结构体内存占用必须为系数的整数倍，它无法直接得出该结构体占用内存的值，还需要根据具体排列情况来获取。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type demo1 struct {
+</span></span><span class="line"><span class="cl">	a int8
+</span></span><span class="line"><span class="cl">	b int16
+</span></span><span class="line"><span class="cl">	c int32
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type demo2 struct {
+</span></span><span class="line"><span class="cl">	a int8
+</span></span><span class="line"><span class="cl">	c int32
+</span></span><span class="line"><span class="cl">	b int16
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	fmt.Println(unsafe.Sizeof(demo1{})) // 8
+</span></span><span class="line"><span class="cl">	fmt.Println(unsafe.Sizeof(demo2{})) // 12
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>unsafe.Alignof(x)只会返回最终的对齐系数，。每个字段会按照自身的对齐系数来确定在内存中的偏移量，字段排列顺序不同，上一个字段因为偏移而浪费的大小也不同。</p>
+<ul>
+<li>demo1:
+<ul>
+<li>a是第一个字段，它的对齐系数为8/8=1，自身就是8bit，即占满第0个字节。</li>
+<li>b是第二个字段，它的对齐系数为16/8=2，那么偏移量必须为2的倍数，即占据第2和第3个字节，第1个字节被留空。</li>
+<li>c是第三个字段，它的对齐系数为32/8=4，那么偏移量必须为4的倍数，即占据第4-7字节。</li>
+</ul>
+</li>
+</ul>
+<p>因此demo1内存占用为8字节。</p>
+<ul>
+<li>demo2:
+<ul>
+<li>a是第一个字段，和demo1一样占据第0字节。</li>
+<li>b是第二个字段,对齐系数为4，4的倍数即必须从第4字节开始，占据4-7字节。</li>
+<li>c是第三个字段，对齐系数为2，即占用8-9字节。</li>
+<li>demo2的最终对齐倍数为占据内存最大的成员对齐系数值，即它的对齐系数为4，而abc加起来占据了10字节，并不是4的整数倍，因此demo2最终内存占用为12字节。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-2.png"
+	width="1155"
+	height="419"
+	srcset="/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-2_hub2deb09a9ceb43164162f9914bb1b95c_31255_480x0_resize_box_3.png 480w, /p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-2_hub2deb09a9ceb43164162f9914bb1b95c_31255_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="内存对齐-2.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="275"
+		data-flex-basis="661px"
+	
+></p>
+<p>因此，在对内存特别敏感的结构体的设计上，可以通过调整字段的顺序来减少内存的占用。只需要将结构体的成员按照各自内存占用大小升序排列即可，这样成员的对齐系数是逐渐增大的，排列的会更加紧凑，内存占用也就越小。</p>
+<h3 id="空结构体struct-的对齐">空结构体struct{} 的对齐</h3>
+<p>空 struct{} 大小为 0，当作为其他 struct 的字段时，一般不需要内存对齐(某个结构体中存在空结构体,只要不是放置在最后，都不会占用空间)。</p>
+<p>但是有一种情况除外：即当 struct{} 作为结构体最后一个字段时，会被填充对齐到前一个字段的大小，地址偏移对齐规则不变。</p>
+<p>因为如果有指针指向该字段, 返回的地址将在结构体之外，如果此指针一直存活不释放对应的内存，就会有内存泄露的问题（该内存不因结构体释放而释放，因为空结构不占用内存，导致这个指针无法指向相对应的值）。</p>
+<p>因此，当 struct{} 作为其他 struct 最后一个字段时，需要填充额外的内存保证安全。我们做个试验，验证下这种情况。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type demo3 struct {
+</span></span><span class="line"><span class="cl">	c int32
+</span></span><span class="line"><span class="cl">	a struct{}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type demo4 struct {
+</span></span><span class="line"><span class="cl">	a struct{}
+</span></span><span class="line"><span class="cl">	c int32
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	fmt.Println(unsafe.Sizeof(demo3{})) // 8
+</span></span><span class="line"><span class="cl">	fmt.Println(unsafe.Sizeof(demo4{})) // 4
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
 </section>
 
 

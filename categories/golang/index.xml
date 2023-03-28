@@ -203,7 +203,151 @@
 &lt;li&gt;作为不发送数据的信道，只用来通知子协程(goroutine)执行任务，或只用来控制协程并发度。&lt;/li&gt;
 &lt;li&gt;作为仅包含方法的结构体，主要用来给一系列函数进行分组。&lt;/li&gt;
 &lt;/ul&gt;
-</description>
+&lt;h2 id=&#34;内存对齐&#34;&gt;内存对齐&lt;/h2&gt;
+&lt;p&gt;CPU访问内存时并不是逐个字节的访问，而是以字长为单位进行访问。而32位的cpu字长为(32/8) 4字节，即cpu每次访问内存的单位也是4字节。&lt;/p&gt;
+&lt;p&gt;这么设计的目的主要是减少CPU访问内存的次数，加大CPU访问内存的吞吐量。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-1.png&#34;
+	width=&#34;1130&#34;
+	height=&#34;674&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-1_huefaf2885a9b6222efd88d25e25f0d796_65827_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-1_huefaf2885a9b6222efd88d25e25f0d796_65827_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;内存对齐-1.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;167&#34;
+		data-flex-basis=&#34;402px&#34;
+	
+&gt;
+如此图中，如果不进行内存对齐，访问b变量时就需要进行2次内存访问。第一次访问得到b变量的第1个字节，第二次访问得到b变量的后两个字节。&lt;/p&gt;
+&lt;p&gt;并且内存对齐对实现变量的原子性操作也是有好处的，如果变量的大小不超过字长，那么内存对齐后，对该变量的访问就是原子的。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;总结：合理的内存对齐可以提高内存读写的性能，并且便于实现变量操作的原子性。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;unsafealignof&#34;&gt;unsafe.Alignof()&lt;/h3&gt;
+&lt;p&gt;可以根据此方法计算内存对齐遵守的规律。它会返回一个类型的对齐值，也可以叫做对齐系数或者对齐倍数。&lt;/p&gt;
+&lt;p&gt;其实例占据的空间必须是对齐值的整数倍，例如一个结构体有一个int16和int32成员，那么它的内存就是2+4=6，但是通过Alignof()得到它的对齐系数为4，因此最终的内存占用值就为8。&lt;/p&gt;
+&lt;p&gt;它的对齐系数取决于其结构体中占用内存最大的那个成员的对齐系数。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对于任意类型的变量 x ，unsafe.Alignof(x) 至少为 1&lt;/li&gt;
+&lt;li&gt;对于 struct 结构体类型的变量 x，计算 x 每一个字段 f 的 unsafe.Alignof(x.f)，unsafe.Alignof(x) 等于其中的最大值&lt;/li&gt;
+&lt;li&gt;对于 array 数组类型的变量 x，unsafe.Alignof(x) 等于构成数组的元素类型的对齐倍数(例如切片组成为 cap、len和指向底层数组的指针ptr)，对齐倍数取三者中占用内存最大的那个成员的对齐系数即可&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;合理布局减少内存占用&#34;&gt;合理布局减少内存占用&lt;/h3&gt;
+&lt;p&gt;对齐系数只是用来推算结构体内存占用必须为系数的整数倍，它无法直接得出该结构体占用内存的值，还需要根据具体排列情况来获取。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;type demo1 struct {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a int8
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	b int16
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	c int32
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;type demo2 struct {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a int8
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	c int32
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	b int16
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;func main() {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	fmt.Println(unsafe.Sizeof(demo1{})) // 8
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	fmt.Println(unsafe.Sizeof(demo2{})) // 12
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;unsafe.Alignof(x)只会返回最终的对齐系数，。每个字段会按照自身的对齐系数来确定在内存中的偏移量，字段排列顺序不同，上一个字段因为偏移而浪费的大小也不同。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;demo1:
+&lt;ul&gt;
+&lt;li&gt;a是第一个字段，它的对齐系数为8/8=1，自身就是8bit，即占满第0个字节。&lt;/li&gt;
+&lt;li&gt;b是第二个字段，它的对齐系数为16/8=2，那么偏移量必须为2的倍数，即占据第2和第3个字节，第1个字节被留空。&lt;/li&gt;
+&lt;li&gt;c是第三个字段，它的对齐系数为32/8=4，那么偏移量必须为4的倍数，即占据第4-7字节。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因此demo1内存占用为8字节。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;demo2:
+&lt;ul&gt;
+&lt;li&gt;a是第一个字段，和demo1一样占据第0字节。&lt;/li&gt;
+&lt;li&gt;b是第二个字段,对齐系数为4，4的倍数即必须从第4字节开始，占据4-7字节。&lt;/li&gt;
+&lt;li&gt;c是第三个字段，对齐系数为2，即占用8-9字节。&lt;/li&gt;
+&lt;li&gt;demo2的最终对齐倍数为占据内存最大的成员对齐系数值，即它的对齐系数为4，而abc加起来占据了10字节，并不是4的整数倍，因此demo2最终内存占用为12字节。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-2.png&#34;
+	width=&#34;1155&#34;
+	height=&#34;419&#34;
+	srcset=&#34;https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-2_hub2deb09a9ceb43164162f9914bb1b95c_31255_480x0_resize_box_3.png 480w, https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/media/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-2_hub2deb09a9ceb43164162f9914bb1b95c_31255_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;内存对齐-2.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;275&#34;
+		data-flex-basis=&#34;661px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;因此，在对内存特别敏感的结构体的设计上，可以通过调整字段的顺序来减少内存的占用。只需要将结构体的成员按照各自内存占用大小升序排列即可，这样成员的对齐系数是逐渐增大的，排列的会更加紧凑，内存占用也就越小。&lt;/p&gt;
+&lt;h3 id=&#34;空结构体struct-的对齐&#34;&gt;空结构体struct{} 的对齐&lt;/h3&gt;
+&lt;p&gt;空 struct{} 大小为 0，当作为其他 struct 的字段时，一般不需要内存对齐(某个结构体中存在空结构体,只要不是放置在最后，都不会占用空间)。&lt;/p&gt;
+&lt;p&gt;但是有一种情况除外：即当 struct{} 作为结构体最后一个字段时，会被填充对齐到前一个字段的大小，地址偏移对齐规则不变。&lt;/p&gt;
+&lt;p&gt;因为如果有指针指向该字段, 返回的地址将在结构体之外，如果此指针一直存活不释放对应的内存，就会有内存泄露的问题（该内存不因结构体释放而释放，因为空结构不占用内存，导致这个指针无法指向相对应的值）。&lt;/p&gt;
+&lt;p&gt;因此，当 struct{} 作为其他 struct 最后一个字段时，需要填充额外的内存保证安全。我们做个试验，验证下这种情况。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;type demo3 struct {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	c int32
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a struct{}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;type demo4 struct {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a struct{}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	c int32
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;func main() {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	fmt.Println(unsafe.Sizeof(demo3{})) // 8
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	fmt.Println(unsafe.Sizeof(demo4{})) // 4
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
         </item>
         <item>
         <title>GMP模型理解</title>
