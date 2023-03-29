@@ -214,7 +214,23 @@
         <li><a href="#互斥锁如何实现公平">互斥锁如何实现公平</a></li>
       </ol>
     </li>
-    <li><a href="#协程的退出">协程的退出</a></li>
+    <li><a href="#协程的退出">协程的退出</a>
+      <ol>
+        <li><a href="#超时返回时的陷阱">超时返回时的陷阱</a>
+          <ol>
+            <li><a href="#超时退出后子协程依然存在导致内存泄漏">超时退出后，子协程依然存在，导致内存泄漏</a></li>
+            <li><a href="#强制kill-goroutine-是不能实现的">强制kill goroutine 是不能实现的</a></li>
+          </ol>
+        </li>
+        <li><a href="#channel-忘记关闭的陷阱">channel 忘记关闭的陷阱</a>
+          <ol>
+            <li><a href="#关于通道和协程的垃圾回收">关于通道和协程的垃圾回收</a></li>
+            <li><a href="#通道关闭原则">通道关闭原则</a></li>
+            <li><a href="#优雅的关闭通道">优雅的关闭通道</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -639,6 +655,542 @@
 <p>那么锁就会从饥饿状态转换为正常状态。</p>
 <p>正常状态有很好的性能表现，饥饿模式也是非常重要的，因为它能阻止尾部延迟的现象。</p>
 <h2 id="协程的退出">协程的退出</h2>
+<h3 id="超时返回时的陷阱">超时返回时的陷阱</h3>
+<p>超时控制在网络编程中是非常常见的，利用 context.WithTimeout 和 time.After 都能够很轻易地实现。</p>
+<h4 id="超时退出后子协程依然存在导致内存泄漏">超时退出后，子协程依然存在，导致内存泄漏</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func doBadthing(done chan bool) {
+</span></span><span class="line"><span class="cl">	time.Sleep(time.Second)
+</span></span><span class="line"><span class="cl">	done &lt;- true
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func timeout(f func(chan bool)) error {
+</span></span><span class="line"><span class="cl">	done := make(chan bool)
+</span></span><span class="line"><span class="cl">	go f(done)
+</span></span><span class="line"><span class="cl">	select {
+</span></span><span class="line"><span class="cl">	case &lt;-done:
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;done&#34;)
+</span></span><span class="line"><span class="cl">		return nil
+</span></span><span class="line"><span class="cl">	case &lt;-time.After(time.Millisecond):
+</span></span><span class="line"><span class="cl">		return fmt.Errorf(&#34;timeout&#34;)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// fmt.Println(timeout(doBadthing))
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在这个代码中出现的问题就是，假如执行了1000次timeout(doBadthing),那么就会多1000个子协程永久存在与内存中，直到程序结束。原因就是超时时间为1ms，而doBadthing的执行为1s，那么每次都会走超时逻辑，这就导致1s后向done中发送信息时却找不到接收者(timeout已经结束),那么它会永久阻塞。</p>
+<p>解决办法：</p>
+<ul>
+<li>将done从无缓冲channel改为缓存为1的有缓冲channel，这样就不会在done处阻塞，而这个有缓冲的channel因为没人使用也会被垃圾回收掉。</li>
+<li>在doBadthing中增加select{} 机制，如果向done发送数据失败，则说明缺少接收者，即超时了，那么这个子协程直接退出。</li>
+</ul>
+<h4 id="强制kill-goroutine-是不能实现的">强制kill goroutine 是不能实现的</h4>
+<p>即时超时返回了，但是子协程仍在继续运行，直到自己退出。那么有可能在超时的时候，就强制关闭子协程吗？</p>
+<p>答案是不能，goroutine 只能自己退出，而不能被其他 goroutine 强制关闭或杀死。</p>
+<p>goroutine 被设计为不可以从外部无条件地结束掉，只能通过 channel 来与它通信。也就是说，每一个 goroutine 都需要承担自己退出的责任。</p>
+<p>因为 goroutine 不能被强制 kill，在超时或其他类似的场景下，为了 goroutine 尽可能正常退出，建议如下：</p>
+<ul>
+<li>尽量使用非阻塞 I/O（非阻塞 I/O 常用来实现高性能的网络库），阻塞 I/O 很可能导致 goroutine 在某个调用一直等待，而无法正确结束。</li>
+<li>业务逻辑总是考虑退出机制，避免死循环。</li>
+<li>任务是分段执行时，超时后立马退出，避免 goroutine 无用的执行过多，浪费资源(在复杂的业务逻辑中，超时可能和部分业务是耦合在一起的，在这种情况下就很难使用非阻塞 I/O 来设计超时，因为如果是非阻塞I/O，它不会进行阻塞，就无法判断有没有超时，会继续向后执行很多不应该执行的业务代码，因此在设计超时机制时，尝试考虑使用select{}是否可行)</li>
+</ul>
+<h3 id="channel-忘记关闭的陷阱">channel 忘记关闭的陷阱</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func do(taskCh chan int) {
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		select {
+</span></span><span class="line"><span class="cl">		case t := &lt;-taskCh:
+</span></span><span class="line"><span class="cl">			time.Sleep(time.Millisecond)
+</span></span><span class="line"><span class="cl">			fmt.Printf(&#34;task %d is done\n&#34;, t)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func sendTasks() {
+</span></span><span class="line"><span class="cl">	taskCh := make(chan int, 10)
+</span></span><span class="line"><span class="cl">	go do(taskCh)
+</span></span><span class="line"><span class="cl">	for i := 0; i &lt; 1000; i++ {
+</span></span><span class="line"><span class="cl">		taskCh &lt;- i
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func TestDo(t *testing.T) {
+</span></span><span class="line"><span class="cl">    t.Log(runtime.NumGoroutine())
+</span></span><span class="line"><span class="cl">    sendTasks()
+</span></span><span class="line"><span class="cl">	time.Sleep(time.Second)
+</span></span><span class="line"><span class="cl">	t.Log(runtime.NumGoroutine())
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过测试结果发现，子协程多了一个，也就是说，有一个协程一直没有得到释放。原因就是子协程<code>go do(taskCh)</code> 的select一直处于阻塞状态，等待接收任务，因此直到程序结束协程都没有释放。
+解决办法就是发送完成后通过close(chan)来关闭通道，此时接收者获取的值就是对应类型的零值，然后通过<code>t, beforeClosed := &lt;-taskCh</code>的beforeClosed来判断通道是否关闭，当它为false时表示channel已经被关闭，并且channel里面的数据为空，直接返回。也可以将<code>select{}</code>改为<code>for range</code>的方式，它也会一直读取channel的数据，当close执行后，for循环会退出。</p>
+<h4 id="关于通道和协程的垃圾回收">关于通道和协程的垃圾回收</h4>
+<p>注意，一个通道被其发送数据协程队列和接收数据协程队列中的所有协程引用着。因此，如果一个通道的这两个队列只要有一个不为空，则此通道肯定不会被垃圾回收。另一方面，如果一个协程处于一个通道的某个协程队列之中，则此协程也肯定不会被垃圾回收，即使此通道仅被此协程所引用。事实上，一个协程只有在退出后才能被垃圾回收。</p>
+<h4 id="通道关闭原则">通道关闭原则</h4>
+<p>一个常用的使用Go通道的原则是<code>不要在数据接收方或者在有多个发送者的情况下关闭通道</code>。换句话说，我们只应该让一个通道唯一的发送者关闭此通道 (因为对一个已经关闭的channel再次关闭会panic)。</p>
+<p>可以使用sync.One() 或者互斥锁来确保channel 只被关闭一次。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type MyChannel struct {
+</span></span><span class="line"><span class="cl">	C    chan T
+</span></span><span class="line"><span class="cl">	once sync.Once
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func NewMyChannel() *MyChannel {
+</span></span><span class="line"><span class="cl">	return &amp;MyChannel{C: make(chan T)}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func (mc *MyChannel) SafeClose() {
+</span></span><span class="line"><span class="cl">	mc.once.Do(func() {
+</span></span><span class="line"><span class="cl">		close(mc.C)
+</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type MyChannel struct {
+</span></span><span class="line"><span class="cl">    C      chan T
+</span></span><span class="line"><span class="cl">    closed bool
+</span></span><span class="line"><span class="cl">    mutex  sync.Mutex
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func NewMyChannel() *MyChannel {
+</span></span><span class="line"><span class="cl">    return &amp;MyChannel{C: make(chan T)}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func (mc *MyChannel) SafeClose() {
+</span></span><span class="line"><span class="cl">    mc.mutex.Lock()
+</span></span><span class="line"><span class="cl">    defer mc.mutex.Unlock()
+</span></span><span class="line"><span class="cl">    if !mc.closed {
+</span></span><span class="line"><span class="cl">        close(mc.C)
+</span></span><span class="line"><span class="cl">        mc.closed = true
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func (mc *MyChannel) IsClosed() bool {
+</span></span><span class="line"><span class="cl">    mc.mutex.Lock()
+</span></span><span class="line"><span class="cl">    defer mc.mutex.Unlock()
+</span></span><span class="line"><span class="cl">    return mc.closed
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="优雅的关闭通道">优雅的关闭通道</h4>
+<ul>
+<li>M 个接受者，1 个发送者。这是最简单的情况，只需让发送者在不想再发送数据的时候关闭数据通道，直接在发送者方close(ch)即可。</li>
+<li>1 个接收者，N 个发送者。这个情况比上面的要复杂一点。我们不能让接收者关闭数据通道，不然就会违反了<code>通道关闭原则</code>。但是可以在接收者处创建一个额外的channel,通过关闭额外的信号通道来通知发送者不要再发送数据了</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 在例子中，通道 dataCh 不曾被关闭过。如果一个通道不会再有 goroutine 去使用它，它最终会被垃圾回收，不管它是否被关闭。所以在这里优雅的关闭通道就是不要去关闭通道。
+</span></span><span class="line"><span class="cl">	wgReceivers := sync.WaitGroup{}
+</span></span><span class="line"><span class="cl">	wgReceivers.Add(1)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	dataCh := make(chan int, 100)
+</span></span><span class="line"><span class="cl">	stopCh := make(chan struct{})
+</span></span><span class="line"><span class="cl">	// stopCh 是一个信号通道。用于通知发送方不要继续发送了
+</span></span><span class="line"><span class="cl">	// 它的发送者是 dataCh 的接收者。
+</span></span><span class="line"><span class="cl">	// 它的接收者是 dataCh 的发送者。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 发送者，设置1000个发送者
+</span></span><span class="line"><span class="cl">	for i := 0; i &lt; 1000; i++ {
+</span></span><span class="line"><span class="cl">		go func() {
+</span></span><span class="line"><span class="cl">			for {
+</span></span><span class="line"><span class="cl">				select {
+</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
+</span></span><span class="line"><span class="cl">					return
+</span></span><span class="line"><span class="cl">				default:
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">				// 即使 stopCh 已经关闭，如果发送给 dataCh 没有阻塞，那么在第二个 select 中第一个分支可能会在一些循环中不会执行(因为select是随机执行一个不阻塞的分支)。
+</span></span><span class="line"><span class="cl">				// 如果这是不可接受的，则上面的第一个select代码块是必需的。
+</span></span><span class="line"><span class="cl">				select {
+</span></span><span class="line"><span class="cl">				// 判断能否从stopCh中获取停止发送的信号,因为stopCh在正常情况下没有发送方，导致这一个分支一直处于阻塞状态，直到接收方执行close(ch)后，
+</span></span><span class="line"><span class="cl">				// 从已关闭的channel中接收数据，如果channel中已经没有数据，则永远不会阻塞，每次接收的都是类型的零值。因此此处发送方不阻塞，直接结束协程。
+</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
+</span></span><span class="line"><span class="cl">					return
+</span></span><span class="line"><span class="cl">				case dataCh &lt;- rand.Intn(100):
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}()
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 接收者
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		defer wgReceivers.Done()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		for value := range dataCh {
+</span></span><span class="line"><span class="cl">			if value == 99 {
+</span></span><span class="line"><span class="cl">				//  dataCh 通道的接收者也是 stopCh 通道的发送者。
+</span></span><span class="line"><span class="cl">				// 在这里关闭停止通道是安全的。.
+</span></span><span class="line"><span class="cl">				close(stopCh)
+</span></span><span class="line"><span class="cl">				return
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			log.Println(value)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	wgReceivers.Wait()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>M个接收者和N个发送者。它们中的任何一个协程都可以去通知让一个中间调解协程帮忙发出停止数据传送的信号。这是最复杂的一种情形。我们不能让接收者和发送者中的任何一个关闭用来传输数据的通道，我们也不能让多个接收者之一关闭一个额外的信号通道。 这两种做法都违反了<code>通道关闭原则</code>。 然而，我们可以引入一个中间调解者角色并让其关闭额外的信号通道来通知所有的接收者和发送者结束工作</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">const Max = 100000
+</span></span><span class="line"><span class="cl">	const NumReceivers = 10
+</span></span><span class="line"><span class="cl">	const NumSenders = 1000
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	wgReceivers := sync.WaitGroup{}
+</span></span><span class="line"><span class="cl">	wgReceivers.Add(NumReceivers)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	dataCh := make(chan int)
+</span></span><span class="line"><span class="cl">	stopCh := make(chan struct{})
+</span></span><span class="line"><span class="cl">	// stopCh是一个额外的信号通道。
+</span></span><span class="line"><span class="cl">	// 它的发送者为中间调解者。它的接收者为dataCh数据通道的所有的发送者和接收者。
+</span></span><span class="line"><span class="cl">	// 平常都处于阻塞状态，直到执行close(stopCh)后
+</span></span><span class="line"><span class="cl">	toStop := make(chan string, 1)
+</span></span><span class="line"><span class="cl">	// toStop是一个用来通知中间调解者，让其关闭 通道stopCh 的信号通道。
+</span></span><span class="line"><span class="cl">	// 此第二个信号通道的发送者为 dataCh数据通道的所有的发送者和接收者，
+</span></span><span class="line"><span class="cl">	// 它的接收者为中间调解者。它必须为一个缓冲通道，
+</span></span><span class="line"><span class="cl">	// 不然如果在中间调解者还未准备好的情况下就已经有某个协程向toStop发送信号时，会发送阻塞，走default分支，此信号就会被抛弃。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 中间调解者
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		&lt;-toStop
+</span></span><span class="line"><span class="cl">		close(stopCh)
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 发送者
+</span></span><span class="line"><span class="cl">	for i := 0; i &lt; NumSenders; i++ {
+</span></span><span class="line"><span class="cl">		go func(id string) {
+</span></span><span class="line"><span class="cl">			for {
+</span></span><span class="line"><span class="cl">				value := rand.Intn(Max)
+</span></span><span class="line"><span class="cl">				if value == 0 {
+</span></span><span class="line"><span class="cl">					// 为了防止阻塞，这里使用了一个尝试
+</span></span><span class="line"><span class="cl">					// 发送操作来向中间调解者发送信号。
+</span></span><span class="line"><span class="cl">					select {
+</span></span><span class="line"><span class="cl">					case toStop &lt;- &#34;发送者#&#34; + id:
+</span></span><span class="line"><span class="cl">					default:
+</span></span><span class="line"><span class="cl">					}
+</span></span><span class="line"><span class="cl">					return
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">				// 此处的尝试接收操作是为了让此发送协程尽早
+</span></span><span class="line"><span class="cl">				// 退出。标准编译器对尝试接收和尝试发送做了
+</span></span><span class="line"><span class="cl">				// 特殊的优化，因而它们的速度很快。
+</span></span><span class="line"><span class="cl">				select {
+</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
+</span></span><span class="line"><span class="cl">					return
+</span></span><span class="line"><span class="cl">				default:
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">				// 即使stopCh已关闭，如果这个select代码块
+</span></span><span class="line"><span class="cl">				// 中第二个分支的发送操作是非阻塞的，则第一个
+</span></span><span class="line"><span class="cl">				// 分支仍很有可能在若干个循环步内依然不会被选
+</span></span><span class="line"><span class="cl">				// 中。如果这是不可接受的，则上面的第一个尝试
+</span></span><span class="line"><span class="cl">				// 接收操作代码块是必需的。
+</span></span><span class="line"><span class="cl">				select {
+</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
+</span></span><span class="line"><span class="cl">					return
+</span></span><span class="line"><span class="cl">				case dataCh &lt;- value:
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}(strconv.Itoa(i))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 接收者
+</span></span><span class="line"><span class="cl">	for i := 0; i &lt; NumReceivers; i++ {
+</span></span><span class="line"><span class="cl">		go func(id string) {
+</span></span><span class="line"><span class="cl">			defer wgReceivers.Done()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			for {
+</span></span><span class="line"><span class="cl">				// 和发送者协程一样，此处的尝试接收操作是为了
+</span></span><span class="line"><span class="cl">				// 让此接收协程尽早退出。
+</span></span><span class="line"><span class="cl">				select {
+</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
+</span></span><span class="line"><span class="cl">					return
+</span></span><span class="line"><span class="cl">				default:
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">				// 即使stopCh已关闭，如果这个select代码块
+</span></span><span class="line"><span class="cl">				// 中第二个分支的接收操作是非阻塞的，则第一个
+</span></span><span class="line"><span class="cl">				// 分支仍很有可能在若干个循环步内依然不会被选
+</span></span><span class="line"><span class="cl">				// 中。如果这是不可接受的，则上面尝试接收操作
+</span></span><span class="line"><span class="cl">				// 代码块是必需的。
+</span></span><span class="line"><span class="cl">				select {
+</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
+</span></span><span class="line"><span class="cl">					return
+</span></span><span class="line"><span class="cl">				case value := &lt;-dataCh:
+</span></span><span class="line"><span class="cl">					if value == Max-1 {
+</span></span><span class="line"><span class="cl">						// 为了防止阻塞，这里使用了一个尝试
+</span></span><span class="line"><span class="cl">						// 发送操作来向中间调解者发送信号。
+</span></span><span class="line"><span class="cl">						select {
+</span></span><span class="line"><span class="cl">						case toStop &lt;- &#34;接收者#&#34; + id:
+</span></span><span class="line"><span class="cl">						default:
+</span></span><span class="line"><span class="cl">						}
+</span></span><span class="line"><span class="cl">						return
+</span></span><span class="line"><span class="cl">					}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">					log.Println(value)
+</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}(strconv.Itoa(i))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	wgReceivers.Wait()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>并没有什么情况非得逼得我们违反通道关闭原则。 如果你遇到了此情形，请考虑修改你的代码流程和结构设计</code></p>
 
 </section>
 
