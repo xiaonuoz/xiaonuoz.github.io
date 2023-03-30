@@ -1041,6 +1041,53 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;&lt;code&gt;磁盘的 I/O 读写性能和内存条相差是非常大的，&lt;/code&gt;例如 DDR3 的内存条读写速率很容易达到 20GB/s，但是 SSD 固态硬盘的读写性能通常只能达到 0.5GB/s，相差 40倍之多。因此，使用虚拟内存技术将硬盘映射为内存使用，显然会对性能产生一定的影响。如果应用程序只是在较短的时间内需要较大的内存，那么虚拟内存能够有效避免 &lt;code&gt;out of memory (内存不足)&lt;/code&gt; 的问题。如果应用程序长期高频率读写大量内存，那么虚拟内存对性能的影响就比较明显了。&lt;/p&gt;
+&lt;h2 id=&#34;syncpool-复用对象&#34;&gt;sync.Pool 复用对象&lt;/h2&gt;
+&lt;p&gt;通过保存和复用临时对象，减少内存分配，降低GC垃圾回收压力,&lt;code&gt;sync.Pool&lt;/code&gt;主要就是复用一个临时变量，避免频繁的创建临时结构体来承载数据，造成极大的GC压力和不必要的内存，它是并发安全的，所以可以多协程共用。&lt;/p&gt;
+&lt;p&gt;常用于网络包收取发送的时候，因为收取发送时需要频繁的反序列化，如果每次反序列化时都是一个新的临时变量，在高并发时，会造成极大的GC压力，采用sync.Pool的话，一直仅有一个临时变量，就不会分配过多内存。&lt;/p&gt;
+&lt;p&gt;例如json 的反序列化在文本解析和网络通信过程中非常常见，当程序并发度非常高的情况下，短时间内需要创建大量的临时对象来承载反序列化的数据。而这些对象是都是分配在堆上的，会给 GC 造成很大压力，严重影响程序的性能。&lt;/p&gt;
+&lt;p&gt;sync.Pool 是可伸缩的，同时也是并发安全的，其大小仅受限于内存的大小。sync.Pool 用于存储那些被分配了但是没有被使用，而未来可能会使用的值。这样就可以不用再次经过内存分配，可直接复用已有对象，减轻 GC 的压力，从而提升系统的性能。&lt;/p&gt;
+&lt;p&gt;sync.Pool 的大小在高负载时会动态扩容，存放在池中的对象如果不活跃了会被自动清理。&lt;/p&gt;
+&lt;h3 id=&#34;使用方法&#34;&gt;使用方法&lt;/h3&gt;
+&lt;h4 id=&#34;声明对象池&#34;&gt;声明对象池&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;var studentPool = sync.Pool{
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    New: func() interface{} { 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        return new(Student) 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    },
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;只需要实现 New 函数即可。对象池中没有对象时，将会调用 New 函数创建。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;#### Get &amp;amp; Put
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;stu := studentPool.Get().(*Student)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;json.Unmarshal(buf, stu)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;studentPool.Put(stu)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Get() 用于从对象池中获取对象，因为返回值是 interface{}，因此需要类型转换。&lt;/li&gt;
+&lt;li&gt;Put() 则是在对象使用完毕后，返回对象池。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;sync.Pool&lt;/code&gt; 作为使用方不能对 Pool 里面的对象个数做假定，同时也无法获取 Pool 池中对象个数。可以往池中Put发送多个对象，但是Get()时是随机取出对象，无法保证以固定的顺序获取Pool池中的存储对象。&lt;/p&gt;
+&lt;p&gt;没有配置 New 方法时，如果 Get 操作多于 Put 操作，继续 Get 会得到一个 nil interface{} 对象，所以需要配置New()代码进行兼容。&lt;/p&gt;
+&lt;p&gt;配置 New 方法后，Get 获取不到对象时（Pool 池中已经没有对象了），会调用自定义的 New 方法创建一个对象并返回。需要注意的是，sync.Pool 本身数据结构是并发安全的，但是 Pool.New 函数（用户自定义的）不一定是线程安全的。Pool.New 函数可能会被并发调用，如果 New 函数里面的实现逻辑是 非并发安全的，那就会有问题。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sync.Pool&lt;/code&gt;不适合存储带状态的对象，因为获取对象是随机的 &lt;code&gt;(Get 到的对象可能是刚创建的，也可能是之前创建并 cache 住的)&lt;/code&gt;，并且缓存对象的释放策略完全由 runtime 内部管理，你无法确定此次获取的数据是否是自己需要的，也许是之前未被取出，还未释放的数据。&lt;/p&gt;
 </description>
         </item>
         <item>
