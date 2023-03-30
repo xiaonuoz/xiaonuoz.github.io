@@ -252,6 +252,11 @@
         </li>
       </ol>
     </li>
+    <li><a href="#synconce-如何提升性能">sync.Once 如何提升性能</a>
+      <ol>
+        <li><a href="#synconce-的原理">sync.Once 的原理</a></li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -1393,6 +1398,103 @@
 <p>没有配置 New 方法时，如果 Get 操作多于 Put 操作，继续 Get 会得到一个 nil interface{} 对象，所以需要配置New()代码进行兼容。</p>
 <p>配置 New 方法后，Get 获取不到对象时（Pool 池中已经没有对象了），会调用自定义的 New 方法创建一个对象并返回。需要注意的是，sync.Pool 本身数据结构是并发安全的，但是 Pool.New 函数（用户自定义的）不一定是线程安全的。Pool.New 函数可能会被并发调用，如果 New 函数里面的实现逻辑是 非并发安全的，那就会有问题。</p>
 <p><code>sync.Pool</code>不适合存储带状态的对象，因为获取对象是随机的 <code>(Get 到的对象可能是刚创建的，也可能是之前创建并 cache 住的)</code>，并且缓存对象的释放策略完全由 runtime 内部管理，你无法确定此次获取的数据是否是自己需要的，也许是之前未被取出，还未释放的数据。</p>
+<h2 id="synconce-如何提升性能">sync.Once 如何提升性能</h2>
+<p>sync.Once 是 Go 标准库提供的使函数只执行一次的实现，常应用于单例模式，例如初始化配置、保持数据库连接等。作用与 init 函数类似，但有区别。</p>
+<ul>
+<li>init 函数是当所在的 package 首次被加载时执行，若执行后init()中的全局变量迟迟未被使用，则既浪费了内存，又延长了程序加载时间。</li>
+<li>sync.Once 可以在代码的任意位置初始化和调用，因此可以延迟到需要使用时再执行，并发场景下是线程安全的。</li>
+</ul>
+<p>在多数情况下，sync.Once 被用于控制变量的初始化，这个变量的读写满足如下三个条件：</p>
+<ul>
+<li>当且仅当第一次访问某个变量时，进行初始化（写）；</li>
+<li>变量初始化过程中，其他执行该sync.Once.Do()的协程会发生阻塞，直到初始化完成，保证所有协程都能拿到初始化后的值；</li>
+<li>变量仅初始化一次，初始化完成后驻留在内存里。</li>
+</ul>
+<p>sync.Once 仅提供了一个方法 Do，参数 f 是对象初始化函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (o *Once) Do(f func())
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果不使用sync.One，并发运行初始化时，每次都构造出一个新的对象，既浪费内存，又浪费初始化时间。如果初始化时不加锁，初始化全局变量就可能出现并发冲突。这种情况下，使用 sync.Once 既能够保证全局变量初始化时是线程安全的，又能节省内存和初始化时间。</p>
+<h3 id="synconce-的原理">sync.Once 的原理</h3>
+<p>首先要保证变量仅被初始化一次，那么就需要有一个标志来判断变量是否已经初始化过，若没有才需要初始化。</p>
+<p>其次就是保证线程安全，支持并发，这无疑需要互斥锁来实现。</p>
+<p>源码<code> (代码位于 $(dirname $(which go))/../src/sync/once.g)</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">sync</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;sync/atomic&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Once</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 标志位，判断是否已经初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">done</span> <span class="kt">uint32</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">m</span>    <span class="nx">Mutex</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="o">*</span><span class="nx">Once</span><span class="p">)</span> <span class="nf">Do</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 原子操作判断是否初始化过，标志位设置为uint32就是因为atomic的最小单位就是32，没有uint8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">o</span><span class="p">.</span><span class="nf">doSlow</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="o">*</span><span class="nx">Once</span><span class="p">)</span> <span class="nf">doSlow</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 加锁避免并发问题，不再Do层面加锁的原因就是加快速度，如果在Do中加锁，那么即使初始化过后，以后执行Do方法依然需要加锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">defer</span> <span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Once都是同一个，因此在原子操作设置完后，这个done就为1了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">done</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 设置标志为已初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">defer</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>done 在热路径中，done 放在第一个字段，能够减少 CPU 指令，也就是说，这样做能够提升性能</p>
+<ul>
+<li>热路径<code>(hot path)</code>是程序非常频繁执行的一系列指令，sync.Once 绝大部分场景都会访问 o.done (判断是否执行过)，在热路径上是比较好理解的，如果 <code>hot path</code> 编译后的机器码指令更少，更直接，必然是能够提升性能的</li>
+<li>为什么放在第一个字段就能够减少指令呢？ 因为结构体第一个字段的地址和结构体的指针是相同的，如果是第一个字段，直接对结构体的指针解引用即可。 如果是后面的字段，除了结构体指针外，还需要计算与第一个值的偏移(calculate offset)。在机器码中，偏移量是随指令传递的附加值，CPU 需要做一次偏移值与指针的加法运算，才能获取要访问的值的地址。因此，访问第一个字段的机器代码更紧凑，速度更快。</li>
+</ul>
 
 </section>
 
