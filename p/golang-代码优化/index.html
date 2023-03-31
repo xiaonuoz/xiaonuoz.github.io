@@ -1692,6 +1692,13 @@
 </span><span class="lnt">39
 </span><span class="lnt">40
 </span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// done 即互斥锁需要保护的条件变量
@@ -1699,11 +1706,18 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">// 调用 Wait() 等待通知，直到 done 为 true，调用Wait()时必须加锁
 </span></span><span class="line"><span class="cl">func read(name string, c *sync.Cond) {
-</span></span><span class="line"><span class="cl">	// c.L.Lock()是为了Wait函数内部并发安全的将当前协程加入Cond的通知队列，之后会解锁并挂起等待通知唤醒，唤醒后在Wait()方法结束时会重新给c.L 加锁。
+</span></span><span class="line"><span class="cl">	// c.L.Lock()是为了Wait函数内部并发安全的将当前协程加入Cond的通知队列，
+</span></span><span class="line"><span class="cl">	// 之后会解锁并挂起等待通知唤醒，唤醒后在Wait()方法结束时会重新给c.L 加锁。
 </span></span><span class="line"><span class="cl">	c.L.Lock()
-</span></span><span class="line"><span class="cl">	// 某个wait协程可能会把资源状态改回不可用，所以其他wait协程需要在wait结束后for循环重新判断条件变量是否符合，如果被改回不可用就再次阻塞，如果确定所有wait协程都是只读不写的话，用if也可以。
+</span></span><span class="line"><span class="cl">	// 某个wait协程可能会把资源状态改回不可用，
+</span></span><span class="line"><span class="cl">	// 所以其他wait协程需要在wait结束后for循环重新判断条件变量是否符合，
+</span></span><span class="line"><span class="cl">	// 如果被改回不可用就再次阻塞，
+</span></span><span class="line"><span class="cl">	// 如果确定所有wait协程都是只读不写的话，用if也可以。
 </span></span><span class="line"><span class="cl">	for !done {
-</span></span><span class="line"><span class="cl">		// wait()获得通知后，并不会立即就退出函数了，wait内部会去抢占c.L锁，以确保对共享资源的并发安全访问。只有当前协程抢占到c.L锁后才会从wait()退出。之后处理业务逻辑，最后需要显式的c.L.Unlock()去解锁wait()退出前的锁定
+</span></span><span class="line"><span class="cl">		// wait()获得通知后，并不会立即就退出函数了，wait内部会去抢占c.L锁，
+</span></span><span class="line"><span class="cl">		// 以确保对共享资源的并发安全访问。
+</span></span><span class="line"><span class="cl">		// 只有当前协程抢占到c.L锁后才会从wait()退出。
+</span></span><span class="line"><span class="cl">		// 之后处理业务逻辑，最后需要显式的c.L.Unlock()去解锁wait()退出前的锁定
 </span></span><span class="line"><span class="cl">		c.Wait()
 </span></span><span class="line"><span class="cl">	}
 </span></span><span class="line"><span class="cl">	log.Println(name, &#34;starts reading&#34;)
