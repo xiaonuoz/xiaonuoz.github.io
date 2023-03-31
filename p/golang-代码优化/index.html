@@ -270,6 +270,16 @@
         <li><a href="#示例">示例：</a></li>
       </ol>
     </li>
+    <li><a href="#减小编译体积">减小编译体积</a>
+      <ol>
+        <li><a href="#编译选项">编译选项</a></li>
+        <li><a href="#使用-upx-减小体积">使用 upx 减小体积</a>
+          <ol>
+            <li><a href="#upx-的原理">upx 的原理</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -1751,7 +1761,69 @@
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
+</div><h2 id="减小编译体积">减小编译体积</h2>
+<p>减小编译后的二进制文件体积，能够加快程序的发布和安装过程。</p>
+<h3 id="编译选项">编译选项</h3>
+<p>Go 编译器默认编译出来的程序会带有符号表和调试信息，一般来说 release 版本可以去除调试信息以减小二进制体积。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build -ldflags=&#34;-s -w&#34; -o server main.go
+</span></span></code></pre></td></tr></table>
 </div>
+</div><ul>
+<li>-s：忽略符号表和调试信息。</li>
+<li>-w：忽略DWARFv3调试信息，使用该选项后将无法使用gdb进行调试。</li>
+</ul>
+<h3 id="使用-upx-减小体积">使用 upx 减小体积</h3>
+<p><a class="link" href="https://github.com/upx/upx"  target="_blank" rel="noopener"
+    >upx</a> 是一个常用的压缩动态库和可执行文件的工具，通常可减少 50-70% 的体积。</p>
+<p>upx 的安装方式非常简单，我们可以直接从 github 下载最新的 release 版本，支持 Windows 和 Linux，在 Ubuntu 或 Mac 可以直接使用包管理工具安装。</p>
+<p>upx 有很多参数，最重要的则是压缩率，1-9，1 代表最低压缩率，9 代表最高压缩率。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -o server main.go &amp;&amp; upx -9 server
+</span></span><span class="line"><span class="cl">        File size         Ratio      Format      Name
+</span></span><span class="line"><span class="cl">   --------------------   ------   -----------   -----------
+</span></span><span class="line"><span class="cl">  10253684 -&gt;   5210128   50.81%   macho/amd64   server 
+</span></span><span class="line"><span class="cl">$ ls -lh server
+</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 dj  staff   5.0M Dec  8 00:45 server
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，使用 upx 后，可执行文件的体积从 9.8M 缩小到了 5M，缩小了 50%。</p>
+<p>然后再此基础上可以再加上编译选项进一步压缩可执行文件的大小。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -ldflags=&#34;-s -w&#34; -o server main.go &amp;&amp; upx -9 server
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="upx-的原理">upx 的原理</h4>
+<p>upx 压缩后的程序和压缩前的程序一样，无需解压仍然能够正常地运行，这种压缩方法称之为带壳压缩，压缩包含两个部分：</p>
+<ul>
+<li>在程序开头或其他合适的地方插入解压代码；</li>
+<li>将程序的其他部分压缩。</li>
+</ul>
+<p>执行时，也包含两个部分：</p>
+<ul>
+<li>首先执行的是程序开头的插入的解压代码，将原来的程序在内存中解压出来；</li>
+<li>再执行解压后的程序。</li>
+</ul>
+<p>也就是说，<code>upx 在程序执行时，会有额外的解压动作，不过这个耗时几乎可以忽略不计。</code></p>
+<p>如果对编译后的体积没什么要求的情况下，可以不使用 upx 来压缩。一般在服务器端独立运行的后台服务，无需压缩体积。</p>
+
 </section>
 
 
