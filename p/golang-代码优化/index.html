@@ -1485,6 +1485,7 @@
 </span><span class="lnt">28
 </span><span class="lnt">29
 </span><span class="lnt">30
+</span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">sync</span>
@@ -1507,7 +1508,8 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="o">*</span><span class="nx">Once</span><span class="p">)</span> <span class="nf">doSlow</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 加锁避免并发问题，不再Do函数加锁的原因就是加快速度，如果在Do中加锁，那么即使初始化过后，以后执行Do方法依然需要加锁
+</span></span><span class="line"><span class="cl">	<span class="c1">// 加锁避免并发问题，不再Do函数加锁的原因就是加快速度，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 如果在Do中加锁，那么即使初始化过后，以后执行Do方法依然需要加锁
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">    <span class="k">defer</span> <span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">	<span class="c1">// Once都是同一个，因此在原子操作设置完后，这个done就为1了
@@ -1725,14 +1727,14 @@
 </span></span><span class="line"><span class="cl">	// 如果确定所有wait协程都是只读不写的话，用if也可以。
 </span></span><span class="line"><span class="cl">	for !done {
 </span></span><span class="line"><span class="cl">		// wait()获得通知后，并不会立即就退出函数了，wait内部会去抢占c.L锁，
-</span></span><span class="line"><span class="cl">		// 以确保对共享资源的并发安全访问。
+</span></span><span class="line"><span class="cl">		// 以确保对共享资源(条件变量) 的并发安全访问。
 </span></span><span class="line"><span class="cl">		// 只有当前协程抢占到c.L锁后才会从wait()退出。
-</span></span><span class="line"><span class="cl">		// 之后处理业务逻辑，最后需要显式的c.L.Unlock()去解锁wait()退出前的锁定
+</span></span><span class="line"><span class="cl">		// 访问完条件变量后需要显式的c.L.Unlock()去解锁wait()退出前的锁定
 </span></span><span class="line"><span class="cl">		c.Wait()
 </span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	log.Println(name, &#34;starts reading&#34;)
 </span></span><span class="line"><span class="cl">	// c.L.Unlock()并不是配对上面的那个c.L.Lock()，而是配对的wait()内部的加锁。
 </span></span><span class="line"><span class="cl">	c.L.Unlock()
+</span></span><span class="line"><span class="cl">	log.Println(name, &#34;starts reading&#34;)
 </span></span><span class="line"><span class="cl">}
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">// 接收数据，接收完成后，将 done 置为 true，调用 Broadcast() 通知所有等待的协程
@@ -1761,7 +1763,8 @@
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="减小编译体积">减小编译体积</h2>
+</div><p><strong><code>channel也能作为广播使用,close(ch)关闭时，其他协程都可以获取它的零值，但是close有一个问题是它不能复用，无法对close的channel再次close，而sync.Cond是可以复用的</code></strong></p>
+<h2 id="减小编译体积">减小编译体积</h2>
 <p>减小编译后的二进制文件体积，能够加快程序的发布和安装过程。</p>
 <h3 id="编译选项">编译选项</h3>
 <p>Go 编译器默认编译出来的程序会带有符号表和调试信息，一般来说 release 版本可以去除调试信息以减小二进制体积。</p>
