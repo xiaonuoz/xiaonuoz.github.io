@@ -293,6 +293,19 @@
         <li><a href="#如何利用逃逸分析提升性能">如何利用逃逸分析提升性能</a></li>
       </ol>
     </li>
+    <li><a href="#死码消除与调试模式">死码消除与调试模式</a>
+      <ol>
+        <li><a href="#死码消除">死码消除</a></li>
+        <li><a href="#go-语言中的应用">Go 语言中的应用</a>
+          <ol>
+            <li><a href="#使用常量提升性能">使用常量提升性能</a></li>
+            <li><a href="#可推断的去局部变量">可推断的去局部变量</a></li>
+            <li><a href="#调试debug模式">调试(debug)模式</a></li>
+            <li><a href="#条件编译">条件编译</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -2104,6 +2117,359 @@
 </div><h3 id="如何利用逃逸分析提升性能">如何利用逃逸分析提升性能</h3>
 <p>函数参数和返回值 传值时会拷贝整个对象，而传指针只会拷贝指针地址，指向的对象是同一个对象。但是传指针虽然可以减少值的拷贝，却会导致对象逃逸到堆中，增加垃圾回收(GC)的负担。在对象频繁创建和删除的场景下，传递指针导致的GC开销可能会严重影响性能。</p>
 <p>一般情况下，对于需要修改原对象值或者占用内存比较大的结构体会选择指针传递(避免对象拷贝，并且大结构体也可能会因为栈空间不足发生逃逸，既拷贝也要逃逸，那直接使用指针性能会更好)。对于只读的占用内存较小的结构体，直接传值能够获得更好的性能(避免频繁的指针逃逸影响GC性能)。</p>
+<h2 id="死码消除与调试模式">死码消除与调试模式</h2>
+<h3 id="死码消除">死码消除</h3>
+<p>死码消除(dead code elimination, DCE) 是一种编译器优化技术，用处是在编译阶段去掉对程序运行结果没有任何影响的代码。</p>
+<p>死码消除有很多好处：减小程序体积，程序运行过程中避免执行无用的指令，缩短运行时间。</p>
+<h3 id="go-语言中的应用">Go 语言中的应用</h3>
+<h4 id="使用常量提升性能">使用常量提升性能</h4>
+<p>在某些场景下，将变量替换为常量的话，性能会有很大的提升。</p>
+<p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func max(num1, num2 int) int {
+</span></span><span class="line"><span class="cl">	if num1 &gt; num2 {
+</span></span><span class="line"><span class="cl">		return num1
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return num2
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">var a, b = 10, 20
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	if max(a, b) == a {
+</span></span><span class="line"><span class="cl">		fmt.Println(a)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>将var改为const后分别编译会发现两者大小有差距：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build -o maxvar maxvar.go
+</span></span><span class="line"><span class="cl">go build -o maxconst maxconst.go
+</span></span><span class="line"><span class="cl">ls -l maxvar maxconst
+</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 x x 1895424 Jan 10 00:01 maxconst
+</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 x x 2120368 Jan 10 00:01 maxvar
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到 maxconst 比 maxvar 体积小了约 10% = 0.22 MB。</p>
+<p>为什么会出现 11% 的差异呢？</p>
+<p>我们使用 -gcflags=-m 参数看一下编译器做了哪些优化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build -gcflags=-m  -o maxvar maxvar.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">./maxconst.go:7:6: can inline max
+</span></span><span class="line"><span class="cl">./maxconst.go:17:8: inlining call to max
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>max 函数被内联了</code>，即被展开了，手动展开后如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	var result int
+</span></span><span class="line"><span class="cl">	if a &gt; b {
+</span></span><span class="line"><span class="cl">		result = a
+</span></span><span class="line"><span class="cl">	} else {
+</span></span><span class="line"><span class="cl">		result = b
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">	if result == a {
+</span></span><span class="line"><span class="cl">		fmt.Println(a)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果a和b均为常量的话，那在编译阶段就可以直接进行计算：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	var result int
+</span></span><span class="line"><span class="cl">	if 10 &gt; 20 {
+</span></span><span class="line"><span class="cl">		result = 10
+</span></span><span class="line"><span class="cl">	} else {
+</span></span><span class="line"><span class="cl">		result = 20
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">	if result == 10 {
+</span></span><span class="line"><span class="cl">		fmt.Println(a)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>计算之后，<code>10 &gt; 20 </code>永远为假，那么分支消除后：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	if 20 == 10 {
+</span></span><span class="line"><span class="cl">		fmt.Println(a)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>进一步，<code>20 == 10 </code>也永远为假，再次分支消除：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果全局变量a和b不为常量，编译器并不知道运行过程中ab会不会发生改变，因此不能进行<code>死码消除</code>，这部分代码会被编译到最终的二进制程序中。因此<code>maxvar</code> 比 <code>maxconst</code> 二进制体积大了约 10%。</p>
+<p>如果在if语句中调用了更多的库，死码消除后，体积差距会更大。</p>
+<p>因此在声明全局变量时，如果能够确定这个变量不会发生改变，那么尽量使用const而非var，这样很多运行代码在编译时期就可以执行。死码消除后，既减小了二进制的体积，又可以提高运行时效率，如果这部分代码是 <code>热路径 (hot path)</code>，那么对性能的提升会更加明显。</p>
+<h4 id="可推断的去局部变量">可推断的去局部变量</h4>
+<p>如果ab作为局部变量呢</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// maxvarlocal
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	var a, b = 10, 20
+</span></span><span class="line"><span class="cl">	if max(a, b) == a {
+</span></span><span class="line"><span class="cl">		fmt.Println(a)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>编译结果如下，大小与 varconst 一致，即 a、b 作为局部变量时，编译器死码消除是生效的。因为ab局部变量只作用在该函数内部，是可以推断出它的值大小的，就可以直接进行死码消除。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -o maxvarlocal maxvarlocal.go
+</span></span><span class="line"><span class="cl">$ ls -l maxvarlocal                      
+</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 x x 1895424 Jan 10 00:05 maxvarlocal
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>那如果再修改一下，函数中增加修改 a、b 变量的并发操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	var a, b = 10, 20
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		b, a = a, b
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">	if max(a, b) == a {
+</span></span><span class="line"><span class="cl">		fmt.Println(a)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>编译结果如下，大小增加了 10%，此时，<code>a、b 的值不能有效推断，死码消除失效。</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -o maxvarlocal maxvarlocal.go
+</span></span><span class="line"><span class="cl">$ ls -l maxvarlocal                      
+</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 x x 2120352 Jan 10 00:05 maxvarlocal
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其实这个结果很好理解，包(package)级别的变量和函数内部的局部变量的推断难度是不一样的。函数内部的局部变量的修改只会发生在该函数中(注意内部这个词，有协程修改它就不属于内部了)。但是如果是包级别的变量，对该变量的修改可能出现在：</p>
+<ul>
+<li>包初始化函数 init() 中，init() 函数可能有多个，且可能位于不同的 .go 源文件。</li>
+<li>包内的其他函数。</li>
+<li>如果是 public 变量（首字母大写），其他包引用时可修改。</li>
+</ul>
+<p>推断 package 级别的变量是否被修改难度是非常大的，从上述的例子看，Go 编译器只对局部变量作了优化，<code>如果这个局部变量被协程引用，即被外部引用，那么它就会像全局变量一样无法进行死码消除。</code></p>
+<p><code>由此可知：只有在其为常量(局部常量也是常量，它无法被外部函数修改)和只作用于当前函数内部的局部变量才会进行死码消除，其他情况由于无法在编译时期有效推断出具体的值，因此无法进行死码消除。</code></p>
+<h4 id="调试debug模式">调试(debug)模式</h4>
+<p>我们可以在源代码中定义全局常量debug，值设置为false，在需要增加调试代码的地方，使用条件语句 <code>if debug</code> 包裹：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">const debug = false
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	if debug {
+</span></span><span class="line"><span class="cl">		log.Println(&#34;debug mode is enabled&#34;)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>如果是正常编译，常量debug始终等于false，调试语句在编译过程中就会被当做死码消除，不会影响最终的二进制大小，也不会对运行效率产生任何影响。</code></p>
+<p>如果想编译出debug版本的二进制程序就只需要将debug 修改为true编译即可。这对于开发者日常调试是非常有帮助的，日常开发过程中，在进行单元测试或者是简单的集成测试时，总会执行一些额外的操作，例如打印日志，或者是修改变量的值。提交代码时再将debug修改为false即可，这样在开发过程中增加的额外的调试代码在编译时期就会被消除，不会对正式版本产生任何影响。</p>
+<h4 id="条件编译">条件编译</h4>
+<p>可以结合 <code>build tags</code> 来实现条件编译，可以不修改源代码也能编译出debug版本。</p>
+<p>新建 <code>release.go </code>和 <code>debug.go</code> ：</p>
+<ul>
+<li>debug.go</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// +build debug
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="nx">debug</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>release.go</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// +build !debug
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="nx">debug</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>// +build debug 表示 build tags 中包含 debug 时，该源文件参与编译。</li>
+<li>// +build !debug 表示 build tags 中不包含 debug 时，该源文件参与编译。</li>
+</ul>
+<p>编译一个 debug 版本并运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -tags debug -o debug .  
+</span></span><span class="line"><span class="cl">$ ./debug 
+</span></span><span class="line"><span class="cl">2021/01/11 00:10:40 debug mode is enabled
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>编译 release 版本并运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -o release .
+</span></span><span class="line"><span class="cl">$ ./release
+</span></span><span class="line"><span class="cl"># 无输出
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>除了全局布尔值常量 <code>debug</code> 以外，<code>debug.go</code>和<code>release.go</code>还可以根据需要添加其他代码。<code>比如相同的函数定义，debug 和release 模式下有不同的函数实现。</code></p>
+<p>一个源文件中可以有多个build tags，同一行的空格隔开的tag之间是逻辑或的关系。不同行之间的tag是逻辑与的关系。</p>
+<p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// +build linux darwin
+</span></span><span class="line"><span class="cl">// +build 386
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这种写法表示此源文件只能在linux_386 或者 darwin_386 平台下编译。</p>
 
 </section>
 
