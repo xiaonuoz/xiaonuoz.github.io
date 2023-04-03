@@ -280,6 +280,19 @@
         </li>
       </ol>
     </li>
+    <li><a href="#分析内存逃逸对性能的影响">分析内存逃逸对性能的影响</a>
+      <ol>
+        <li><a href="#逃逸分析">逃逸分析</a>
+          <ol>
+            <li><a href="#指针逃逸">指针逃逸</a></li>
+            <li><a href="#interface-动态类型逃逸">interface{} 动态类型逃逸</a></li>
+            <li><a href="#栈空间不足逃逸">栈空间不足逃逸</a></li>
+            <li><a href="#闭包">闭包</a></li>
+          </ol>
+        </li>
+        <li><a href="#如何利用逃逸分析提升性能">如何利用逃逸分析提升性能</a></li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -1821,11 +1834,276 @@
 </ul>
 <p>执行时，也包含两个部分：</p>
 <ul>
-<li>首先执行的是程序开头的插入的解压代码，将原来的程序在内存中解压出来；</li>
+<li>首先执行的是程序开头插入的解压代码，将原来的程序在内存中解压出来；</li>
 <li>再执行解压后的程序。</li>
 </ul>
 <p>也就是说，<code>upx 在程序执行时，会有额外的解压动作，不过这个耗时几乎可以忽略不计。</code></p>
 <p>如果对编译后的体积没什么要求的情况下，可以不使用 upx 来压缩。一般在服务器端独立运行的后台服务，无需压缩体积。</p>
+<h2 id="分析内存逃逸对性能的影响">分析内存逃逸对性能的影响</h2>
+<p>Go程序会在2个地方为变量分配内存，一个是 <code>全局</code> 的堆(heap)空间用来动态分配内存，另一个是 <code>每一个goroutine</code> 的栈(stack)空间。</p>
+<p>Go语言实现了垃圾回收(Garbage Collector)机制，因此Go语言的内存管理是自动的，通常开发者并不需要关心内存是分配在栈上还是堆上。但是从性能的角度出发，在栈上分配内存和在堆上分配内存，两者的性能差异是非常大的。</p>
+<p><strong><code>在函数中申请一个对象，如果分配在栈中，函数执行结束时自动回收。但是如果分配在堆中，则在函数结束后某个时间点进行垃圾回收。</code></strong></p>
+<p>在栈上分配和回收内存的开销很低，只需要2个 CPU指令: PUSH和POP，一个是将数据PUSH到栈空间以完成分配，POP则是释放空间，也就是说在栈上分配内存，消耗的仅仅是将数据拷贝到内存的时间，而内存的I/O通常能够达到 30GB/s，因此在栈上分配内存的效率是非常高的。</p>
+<p>在堆上分配内存，一个很大的额外开销则是垃圾回收。Go语言使用的是标记清除算法，并在此基础上使用了三色标记法和写屏障技术来提高效率。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">标记清除收集器是跟踪式垃圾收集器，其执行过程可以分成标记（Mark）和清除（Sweep）两个阶段：
+</span></span><span class="line"><span class="cl">* 标记阶段 — 从根对象出发查找并标记堆中所有存活的对象；
+</span></span><span class="line"><span class="cl">* 清除阶段 — 遍历堆中的全部对象，回收未被标记的垃圾对象并将回收的内存加入空闲链表。
+</span></span><span class="line"><span class="cl">标记清除算法的一个典型耗时是在标记期间，需要暂停程序（Stop the world，STW），标记结束之后，用户程序才可以继续执行。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>因此，堆内存分配由于垃圾回收的原因导致其开销远远大于栈空间分配与释放的开销。</code></p>
+<h3 id="逃逸分析">逃逸分析</h3>
+<p>在Go语言中，堆内存是通过垃圾回收机制自动管理的。那么Go编译器怎么知道某个变量要分配在堆上还是栈上呢？编译器决定内存分配位置的方式就称之为逃逸分析(Escape Analysis)。逃逸分析由编译器完成，作用于编译阶段。</p>
+<h4 id="指针逃逸">指针逃逸</h4>
+<p>指针逃逸即在函数中创建了一个对象，并将这个对象的指针通过return返回了出去。这种情况下，函数虽然退出了，但是因为指针还存在在函数外部，这个对象的内存不能随着函数的结束而回收(避免外部有使用这个指针指向的对象时，却因为回收出现空指针异常)，因此只能分配在堆上，由垃圾回收机制管理。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Demo</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">createDemo</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">Demo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">d</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Demo</span><span class="p">)</span> <span class="c1">// 局部变量 d 逃逸到堆
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">d</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">name</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">d</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">demo</span> <span class="o">:=</span> <span class="nf">createDemo</span><span class="p">(</span><span class="s">&#34;demo&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">demo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个例子中，函数 createDemo 的局部变量 d 发生了逃逸。d 作为返回值，在 main 函数中继续使用，因此 d 指向的内存不能够分配在栈上，随着函数结束而回收，只能分配在堆上。</p>
+<p><code>编译时可以借助选项 -gcflags=-m，查看变量逃逸的情况</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -gcflags=-m .\main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:9:6: can inline createDemo
+</span></span><span class="line"><span class="cl">.\main.go:16:20: inlining call to createDemo
+</span></span><span class="line"><span class="cl">.\main.go:17:13: inlining call to fmt.Println
+</span></span><span class="line"><span class="cl">.\main.go:9:17: leaking param: name
+</span></span><span class="line"><span class="cl">.\main.go:10:10: new(Demo) escapes to heap
+</span></span><span class="line"><span class="cl">.\main.go:16:20: new(Demo) escapes to heap
+</span></span><span class="line"><span class="cl">.\main.go:17:13: ... argument does not escape
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>new(Demo) escapes to heap 即表示 new(Demo) 逃逸到堆上了。</code></p>
+<h4 id="interface-动态类型逃逸">interface{} 动态类型逃逸</h4>
+<p>在Go语言中，空接口 <code>interface{}</code> 可以表示任意的类型，如果函数的参数或返回值为 interface{}，编译期间很难确定其参数的具体类型，也会发生逃逸。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;hello world!&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>因为 fmt.Println() 接收的参数是空接口类型，Go 编译器无法确定入参变量的具体类型，所以此类情况变量也会逃逸到堆上</p>
+<h4 id="栈空间不足逃逸">栈空间不足逃逸</h4>
+<p>操作系统对内核线程使用的栈空间是有大小限制的，64位系统上通常是8MB。可以使用 <code>ulimit -a</code>命令查看机器上栈允许占用的内存的大小。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ ulimit -a
+</span></span><span class="line"><span class="cl">-s: stack size (kbytes)             8192
+</span></span><span class="line"><span class="cl">-n: file descriptors                12800
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于栈空间通常比较小，因此当递归函数实现不当时，很容易导致栈溢出。</p>
+<p>对应Go语言来说，运行时(runtime) 会尝试在goroutine需要的时候动态地分配栈空间，goroutine的初始栈大小为2KB。当goroutine被调度时，会绑定内核线程执行，栈空间大小也不会超过操作系统的限制。</p>
+<p>对Go编译器而言，超过一定大小的局部变量将逃逸到堆上，不同Go版本的大小限制可能不一样。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func generate8191() {
+</span></span><span class="line"><span class="cl">	nums := make([]int, 8191) // &lt; 64KB
+</span></span><span class="line"><span class="cl">	for i := 0; i &lt; 8191; i++ {
+</span></span><span class="line"><span class="cl">		nums[i] = rand.Int()
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func generate8192() {
+</span></span><span class="line"><span class="cl">	nums := make([]int, 8192) // = 64KB  64 * 1024 / 8
+</span></span><span class="line"><span class="cl">	for i := 0; i &lt; 8192; i++ {
+</span></span><span class="line"><span class="cl">		nums[i] = rand.Int()
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func generate(n int) {
+</span></span><span class="line"><span class="cl">	nums := make([]int, n) // 不确定大小
+</span></span><span class="line"><span class="cl">	for i := 0; i &lt; n; i++ {
+</span></span><span class="line"><span class="cl">		nums[i] = rand.Int()
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	generate8191()
+</span></span><span class="line"><span class="cl">    generate8192()
+</span></span><span class="line"><span class="cl">    generate(1)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>generate8191() 创建了大小为 8191 的 int 型切片，恰好小于 64 KB(64位机器上，int 占 8 字节)，不包含切片内部字段占用的内存大小。</li>
+<li>generate8192() 创建了大小为 8192 的 int 型切片，恰好占用 64 KB。</li>
+<li>generate(n)，切片大小不确定，调用时传入。</li>
+</ul>
+<p>编译结果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -gcflags=-m main_stack.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">./main_stack.go:9:14: generate8191 make([]int, 8191) does not escape
+</span></span><span class="line"><span class="cl">./main_stack.go:16:14: make([]int, 8192) escapes to heap
+</span></span><span class="line"><span class="cl">./main_stack.go:23:14: make([]int, n) escapes to heap
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>make([]int, 8191)</code> 没有发生逃逸，<code>make([]int, 8192)</code> 和<code>make([]int, n) </code>逃逸到堆上，也就是说，<strong><code>当切片占用内存超过一定大小，或编译时无法确定当前切片长度时，对象占用内存将在堆上分配。</code></strong></p>
+<h4 id="闭包">闭包</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">一个函数和对其周围状态的引用捆绑在一起（或者说函数被引用包围），这样的组合就是闭包（closure）。也就是说，闭包让你可以在一个内层函数中访问到其外层函数的作用域。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func Increase() func() int {
+</span></span><span class="line"><span class="cl">	n := 0
+</span></span><span class="line"><span class="cl">	return func() int {
+</span></span><span class="line"><span class="cl">		n++
+</span></span><span class="line"><span class="cl">		return n
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	in := Increase()
+</span></span><span class="line"><span class="cl">	fmt.Println(in()) // 1
+</span></span><span class="line"><span class="cl">	fmt.Println(in()) // 2
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>Increase()</code> 返回值就是一个闭包函数，该闭包函数访问了外部变量n，那变量n将一直存在，直到<code>in</code> 被销毁。很显然，变量n 占用的内存不能随着函数Increase() 的退出而回收，因此将会逃逸到堆上。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -gcflags=-m main_closure.go 
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">./main_closure.go:6:2: moved to heap: n
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="如何利用逃逸分析提升性能">如何利用逃逸分析提升性能</h3>
+<p>函数参数和返回值 传值时会拷贝整个对象，而传指针只会拷贝指针地址，指向的对象是同一个对象。但是传指针虽然可以减少值的拷贝，却会导致对象逃逸到堆中，增加垃圾回收(GC)的负担。在对象频繁创建和删除的场景下，传递指针导致的GC开销可能会严重影响性能。</p>
+<p>一般情况下，对于需要修改原对象值或者占用内存比较大的结构体会选择指针传递(避免对象拷贝，并且大结构体也可能会因为栈空间不足发生逃逸，既拷贝也要逃逸，那直接使用指针性能会更好)。对于只读的占用内存较小的结构体，直接传值能够获得更好的性能(避免频繁的指针逃逸影响GC性能)。</p>
 
 </section>
 
