@@ -306,6 +306,12 @@
         </li>
       </ol>
     </li>
+    <li><a href="#数组切片陷阱">数组切片陷阱</a>
+      <ol>
+        <li><a href="#数组">数组</a></li>
+        <li><a href="#切片">切片</a></li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -2457,7 +2463,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>除了全局布尔值常量 <code>debug</code> 以外，<code>debug.go</code>和<code>release.go</code>还可以根据需要添加其他代码。<code>比如相同的函数定义，debug 和release 模式下有不同的函数实现。</code></p>
-<p>一个源文件中可以有多个build tags，同一行的空格隔开的tag之间是逻辑或的关系。不同行之间的tag是逻辑与的关系。</p>
+<p><strong>一个源文件中可以有多个build tags，同一行的空格隔开的tag之间是逻辑或的关系。不同行之间的tag是逻辑与的关系。</strong></p>
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -2470,6 +2476,68 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>这种写法表示此源文件只能在linux_386 或者 darwin_386 平台下编译。</p>
+<h2 id="数组切片陷阱">数组切片陷阱</h2>
+<h3 id="数组">数组</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func foo(a [2]int) {
+</span></span><span class="line"><span class="cl">	a[0] = 200
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	a := [2]int{1, 2}
+</span></span><span class="line"><span class="cl">	foo(a)
+</span></span><span class="line"><span class="cl">	fmt.Println(a)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码的输出为 <code>[1,2]</code>，数组a没有发生改变。</p>
+<ul>
+<li>在Go语言中，<code>数组是一种值类型</code>，而且不同长度的数组属于不同的类型。例如 <code>[2]int</code>和<code>[20]int</code> 属于不同的类型。</li>
+<li><code>当值类型作为参数传递时，参数是该值的一个拷贝，因此更改拷贝的值并不会影响原值。</code></li>
+</ul>
+<p>为了避免数组的拷贝，提高性能，建议传递数组的指针作为参数，或者直接使用切片代替数组。</p>
+<h3 id="切片">切片</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func foo(a []int) {
+</span></span><span class="line"><span class="cl">	a = append(a, 1, 2, 3, 4, 5, 6, 7, 8)
+</span></span><span class="line"><span class="cl">	a[0] = 200
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">	a := []int{1, 2}
+</span></span><span class="line"><span class="cl">	foo(a)
+</span></span><span class="line"><span class="cl">	fmt.Println(a)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出仍然是 <code>[1,2]</code>，切片a没有发生改变。
+传参时拷贝了切片，包括底层指针，此时两者指向的是同一个底层数组，但是在foo()中切片新增了8个元素，原切片的cap只有2，不够放置这些元素，因此申请了新的空间来放置扩充后的底层数组，导致函数体中的切片底层指针指向新的空间，此时foo中的a切片和外部的a切片就不是同一个了(引用类型拷贝的是指针，两者指针不同，只是最初都指向相同的底层数组罢了)。因此对新切片的修改不会影响到原切片。</p>
+<p>如果希望foo函数的操作能够影响到原切片的话，可以给foo() 设置返回值，将新切片返回并赋值给 main 函数中的变量 a;也可以将参数改为指针传参 <code>foo(a *[]int)</code>。从可读性上来说，更推荐返回值的方式。</p>
 
 </section>
 

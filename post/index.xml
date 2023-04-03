@@ -2098,7 +2098,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;除了全局布尔值常量 &lt;code&gt;debug&lt;/code&gt; 以外，&lt;code&gt;debug.go&lt;/code&gt;和&lt;code&gt;release.go&lt;/code&gt;还可以根据需要添加其他代码。&lt;code&gt;比如相同的函数定义，debug 和release 模式下有不同的函数实现。&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;一个源文件中可以有多个build tags，同一行的空格隔开的tag之间是逻辑或的关系。不同行之间的tag是逻辑与的关系。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;一个源文件中可以有多个build tags，同一行的空格隔开的tag之间是逻辑或的关系。不同行之间的tag是逻辑与的关系。&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;例如：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -2111,6 +2111,68 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;这种写法表示此源文件只能在linux_386 或者 darwin_386 平台下编译。&lt;/p&gt;
+&lt;h2 id=&#34;数组切片陷阱&#34;&gt;数组切片陷阱&lt;/h2&gt;
+&lt;h3 id=&#34;数组&#34;&gt;数组&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;func foo(a [2]int) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a[0] = 200
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;func main() {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a := [2]int{1, 2}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	foo(a)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	fmt.Println(a)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;上面代码的输出为 &lt;code&gt;[1,2]&lt;/code&gt;，数组a没有发生改变。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在Go语言中，&lt;code&gt;数组是一种值类型&lt;/code&gt;，而且不同长度的数组属于不同的类型。例如 &lt;code&gt;[2]int&lt;/code&gt;和&lt;code&gt;[20]int&lt;/code&gt; 属于不同的类型。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;当值类型作为参数传递时，参数是该值的一个拷贝，因此更改拷贝的值并不会影响原值。&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;为了避免数组的拷贝，提高性能，建议传递数组的指针作为参数，或者直接使用切片代替数组。&lt;/p&gt;
+&lt;h3 id=&#34;切片&#34;&gt;切片&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;func foo(a []int) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a = append(a, 1, 2, 3, 4, 5, 6, 7, 8)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a[0] = 200
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;func main() {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	a := []int{1, 2}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	foo(a)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	fmt.Println(a)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;输出仍然是 &lt;code&gt;[1,2]&lt;/code&gt;，切片a没有发生改变。
+传参时拷贝了切片，包括底层指针，此时两者指向的是同一个底层数组，但是在foo()中切片新增了8个元素，原切片的cap只有2，不够放置这些元素，因此申请了新的空间来放置扩充后的底层数组，导致函数体中的切片底层指针指向新的空间，此时foo中的a切片和外部的a切片就不是同一个了(引用类型拷贝的是指针，两者指针不同，只是最初都指向相同的底层数组罢了)。因此对新切片的修改不会影响到原切片。&lt;/p&gt;
+&lt;p&gt;如果希望foo函数的操作能够影响到原切片的话，可以给foo() 设置返回值，将新切片返回并赋值给 main 函数中的变量 a;也可以将参数改为指针传参 &lt;code&gt;foo(a *[]int)&lt;/code&gt;。从可读性上来说，更推荐返回值的方式。&lt;/p&gt;
 </description>
         </item>
         <item>
