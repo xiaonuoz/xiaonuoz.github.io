@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此文介绍从各个方向优化golang代码，让golang运行更流畅，内存消耗更少。 字符串拼接 在Go语言中，字符串只是可读的，它无法被修改，拼接'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此文介绍从各个方向优化golang代码，让golang运行更流畅，内存消耗更少。 此文章为学习 极客兔兔 《Go 语言高性能编程》后的总结性文章。 字'>
 <title>golang 代码优化</title>
 
 <link rel='canonical' href='https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/'>
 
 <link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='golang 代码优化'>
-<meta property='og:description' content='此文介绍从各个方向优化golang代码，让golang运行更流畅，内存消耗更少。 字符串拼接 在Go语言中，字符串只是可读的，它无法被修改，拼接'>
+<meta property='og:description' content='此文介绍从各个方向优化golang代码，让golang运行更流畅，内存消耗更少。 此文章为学习 极客兔兔 《Go 语言高性能编程》后的总结性文章。 字'>
 <meta property='og:url' content='https://xiaonuoz.github.io/p/golang-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/'>
 <meta property='og:site_name' content='笑傩'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-03-24T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-03-24T00:00:00&#43;00:00'/>
 <meta name="twitter:title" content="golang 代码优化">
-<meta name="twitter:description" content="此文介绍从各个方向优化golang代码，让golang运行更流畅，内存消耗更少。 字符串拼接 在Go语言中，字符串只是可读的，它无法被修改，拼接">
+<meta name="twitter:description" content="此文介绍从各个方向优化golang代码，让golang运行更流畅，内存消耗更少。 此文章为学习 极客兔兔 《Go 语言高性能编程》后的总结性文章。 字">
     <link rel="shortcut icon" href="/favicon.ico" />
 
     </head>
@@ -378,6 +378,7 @@
     
     
     <p>此文介绍从各个方向优化golang代码，让golang运行更流畅，内存消耗更少。</p>
+<p><code>此文章为学习 极客兔兔 《Go 语言高性能编程》后的总结性文章。</code></p>
 <h2 id="字符串拼接">字符串拼接</h2>
 <p>在Go语言中，字符串只是可读的，它无法被修改，拼接字符串实际上是创建了一个新的字符串对象。因此如果频繁的拼接字符串，就意味着在频繁的分配内存，会对性能造成严重的影响。</p>
 <p>当使用 + 拼接 2 个字符串时，生成一个新的字符串，那么就需要开辟一段新的空间，新空间的大小是原来两个字符串的大小之和。拼接第三个字符串时，再开辟一段新空间，新空间大小是三个字符串大小之和，以此类推。</p>

@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此文章为学习 《Go语言标准库》的总结性文章 对于程序员而言，标准库与语言本身同样重要，它好比一个百宝箱，能为各种常见的任务提供完美的解决方案。'>
+<title>Go 语言各种标准库的使用</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/go-%E8%AF%AD%E8%A8%80%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='Go 语言各种标准库的使用'>
+<meta property='og:description' content='此文章为学习 《Go语言标准库》的总结性文章 对于程序员而言，标准库与语言本身同样重要，它好比一个百宝箱，能为各种常见的任务提供完美的解决方案。'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/go-%E8%AF%AD%E8%A8%80%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-04-04T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-04-04T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Go 语言各种标准库的使用">
+<meta name="twitter:description" content="此文章为学习 《Go语言标准库》的总结性文章 对于程序员而言，标准库与语言本身同样重要，它好比一个百宝箱，能为各种常见的任务提供完美的解决方案。">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#输入输出-inputoutput">输入输出 (Input/Output)</a>
+      <ol>
+        <li><a href="#io-库">IO 库</a>
+          <ol>
+            <li><a href="#readerfrom-和-writerto-接口">ReaderFrom 和 WriterTo 接口</a></li>
+            <li><a href="#seeker-接口">Seeker 接口</a></li>
+            <li><a href="#sectionreader-类型">SectionReader 类型</a></li>
+            <li><a href="#limitedreader-类型">LimitedReader 类型</a></li>
+            <li><a href="#pipereader-和-pipewrite-类型">PipeReader 和 PipeWrite 类型</a></li>
+            <li><a href="#readatleast-和-readfull-函数">ReadAtLeast 和 ReadFull 函数</a></li>
+            <li><a href="#multireader-和-multiwriter-函数">MultiReader 和 MultiWriter 函数</a></li>
+            <li><a href="#teereader函数">TeeReader函数</a></li>
+          </ol>
+        </li>
+        <li><a href="#ioutil">ioutil</a>
+          <ol>
+            <li><a href="#nopcloser-函数">NopCloser 函数</a></li>
+            <li><a href="#readfile-和-writefile-函数">ReadFile 和 WriteFile 函数</a></li>
+            <li><a href="#discard-变量">Discard 变量</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/go-%E8%AF%AD%E8%A8%80%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8/">Go 语言各种标准库的使用</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 04, 2023</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><code>此文章为学习 《Go语言标准库》的总结性文章</code></p>
+<p>对于程序员而言，标准库与语言本身同样重要，它好比一个百宝箱，能为各种常见的任务提供完美的解决方案。</p>
+<h2 id="输入输出-inputoutput">输入输出 (Input/Output)</h2>
+<p>一般的计算机程序都是输入(input)内容 -&gt; 算法处理 -&gt; 输出 (Output)</p>
+<p>Go语言中，为了方便开发者使用，将IO操作封装在了如下几个包中：</p>
+<ul>
+<li><a class="link" href="http://docs.studygolang.com/pkg/io/"  target="_blank" rel="noopener"
+    >io</a> 为 IO 原语（I/O primitives）提供基本的接口</li>
+<li><a class="link" href="http://docs.studygolang.com/pkg/io/ioutil/"  target="_blank" rel="noopener"
+    >io/ioutil</a> 封装了一些实用的 I/O 函数</li>
+<li><a class="link" href="http://docs.studygolang.com/pkg/fmt/"  target="_blank" rel="noopener"
+    >fmt</a> 实现格式化 I/O，类似 C 语言中的 printf 和 scanf</li>
+<li><a class="link" href="http://docs.studygolang.com/pkg/bufio/"  target="_blank" rel="noopener"
+    >bufio</a> 实现带缓冲I/O</li>
+</ul>
+<h3 id="io-库">IO 库</h3>
+<h4 id="readerfrom-和-writerto-接口">ReaderFrom 和 WriterTo 接口</h4>
+<p>用于一次性从某个地方读或写到某个地方去，ioutil.ReadFile其实底层用的也是ReaderFrom方法实现</p>
+<h4 id="seeker-接口">Seeker 接口</h4>
+<p>Seek 方法是用于设置偏移量的，这样可以从某个特定位置开始操作数据流。听起来和 ReaderAt/WriteAt 接口有些类似，不过 Seeker 接口更灵活，可以更好的控制读写数据流的位置。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Seeker interface {
+</span></span><span class="line"><span class="cl">    Seek(offset int64, whence int) (ret int64, err error)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>whence 的值，在 io 包中定义了相应的常量，应该使用这些常量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">const (
+</span></span><span class="line"><span class="cl">  SeekStart   = 0 // seek relative to the origin of the file
+</span></span><span class="line"><span class="cl">  SeekCurrent = 1 // seek relative to the current offset
+</span></span><span class="line"><span class="cl">  SeekEnd     = 2 // seek relative to the end
+</span></span><span class="line"><span class="cl">)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>而原先 os 包中的常量已经被标注为Deprecated</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Deprecated: Use io.SeekStart, io.SeekCurrent, and io.SeekEnd.
+</span></span><span class="line"><span class="cl">const (
+</span></span><span class="line"><span class="cl">  SEEK_SET int = 0 // seek relative to the origin of the file
+</span></span><span class="line"><span class="cl">  SEEK_CUR int = 1 // seek relative to the current offset
+</span></span><span class="line"><span class="cl">  SEEK_END int = 2 // seek relative to the end
+</span></span><span class="line"><span class="cl">)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="sectionreader-类型">SectionReader 类型</h4>
+<p>SectionReader 是一个 struct（没有任何导出的字段），实现了 Read, Seek 和 ReadAt，同时，内嵌了 ReaderAt 接口。结构定义如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type SectionReader struct {
+</span></span><span class="line"><span class="cl">    r     ReaderAt    // 该类型最终的 Read/ReadAt 最终都是通过 r 的 ReadAt 实现
+</span></span><span class="line"><span class="cl">    base  int64        // NewSectionReader 会将 base 设置为 off
+</span></span><span class="line"><span class="cl">    off   int64        // 从 r 中的 off 偏移处开始读取数据
+</span></span><span class="line"><span class="cl">    limit int64        // limit - off = SectionReader 流的长度
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从名称我们可以猜到，该类型读取数据流中部分数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func NewSectionReader(r ReaderAt, off int64, n int64) *SectionReader
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="limitedreader-类型">LimitedReader 类型</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type LimitedReader struct {
+</span></span><span class="line"><span class="cl">    R Reader // underlying reader，最终的读取操作通过 R.Read 完成
+</span></span><span class="line"><span class="cl">    N int64  // max bytes remaining
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从 R 读取数据但将返回的数据总量限制为 N 字节。每调用一次 Read 都将更新 N 来反应新的剩余数量，每读取m字节，n就等于n-m。</p>
+<p>也就是说，你可以读取很多次，但是最多总共只能返回 N 字节数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">content := &#34;This Is LimitReader Example&#34;
+</span></span><span class="line"><span class="cl">reader := strings.NewReader(content)
+</span></span><span class="line"><span class="cl">limitReader := &amp;io.LimitedReader{R: reader, N: 8}
+</span></span><span class="line"><span class="cl">for limitReader.N &gt; 0 {
+</span></span><span class="line"><span class="cl">    tmp := make([]byte, 2)
+</span></span><span class="line"><span class="cl">    limitReader.Read(tmp)
+</span></span><span class="line"><span class="cl">    fmt.Printf(&#34;%s&#34;, tmp)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可见，通过该类型可以达到 只允许读取一定长度数据 的目的。</p>
+<p>在 io 包中，LimitReader 函数的实现其实就是调用 LimitedReader：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func LimitReader(r Reader, n int64) Reader { return &amp;LimitedReader{r, n} }
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="pipereader-和-pipewrite-类型">PipeReader 和 PipeWrite 类型</h4>
+<p>PipeReader（一个没有任何导出字段[字段全小写]的 struct）是管道的读取端。从管道中读取数据。该方法会堵塞，直到管道写入端开始写入数据或写入端被关闭。如果写入端关闭时带有 error（即调用 CloseWithError 关闭），该Read返回的 err 就是写入端传递的error；否则 err 为 EOF。</p>
+<p>PipeWriter（一个没有任何导出字段的 struct）是管道的写入端。写数据到管道中。该方法会堵塞，直到管道读取端读完所有数据或读取端被关闭。如果读取端关闭时带有 error（即调用 CloseWithError 关闭），该Write返回的 err 就是读取端传递的error；否则 err 为 ErrClosedPipe。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
+</span></span><span class="line"><span class="cl">    // io.Pipe() 用于创建一个同步的内存管道
+</span></span><span class="line"><span class="cl">    pipeReader, pipeWriter := io.Pipe()
+</span></span><span class="line"><span class="cl">    go PipeWrite(pipeWriter)
+</span></span><span class="line"><span class="cl">    go PipeRead(pipeReader)
+</span></span><span class="line"><span class="cl">    time.Sleep(30 * time.Second)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func PipeWrite(writer *io.PipeWriter){
+</span></span><span class="line"><span class="cl">    data := []byte(&#34;Go语言中文网&#34;)
+</span></span><span class="line"><span class="cl">    for i := 0; i &lt; 3; i++{
+</span></span><span class="line"><span class="cl">        n, err := writer.Write(data)
+</span></span><span class="line"><span class="cl">        if err != nil{
+</span></span><span class="line"><span class="cl">            fmt.Println(err)
+</span></span><span class="line"><span class="cl">            return
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        fmt.Printf(&#34;写入字节 %d\n&#34;,n)
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    writer.CloseWithError(errors.New(&#34;写入段已关闭&#34;))
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func PipeRead(reader *io.PipeReader){
+</span></span><span class="line"><span class="cl">    buf := make([]byte, 128)
+</span></span><span class="line"><span class="cl">    for{
+</span></span><span class="line"><span class="cl">        fmt.Println(&#34;接口端开始阻塞5秒钟...&#34;)
+</span></span><span class="line"><span class="cl">        time.Sleep(5 * time.Second)
+</span></span><span class="line"><span class="cl">        fmt.Println(&#34;接收端开始接受&#34;)
+</span></span><span class="line"><span class="cl">        n, err := reader.Read(buf)
+</span></span><span class="line"><span class="cl">        if err != nil{
+</span></span><span class="line"><span class="cl">            fmt.Println(err)
+</span></span><span class="line"><span class="cl">            return
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        fmt.Printf(&#34;收到字节: %d\n buf内容: %s\n&#34;,n,buf)
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>有点类似于无缓冲channel</p>
+<p>它将 io.Reader 连接到 io.Writer。一端的读取匹配另一端的写入，直接在这两端之间复制数据；<code>它没有内部缓存。它对于并行调用 Read 和 Write 以及其它函数或 Close 来说都是安全的(一方调用close，另一方就无法再写入或读取)。</code>一旦等待的 I/O 结束，Close 就会完成。并行调用 Read 或并行调用 Write 也同样安全：同种类的调用将按顺序进行控制。</p>
+<p>正因为是同步的，因此不能在一个 goroutine 中进行读和写（会死锁，就像channel一样）。</p>
+<p><code>另外，对于管道的 close 方法（非 CloseWithError 时），err 会被置为 EOF。</code></p>
+<h4 id="readatleast-和-readfull-函数">ReadAtLeast 和 ReadFull 函数</h4>
+<p>ReadAtLeast 函数的签名：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func ReadAtLeast(r Reader, buf []byte, min int) (n int, err error)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>ReadAtLeast 将 r 读取到 buf 中，直到读了最少 min 个字节为止。</code>它返回复制的字节数，如果读取的字节较少，还会返回一个错误。若没有读取到字节，错误就只是 EOF。如果一个 EOF 发生在读取了少于 min 个字节之后，ReadAtLeast 就会返回 ErrUnexpectedEOF。若 min 大于 buf 的长度，ReadAtLeast 就会返回 ErrShortBuffer。对于返回值，当且仅当 err == nil 时，才有 n &gt;= min。</p>
+<p>ReadFull 函数的签名：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func ReadFull(r Reader, buf []byte) (n int, err error)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>ReadFull 精确地从 r 中将 len(buf) 个字节读取到 buf 中。</code>它返回复制的字节数，如果读取的字节较少，还会返回一个错误。若没有读取到字节，错误就只是 EOF。如果一个 EOF 发生在读取了一些但不是所有的字节后，ReadFull 就会返回 ErrUnexpectedEOF。对于返回值，当且仅当 err == nil 时，才有 n == len(buf)。</p>
+<p>注意该函数和 ReadAtLeast 的区别：ReadFull 将 buf 读满；而 ReadAtLeast 是最少读取 min 个字节。</p>
+<h4 id="multireader-和-multiwriter-函数">MultiReader 和 MultiWriter 函数</h4>
+<p>这两个函数的定义分别是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func MultiReader(readers ...Reader) Reader
+</span></span><span class="line"><span class="cl">func MultiWriter(writers ...Writer) Writer
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>它们接收多个 Reader 或 Writer，返回一个 Reader 或 Writer。我们可以猜想到这两个函数就是操作多个 Reader 或 Writer 就像操作一个。</p>
+<p>MultiReader 的使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	readers := []io.Reader{
+</span></span><span class="line"><span class="cl">		strings.NewReader(&#34;from strings reader&#34;),
+</span></span><span class="line"><span class="cl">		bytes.NewBufferString(&#34;sssfrom bytes buffer&#34;),
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	reader := io.MultiReader(readers...)
+</span></span><span class="line"><span class="cl">	data := make([]byte, 0, 128)
+</span></span><span class="line"><span class="cl">	buf := make([]byte, 15)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		n, err := reader.Read(buf)
+</span></span><span class="line"><span class="cl">		if err != nil {
+</span></span><span class="line"><span class="cl">			fmt.Println(err)
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		fmt.Println(string(buf[:n]))
+</span></span><span class="line"><span class="cl">		data = append(data, buf[:n]...)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;%s\n&#34;, data)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">from strings re
+</span></span><span class="line"><span class="cl">ader
+</span></span><span class="line"><span class="cl">sssfrom bytes b
+</span></span><span class="line"><span class="cl">uffer
+</span></span><span class="line"><span class="cl">EOF
+</span></span><span class="line"><span class="cl">from strings readersssfrom bytes buffer
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>代码中首先构造了一个 io.Reader 的 slice，由 strings.Reader 和 bytes.Buffer 两个实例组成，然后通过 MultiReader 得到新的 Reader，循环读取新 Reader 中的内容。从输出结果可以看到，第一次调用 Reader 的 Read 方法获取到的是 slice 中第一个元素的内容(第一个元素读完后才会读第二个元素)……也就是说，<code>MultiReader 只是逻辑上将多个 Reader 组合起来，并不能通过调用一次 Read 方法获取所有 Reader 的内容，而是顺序读取Reader切片中的所有Reader。在所有的 Reader 内容都被读完后，Reader 会返回 EOF。</code></p>
+<p>MultiWriter 的使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    file, err := os.Create(&#34;tmp.txt&#34;)
+</span></span><span class="line"><span class="cl">    if err != nil {
+</span></span><span class="line"><span class="cl">        panic(err)
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    defer file.Close()
+</span></span><span class="line"><span class="cl">    writers := []io.Writer{
+</span></span><span class="line"><span class="cl">        file,
+</span></span><span class="line"><span class="cl">        os.Stdout,
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    writer := io.MultiWriter(writers...)
+</span></span><span class="line"><span class="cl">    writer.Write([]byte(&#34;Go语言中文网&#34;))
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这段程序执行后先生成 tmp.txt 文件，然后同时在文件和屏幕中都输出：Go语言中文网。这和 Unix 中的 tee 命令类似。</p>
+<p><code>MultiWriter 可以通过调用一次Write同时向多个I/O写入内容，因为写入可以通过句柄直接从尾部写入；MultiReader 只能顺序读取切片中的每一个元素数据，只有上一个元素读取完后才能读取下一个元素。</code></p>
+<h4 id="teereader函数">TeeReader函数</h4>
+<p>函数签名如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func TeeReader(r Reader, w Writer) Reader
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>TeeReader 返回一个 Reader，<code>它将从 r 中读到的数据写入 w 中。所有经由它处理的从 r 的读取都匹配于对应的对 w 的写入。它没有内部缓存，当读取 r 中的内容时，会无缓冲的将读取内容写入到 Writer 中。任何在写入时遇到的错误都将作为读取错误返回。</code></p>
+<p>这种功能的实现其实挺简单，无非是在 Read 完后执行 Write。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	file, _ := os.OpenFile(&#34;tmp.txt&#34;, os.O_WRONLY|os.O_APPEND, 0666)
+</span></span><span class="line"><span class="cl">	reader := io.TeeReader(strings.NewReader(&#34;Go语言中文网&#34;), file)
+</span></span><span class="line"><span class="cl">	reader.Read(make([]byte, 20))
+</span></span><span class="line"><span class="cl">	// close() 要在读取完成后再关闭 (不能往已经关闭的file中写内容)
+</span></span><span class="line"><span class="cl">	file.Close()
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以使用TeeReader来计算文件hash值，通过 TeeReader 和 io.ReadAll() 读取文件后再 sha256 占用的内存来看， TeeReader 占用的内存更少</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 创建临时文件
+</span></span><span class="line"><span class="cl">	out, err := os.Create(&#34;test.tmp&#34;)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		log.Fatal(err)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	defer out.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 要读取的文件
+</span></span><span class="line"><span class="cl">	resp, err := http.Get(&#34;https://golang.google.cn/dl/go1.18.2.src.tar.gz&#34;)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span><span class="line"><span class="cl">		log.Fatal(err)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	defer resp.Body.Close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	h := sha256.New()
+</span></span><span class="line"><span class="cl">	// 将read和write绑定
+</span></span><span class="line"><span class="cl">	tee := io.TeeReader(resp.Body, h)
+</span></span><span class="line"><span class="cl">	// 读取tee就相当于从resp.Body读取内容，会同时将内容写入h中
+</span></span><span class="line"><span class="cl">	io.Copy(out, tee)
+</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;%x&#34;, h.Sum(nil))
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>还可以用此方法实现简易的下载进度条，只需要定义一个结构体struct，并让它实现io.Writer，然后在自己的Write()方法中实现每次读多少字节就增加多少字节数即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Download Started
+</span></span><span class="line"><span class="cl">Downloading... 21097206 B complete 
+</span></span><span class="line"><span class="cl">Download Finished
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ioutil">ioutil</h3>
+<p>ioutil这个包在go1.16就被废弃了，它的大部分方法都是直接去调用io或os包，比如 ioutil.ReadAll() 点开源码就会发现它的实现逻辑就是直接调用 io.ReadAll()</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// As of Go 1.16, this function simply calls io.ReadAll.
+</span></span><span class="line"><span class="cl">func ReadAll(r io.Reader) ([]byte, error) {
+</span></span><span class="line"><span class="cl">	return io.ReadAll(r)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="nopcloser-函数">NopCloser 函数</h4>
+<p>有时候我们需要传递一个 io.ReadCloser 的实例，而我们现在只有一个 io.Reader 的实例，比如：strings.Reader ，这个时候 NopCloser 就派上用场了。<code>它包装一个io.Reader，返回一个 io.ReadCloser ，而相应的 Close 方法啥也不做，只是返回 nil。</code></p>
+<p>比如，在标准库 net/http 包中的 NewRequest，接收一个 io.Reader 的 body，而实际上，Request 的 Body 的类型是 io.ReadCloser，因此，代码内部进行了判断，如果传递的 io.Reader 也实现了 io.ReadCloser 接口，则转换，否则通过ioutil.NopCloser 包装转换一下。</p>
+<h4 id="readfile-和-writefile-函数">ReadFile 和 WriteFile 函数</h4>
+<p><code>ReadFile 的实现和ReadAll 类似，不过，ReadFile 会先判断文件的大小，给 bytes.Buffer 一个预定义容量，避免额外分配内存。</code></p>
+<p>按源码中注释的说法是 FileInfo 不会很精确地得到文件大小。</p>
+<p>WriteFile 将data写入filename文件中，<code>当文件不存在时会根据perm指定的权限进行创建一个,文件存在时会先清空文件内容。</code></p>
+<h4 id="discard-变量">Discard 变量</h4>
+<p><code>Discard 是一个 io.Writer，对它进行的任何 Write 调用都将无条件成功。</code> 是一个用于丢弃数据的地方。同时，为了优化 io.Copy 到 Discard，避免不必要的工作，实现了 io.ReaderFrom 接口(在io.Copy源码中会尝试将dst转换为io.ReaderForm)。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>
