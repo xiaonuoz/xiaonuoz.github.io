@@ -228,6 +228,14 @@
     <li><a href="#数据结构与算法">数据结构与算法</a>
       <ol>
         <li><a href="#sort-排序算法">sort 排序算法</a></li>
+        <li><a href="#interface-排序与查找">[]interface 排序与查找</a>
+          <ol>
+            <li><a href="#sortslice"><strong>sort.Slice</strong></a></li>
+            <li><a href="#sortslicestable"><strong>sort.SliceStable</strong></a></li>
+            <li><a href="#sortsliceissorted"><strong>sort.SliceIsSorted</strong></a></li>
+            <li><a href="#sortsearch"><strong>sort.Search</strong></a></li>
+          </ol>
+        </li>
       </ol>
     </li>
   </ol>
@@ -1401,7 +1409,91 @@
 </div><p>该方法会使用“二分查找”算法来找出能使 f(x) 在(0&lt;=x&lt;n) 索引返回 ture 的最小值 i。 前提条件 : f(x)(0&lt;=x&lt;i) 均返回 false, f(x)(i&lt;=x&lt;n) 均返回 ture。 如果不存在 i 可以使 f(i) 返回 ture, 则返回 n。</p>
 <p>它会返回符合条件的第一个元素的索引。大于等于时会找到和条件相等的元素，即等于91的那个元素，没有比这个元素排在更前面了；大于时则会找到升序数组中第一个大于91这个值的元素，返回其索引。</p>
 <p>当排序为升序，则Search的条件必须为 大于，这是因为升序由小到大，如果是小于的话，那么第一个就会小于设置的值，第一个都不小于，数组就没有小于的了(因为升序排序第一个值最小)。当数组是降序时，Search就必须为 小于</p>
-
+<h3 id="interface-排序与查找">[]interface 排序与查找</h3>
+<p>只要实现了 <code>sort.Interface</code> 接口，即可通过 sort 包内的函数完成排序，但是这种用法对于其它数据类型的 slice 不友好，可能我们需要为大量的 struct 定义一个单独的 []struct 类型，再为其实现 <code>sort.Interface</code> 接口。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Person struct {
+</span></span><span class="line"><span class="cl">    Name string
+</span></span><span class="line"><span class="cl">    Age  int
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">type Persons []Person
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func (p Persons) Len() int {
+</span></span><span class="line"><span class="cl">    panic(&#34;implement me&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func (p Persons) Less(i, j int) bool {
+</span></span><span class="line"><span class="cl">    panic(&#34;implement me&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func (p Persons) Swap(i, j int) {
+</span></span><span class="line"><span class="cl">    panic(&#34;implement me&#34;)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="sortslice"><strong>sort.Slice</strong></h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.Slice(people, func(i, j int) bool { return people[i].Age &lt; people[j].Age }) // 按年龄升序排序
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="sortslicestable"><strong>sort.SliceStable</strong></h4>
+<p>该函数完成 []interface 的稳定排序，其性能会比sort.Slice略低，通常情况下用Slice() 即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.SliceStable(people, func(i, j int) bool { return people[i].Age &gt; people[j].Age }) // 按年龄降序排序
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="sortsliceissorted"><strong>sort.SliceIsSorted</strong></h4>
+<p>该函数判断 []interface 是否为有序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.SliceIsSorted(people,func(i, j int) bool { return people[i].Age &gt; people[j].Age })
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>判断有序的前提是已经按对应逻辑排好序了，如排序方式为降序，那么上面的返回值则是false，需要将大于变为小于符号，因为SliceIsSorted中是判断该slice是否是升序排序。</p>
+<h4 id="sortsearch"><strong>sort.Search</strong></h4>
+<p>该函数判断 []interface 是否存在指定元素 （或返回最接近的元素），其只能用于已经排好序的数组切片。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.Slice(a, func(i, j int) bool { return a[i] &lt; a[j] })   // 升序排序
+</span></span><span class="line"><span class="cl">index := sort.Search(len(a), func(i int) bool { return a[i] &gt;= x }) // 查找元素
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
 </section>
 
 
