@@ -1735,9 +1735,9 @@
 &lt;p&gt;除了 &lt;code&gt;Run()&lt;/code&gt; 是 &lt;code&gt;Start&lt;/code&gt;+&lt;code&gt;Wait&lt;/code&gt; 的简便写法，&lt;code&gt;Output()&lt;/code&gt; 更是 &lt;code&gt;Run()&lt;/code&gt; 的简便写法，外加获取外部命令的输出。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;func (c *Cmd) Output() ([]byte, error)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;它要求 &lt;code&gt;c.Stdout&lt;/code&gt; 必须是 &lt;code&gt;nil&lt;/code&gt; (内部第一步就是c.Stdout != nil返回错误)，内部会将 &lt;code&gt;bytes.Buffer&lt;/code&gt; 赋值给 &lt;code&gt;c.Stdout&lt;/code&gt;，在 &lt;code&gt;Run()&lt;/code&gt; 成功返回后，会将 &lt;code&gt;Buffer&lt;/code&gt; 的结果返回（&lt;code&gt;stdout.Bytes()&lt;/code&gt;)。&lt;/p&gt;
-&lt;h4 id=&#34;combinedoutput&#34;&gt;&lt;strong&gt;CombinedOutput&lt;/strong&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;combinedoutput&#34;&gt;CombinedOutput&lt;/h4&gt;
 &lt;p&gt;&lt;code&gt;Output()&lt;/code&gt; 只返回 &lt;code&gt;Stdout&lt;/code&gt; 的结果，而 &lt;code&gt;CombinedOutput&lt;/code&gt; 组合了 &lt;code&gt;Stdout&lt;/code&gt; 和 &lt;code&gt;Stderr&lt;/code&gt; 的输出，即 &lt;code&gt;Stdout&lt;/code&gt; 和 &lt;code&gt;Stderr&lt;/code&gt; 都赋值为同一个 &lt;code&gt;bytes.Buffer&lt;/code&gt;。&lt;/p&gt;
-&lt;h4 id=&#34;stdoutpipestderrpipe-和-stdinpipe&#34;&gt;&lt;strong&gt;StdoutPipe、StderrPipe 和 StdinPipe&lt;/strong&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;stdoutpipestderrpipe-和-stdinpipe&#34;&gt;StdoutPipe、StderrPipe 和 StdinPipe&lt;/h4&gt;
 &lt;p&gt;除了上面介绍的 &lt;code&gt;Output&lt;/code&gt; 和 &lt;code&gt;CombinedOutput&lt;/code&gt; 直接获取命令输出结果外，还可以通过 &lt;code&gt;StdoutPipe&lt;/code&gt; 返回的 &lt;code&gt;io.ReadCloser&lt;/code&gt; 来获取输出；相应的 &lt;code&gt;StderrPipe&lt;/code&gt; 得到错误信息；而 &lt;code&gt;StdinPipe&lt;/code&gt; 则可以往命令写入数据。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;func (c *Cmd) StdoutPipe() (io.ReadCloser, error)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;StdoutPipe&lt;/code&gt; 方法返回一个在命令 &lt;code&gt;Start&lt;/code&gt; 执行后与命令标准输出关联的管道。&lt;code&gt;Wait&lt;/code&gt; 方法会在命令结束后会自动关闭这个管道，所以一般不需要手动关闭该管道。但是如果在从管道读取完全部数据之前调用 &lt;code&gt;Wait&lt;/code&gt; 出错了，则必须手动关闭。因此建议获取后直接defer close，即使已经关闭了再次关闭也没事，只是会因为已经关闭返回失败而已。&lt;/p&gt;
