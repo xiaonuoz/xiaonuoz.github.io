@@ -267,6 +267,22 @@
         <li><a href="#进程终止">进程终止</a></li>
       </ol>
     </li>
+    <li><a href="#进程属性和控制">进程属性和控制</a>
+      <ol>
+        <li><a href="#进程凭证">进程凭证</a>
+          <ol>
+            <li><a href="#实际用户-id-和实际组-id">实际用户 ID 和实际组 ID</a></li>
+            <li><a href="#有效用户-id-和有效组-id">有效用户 ID 和有效组 ID</a></li>
+            <li><a href="#set-user-id-和-set-group-id-程序">Set-User-ID 和 Set-Group-ID 程序</a></li>
+            <li><a href="#操作系统用户">操作系统用户</a></li>
+          </ol>
+        </li>
+        <li><a href="#进程的当前工作目录">进程的当前工作目录</a></li>
+        <li><a href="#改变进程的根目录">改变进程的根目录</a></li>
+        <li><a href="#进程环境列表">进程环境列表</a></li>
+      </ol>
+    </li>
+    <li><a href="#线程">线程</a></li>
   </ol>
 </nav>
         </div>
@@ -2076,6 +2092,134 @@
 <p><code>os.Exit()</code> 函数会终止当前进程，对应的系统调用不是 <code>_exit</code>，而是 <code>exit_group</code>。</p>
 <p><code>func Exit(code int)</code></p>
 <p><code>Exit</code> 让当前进程以给出的状态码 <code>code</code> 退出。一般来说，状态码 0 表示成功，非 0 表示出错。Exit 会让进程立刻终止，defer 函数都不会被执行。因此如果需要执行defer函数最好使用return来结束函数。</p>
+<h2 id="进程属性和控制">进程属性和控制</h2>
+<p>每个进程都有一些属性，<code>os</code> 包提供了一些函数可以获取进程属性。</p>
+<p>每个进程都会有一个进程 ID，可以通过 <code>os.Getpid</code> 获得。同时，每个进程都有创建自己的父进程，通过 <code>os.Getppid</code> 获得。</p>
+<h3 id="进程凭证">进程凭证</h3>
+<p>Unix 中进程都有一套数字表示用户 ID(UID) 和组 ID(GID)，有时也将这些 ID 称之为进程凭证。Windows 下总是 -1。</p>
+<h4 id="实际用户-id-和实际组-id">实际用户 ID 和实际组 ID</h4>
+<p>实际用户 ID（real user ID）和实际组 ID（real group ID）确定了进程所属的用户和组。可以从 <code>/etc/passwd</code> 文件读取用户 ID 和组 ID。当创建新进程时（如 shell 执行程序），将从其父进程中继承这些 ID。</p>
+<p>可通过 <code>os.Getuid()</code> 和 <code>os.Getgid()</code> 获取当前进程的实际用户 ID 和实际组 ID；</p>
+<h4 id="有效用户-id-和有效组-id">有效用户 ID 和有效组 ID</h4>
+<p>大多数 Unix 实现中，当进程尝试执行各种操作（即系统调用）时，将结合有效用户 ID、有效组 ID，连同辅助组 ID 一起来确定授予进程哪些权限。内核还会使用有效用户 ID 来决定一个进程是否能向另一个进程发送信号。</p>
+<p>有效用户 ID 为 0（root 的用户 ID）的进程拥有超级用户的所有权限。这样的进程又称为特权级进程（privileged process）。某些系统调用只能由特权级进程执行。</p>
+<p>可通过 <code>os.Geteuid()</code> 和 <code>os.Getegid()</code> 获取当前进程的有效用户 ID（effective user ID）和有效组 ID（effectvie group ID）。</p>
+<p>**通常情况下，有效用户 ID 及组 ID 与其相应的实际 ID 相等，**但有两种方法能够致使二者不同。一是使用相关系统调用；二是执行 set-user-ID 和 set-group-ID 程序，这就会导致实际用户id为运行程序的用户id，而有效用户id为程序本身所属的用户id。</p>
+<h4 id="set-user-id-和-set-group-id-程序">Set-User-ID 和 Set-Group-ID 程序</h4>
+<p><code>set-user-ID</code> 程序会将进程的有效用户 ID 设置为可执行文件所属的用户 ID（实际id和有效id在正常情况下相同，均为执行当前程序的用户，但是set-user-id可以将其改为以文件本身用户权限运行），从而获得常规情况下并不具有的权限。<code>set-group-ID</code> 程序对进程有效组 ID 实现类似任务。（有时也将这程序简称为 set-UID 程序和 set-GID 程序。）</p>
+<p>与其他文件一样，可执行文件的用户 ID 和组 ID 决定了该文件的所有权。文件还拥有两个特别的权限位 set-user-ID 位和 set-group-ID 位，可以使用 <code>os.Chmod</code> 修改这些权限位（非特权用户进程只能修改其自身文件，而特权用户进程能修改任何文件）。</p>
+<p><code>chmod u+s filename</code></p>
+<p>文件设置了 set-user-ID 位后，<code>ls -l</code> 显示文件会在属主用户执行权限字段上看到字母 s（有执行权限时） 或 S（无执行权限时）；相应的 set-group-ID 则是在组用户执行位上看到 s 或 S。</p>
+<p>当运行 set-user-ID 程序时，内核会将进程的有效用户 ID 设置为可执行文件自身的用户 ID。set-group-ID 程序对进程有效组 ID 的操作与之类似。通过这种方法修改进程的有效用户 ID 或组 ID，能够使进程（换言之，执行该程序的用户）获得常规情况下所不具有的权限。例如，如果一个可执行文件的属主为 root，且为此程序设置了 set-user-ID 权限位，那么当运行该程序时，进程会取得超级用户权限。</p>
+<p>也可以利用程序的 set-user-ID 和 set-group-ID 机制，将进程的有效 ID 修改为 root 之外的其他用户。例如，为提供一个受保护文件的访问，可采用如下方案：创建一个具有对该文件访问权限的专有用户（组）ID，然后再创建一个 set-user-ID（set-group-ID）程序，将进程有效用户（组）ID 变更为这个专用 ID (即修改文件属主为专有用户)。这样，无需拥有超级用户的所有权限，程序就能访问该文件，避免使用root权限时进行其他非法操作。</p>
+<p>此外，<code>os</code> 还提供了获取辅助组 ID 的函数：<code>os.Getgroups()</code></p>
+<h4 id="操作系统用户">操作系统用户</h4>
+<p>包 <code>os/user</code> 允许通过名称或 ID 查询用户账号。用户结构定义如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Uid</span>      <span class="kt">string</span> <span class="c1">// user id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Gid</span>      <span class="kt">string</span> <span class="c1">// primary group id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Username</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span>     <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">HomeDir</span>  <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>User</code> 结构体代表一个用户帐户。</p>
+<p>在 POSIX 系统中 Uid 和 Gid 字段分别包含代表 uid 和 gid 的十进制数字。在 Windows 系统中 Uid 和 Gid 包含字符串格式的安全标识符（SID）。在 Plan 9 系统中，Uid、Gid、Username 和 Name 字段是 /dev/user 的内容。</p>
+<p><code>Current</code> 函数可以获取当前用户账号。而 <code>Lookup</code> 和 <code>LookupId</code> 则分别根据用户名和用户 ID 查询用户。如果对应的用户不存在，则返回 <code>user.UnknownUserError</code> 或 <code>user.UnknownUserIdError</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nf">Current</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nf">Lookup</span><span class="p">(</span><span class="s">&#34;xiaonuo&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nf">LookupId</span><span class="p">(</span><span class="s">&#34;0&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Output:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// &amp;{502 502 xiaonuo  /home/xiaonuo} &lt;nil&gt;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// &amp;{502 502 xiaonuo  /home/xiaonuo} &lt;nil&gt;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// &amp;{0 0 root root /root} &lt;nil&gt;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="进程的当前工作目录">进程的当前工作目录</h3>
+<p>一个进程的当前工作目录（current working directory）定义了该进程解析相对路径名的起点。新进程的当前工作目录继承自其父进程。</p>
+<p><code>func Getwd() (dir string, err error)</code></p>
+<p><code>Getwd</code> 返回一个对应当前工作目录的根路径（即绝对路径）。如果当前目录可以经过多条路径抵达（比如符号链接），<code>Getwd</code> 会返回其中一个。对应系统调用：<code>getcwd</code>。</p>
+<p><code>func Chdir(dir string) error</code></p>
+<p>相应的，<code>Chdir</code> 将当前工作目录修改为 <code>dir</code> 指定的目录。如果出错，会返回 <code>*PathError</code> 类型的错误。对应系统调用 <code>chdir</code>。</p>
+<p>另外，<code>os.File</code> 有一个方法：<code>Chdir</code>，对应系统调用 <code>fchidr</code>（以文件描述符为参数），也可以改变当前工作目录。</p>
+<h3 id="改变进程的根目录">改变进程的根目录</h3>
+<p>每个进程都有一个根目录，该目录是解释绝对路径（即那些以 / 开始的目录）时的起点。默认情况下，这是文件系统的真实根目录。新进程从其父进程处继承根目录。有时可能需要改变一个进程的根目录（比如 ftp 服务就是一个典型的例子，ftp一进入，其根就是某个文件夹内容，而不是真实的根）。系统调用 <code>chroot</code> 能改变一个进程的根目录。</p>
+<p>在go的高版本中已经无法通过标准库修改进程的根目录了，可以直接通过syscall去调用系统调用来修改。</p>
+<h3 id="进程环境列表">进程环境列表</h3>
+<p>每个进程都有与其相关的称之为环境列表（environment list）的字符串数组，或简称环境（environment）。其中每个字符串都以 名称 = 值（name=value）形式定义。因此，环境是“名称 - 值”的成对集合，可存储任何信息。常将列表中的名称称为环境变量（environment variables）。</p>
+<p>新进程在创建之时，会继承其父进程的环境副本。这是一种原始的进程间通信方式，却颇为常用。环境（environment）提供了将信息从父进程传递给子进程的方法。创建后，父子进程的环境相互独立，互不影响。</p>
+<p>环境变量的常见用途之一是在 shell 中，通过在自身环境中放置变量值，shell 就可确保把这些值传递给其所创建的进程，并以此来执行用户命令。</p>
+<p>在程序中，可以通过 <code>os.Environ</code> 获取环境列表：</p>
+<p><code>func Environ() []string</code></p>
+<p>返回的 <code>[]string</code> 中每个元素是 <code>key=value</code> 的形式。</p>
+<p><code>func Getenv(key string) string</code></p>
+<p><code>Getenv</code> 检索并返回名为 <code>key</code> 的环境变量的值。如果不存在该环境变量会返回空字符串。有时候，可能环境变量存在，只是值刚好是空。为了区分这种情况，提供了另外一个函数 <code>LookupEnv()</code>：</p>
+<p><code>func LookupEnv(key string) (string, bool)</code></p>
+<p>如果变量名存在，第二个参数返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<p><code>func Setenv(key, value string) error</code></p>
+<p><code>Setenv</code> 设置名为 <code>key</code> 的环境变量，值为 <code>value</code>。如果出错会返回错误。（如果值之前存在，会覆盖）</p>
+<p><code>func Unsetenv(key string) error</code></p>
+<p><code>Unsetenv</code> 删除名为 <code>key</code> 的环境变量。</p>
+<p><code>func Clearenv()</code></p>
+<p><code>Clearenv</code> 删除所有环境变量。</p>
+<p><strong>这些函数都是获取和修改当前程序的环境变量，并不会对全局或其他进程的环境变量造成影响，它们都是独立的副本。如果想修改全局的环境变量肯定需要修改文件 /etc/profile，这会由第一个进程执行，其他进程都是从该进程延申出来的，因此会得到其环境变量的副本。</strong></p>
+<p>另外，<code>ExpandEnv</code> 和 <code>Getenv</code> 功能类似，不过，前者使用变量方式，如：</p>
+<p>os.ExpandEnv(&quot;$GODEBUG&quot;) 和 os.Getenv(&ldquo;GODEBUG&rdquo;) 是一样的。</p>
+<p>实际上，<code>os.ExpandEnv</code> 调用的是 <code>os.Expand(s, os.Getenv)</code>。</p>
+<p><code>func Expand(s string, mapping func(string) string) string</code></p>
+<p><code>Expand</code> 能够将${var} 或 $var 形式的变量，经过 mapping 处理，得到结果。</p>
+<p>实际开发中使用 <code>os.GetEnv</code>就行了，ExpandEnv基本不会使用，其本质上也是用的os.GetEnv。</p>
+<h2 id="线程">线程</h2>
+<p>与进程类似，线程是允许应用程序并发执行多个任务的一种机制。一个进程可以包含多个线程。同一个程序中的所有线程均会独立执行相同程序，且共享同一份全局内存区域。</p>
+<p>同一进程中的多个线程可以并发执行。在多处理器环境下，多个线程可以同时并行（不是并发）。如果一个线程因等待 I/O 操作而遭阻塞，其他线程依然可以继续运行。</p>
+<p>在 Linux 中，通过系统调用 <code>clone()</code> 来实现线程的。从前面的介绍，我们知道，该系统调用也可以用来创建进程。实际上，从内核的角度来说，它并没有线程这个概念。Linux 把所有的线程都当作进程来实现。内核并没有准备特别的调度算法或是定义特别的数据结构来表示线程。相反，线程仅仅被内核视为一个使用某些共享资源的进程。所以，在内核中，它看起来就是一个普通的进程（只是该进程和其他一些进程共享某些资源，如地址空间）。</p>
+<p>在 Go 中，通过 <code>clone()</code> 系统调用来创建线程，其中的 <code>clone_flags</code> 为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cloneFlags = _CLONE_VM | /* share memory */
+</span></span><span class="line"><span class="cl">        _CLONE_FS | /* share cwd, etc */
+</span></span><span class="line"><span class="cl">        _CLONE_FILES | /* share fd table */
+</span></span><span class="line"><span class="cl">        _CLONE_SIGHAND | /* share sig handler table */
+</span></span><span class="line"><span class="cl">        _CLONE_THREAD /* revisit - okay for now */
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是说，父子俩共享了地址空间 (_CLONE_VM)、文件系统资源 (_CLONE_FS)、文件描述符 (_CLONE_FILES) 和信号处理程序 (_CLONE_SIGHAND)。而 <code>_CLONE_THREAD</code> 则会将父子进程放入相同的线程组。这样一来，新建的进程和父进程都叫做线程。</p>
 
 </section>
 
