@@ -230,12 +230,41 @@
         <li><a href="#sort-排序算法">sort 排序算法</a></li>
         <li><a href="#interface-排序与查找">[]interface 排序与查找</a>
           <ol>
-            <li><a href="#sortslice"><strong>sort.Slice</strong></a></li>
-            <li><a href="#sortslicestable"><strong>sort.SliceStable</strong></a></li>
-            <li><a href="#sortsliceissorted"><strong>sort.SliceIsSorted</strong></a></li>
-            <li><a href="#sortsearch"><strong>sort.Search</strong></a></li>
+            <li><a href="#sortslice">sort.Slice</a></li>
+            <li><a href="#sortslicestable">sort.SliceStable</a></li>
+            <li><a href="#sortsliceissorted">sort.SliceIsSorted</a></li>
+            <li><a href="#sortsearch">sort.Search</a></li>
           </ol>
         </li>
+        <li><a href="#container-容器数据类型heaplist-和-ring">container 容器数据类型：heap、list 和 ring</a>
+          <ol>
+            <li><a href="#堆">堆</a></li>
+            <li><a href="#链表">链表</a></li>
+            <li><a href="#环-循环链表">环 (循环链表)</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#进程线程和goroutine">进程、线程和goroutine</a>
+      <ol>
+        <li><a href="#创建进程">创建进程</a>
+          <ol>
+            <li><a href="#process-及其相关方法">Process 及其相关方法</a></li>
+          </ol>
+        </li>
+        <li><a href="#运行外部命令">运行外部命令</a>
+          <ol>
+            <li><a href="#查找可执行程序">查找可执行程序</a></li>
+            <li><a href="#cmd-及其相关方法">Cmd 及其相关方法</a></li>
+            <li><a href="#command">Command</a></li>
+            <li><a href="#start">Start</a></li>
+            <li><a href="#wait">Wait</a></li>
+            <li><a href="#output">Output</a></li>
+            <li><a href="#combinedoutput"><strong>CombinedOutput</strong></a></li>
+            <li><a href="#stdoutpipestderrpipe-和-stdinpipe"><strong>StdoutPipe、StderrPipe 和 StdinPipe</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#进程终止">进程终止</a></li>
       </ol>
     </li>
   </ol>
@@ -330,9 +359,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Seeker interface {
-</span></span><span class="line"><span class="cl">    Seek(offset int64, whence int) (ret int64, err error)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Seeker</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">Seek</span><span class="p">(</span><span class="nx">offset</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">whence</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>whence 的值，在 io 包中定义了相应的常量，应该使用这些常量</p>
@@ -345,11 +374,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">const (
-</span></span><span class="line"><span class="cl">  SeekStart   = 0 // 相对于文件的开头进行偏移
-</span></span><span class="line"><span class="cl">  SeekCurrent = 1 // 相对于当前偏移量进行偏移
-</span></span><span class="line"><span class="cl">  SeekEnd     = 2 // 相对于文件的结尾进行偏移
-</span></span><span class="line"><span class="cl">)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">SeekStart</span>   <span class="p">=</span> <span class="mi">0</span> <span class="c1">// 相对于文件的开头进行偏移
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">SeekCurrent</span> <span class="p">=</span> <span class="mi">1</span> <span class="c1">// 相对于当前偏移量进行偏移
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">SeekEnd</span>     <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 相对于文件的结尾进行偏移
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>而原先 os 包中的常量已经被标注为Deprecated</p>
@@ -363,12 +392,12 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Deprecated: Use io.SeekStart, io.SeekCurrent, and io.SeekEnd.
-</span></span><span class="line"><span class="cl">const (
-</span></span><span class="line"><span class="cl">  SEEK_SET int = 0 // seek relative to the origin of the file
-</span></span><span class="line"><span class="cl">  SEEK_CUR int = 1 // seek relative to the current offset
-</span></span><span class="line"><span class="cl">  SEEK_END int = 2 // seek relative to the end
-</span></span><span class="line"><span class="cl">)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// Deprecated: Use io.SeekStart, io.SeekCurrent, and io.SeekEnd.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">SEEK_SET</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">0</span> <span class="c1">// seek relative to the origin of the file
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">SEEK_CUR</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">1</span> <span class="c1">// seek relative to the current offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">SEEK_END</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">2</span> <span class="c1">// seek relative to the end
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="sectionreader-类型">SectionReader 类型</h4>
@@ -383,12 +412,12 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type SectionReader struct {
-</span></span><span class="line"><span class="cl">    r     ReaderAt    // 该类型最终的 Read/ReadAt 最终都是通过 r 的 ReadAt 实现
-</span></span><span class="line"><span class="cl">    base  int64        // NewSectionReader 会将 base 设置为 off
-</span></span><span class="line"><span class="cl">    off   int64        // 从 r 中的 off 偏移处开始读取数据
-</span></span><span class="line"><span class="cl">    limit int64        // limit - off = SectionReader 流的长度
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">SectionReader</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span>     <span class="nx">ReaderAt</span>    <span class="c1">// 该类型最终的 Read/ReadAt 最终都是通过 r 的 ReadAt 实现
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">base</span>  <span class="kt">int64</span>        <span class="c1">// NewSectionReader 会将 base 设置为 off
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">off</span>   <span class="kt">int64</span>        <span class="c1">// 从 r 中的 off 偏移处开始读取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">limit</span> <span class="kt">int64</span>        <span class="c1">// limit - off = SectionReader 流的长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>从名称我们可以猜到，该类型读取数据流中部分数据。</p>
@@ -397,7 +426,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func NewSectionReader(r ReaderAt, off int64, n int64) *SectionReader
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewSectionReader</span><span class="p">(</span><span class="nx">r</span> <span class="nx">ReaderAt</span><span class="p">,</span> <span class="nx">off</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">n</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">SectionReader</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="limitedreader-类型">LimitedReader 类型</h4>
@@ -409,10 +438,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type LimitedReader struct {
-</span></span><span class="line"><span class="cl">    R Reader // underlying reader，最终的读取操作通过 R.Read 完成
-</span></span><span class="line"><span class="cl">    N int64  // max bytes remaining
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">LimitedReader</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">R</span> <span class="nx">Reader</span> <span class="c1">// underlying reader，最终的读取操作通过 R.Read 完成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">N</span> <span class="kt">int64</span>  <span class="c1">// max bytes remaining
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>从 R 读取数据但将返回的数据总量限制为 N 字节。每调用一次 Read 都将更新 N 来反应新的剩余数量，每读取m字节，n就等于n-m。</p>
@@ -429,14 +458,14 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">content := &#34;This Is LimitReader Example&#34;
-</span></span><span class="line"><span class="cl">reader := strings.NewReader(content)
-</span></span><span class="line"><span class="cl">limitReader := &amp;io.LimitedReader{R: reader, N: 8}
-</span></span><span class="line"><span class="cl">for limitReader.N &gt; 0 {
-</span></span><span class="line"><span class="cl">    tmp := make([]byte, 2)
-</span></span><span class="line"><span class="cl">    limitReader.Read(tmp)
-</span></span><span class="line"><span class="cl">    fmt.Printf(&#34;%s&#34;, tmp)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">content</span> <span class="o">:=</span> <span class="s">&#34;This Is LimitReader Example&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">reader</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">limitReader</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">io</span><span class="p">.</span><span class="nx">LimitedReader</span><span class="p">{</span><span class="nx">R</span><span class="p">:</span> <span class="nx">reader</span><span class="p">,</span> <span class="nx">N</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">limitReader</span><span class="p">.</span><span class="nx">N</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tmp</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">limitReader</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">tmp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="nx">tmp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>可见，通过该类型可以达到 只允许读取一定长度数据 的目的。</p>
@@ -446,7 +475,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func LimitReader(r Reader, n int64) Reader { return &amp;LimitedReader{r, n} }
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">LimitReader</span><span class="p">(</span><span class="nx">r</span> <span class="nx">Reader</span><span class="p">,</span> <span class="nx">n</span> <span class="kt">int64</span><span class="p">)</span> <span class="nx">Reader</span> <span class="p">{</span> <span class="k">return</span> <span class="o">&amp;</span><span class="nx">LimitedReader</span><span class="p">{</span><span class="nx">r</span><span class="p">,</span> <span class="nx">n</span><span class="p">}</span> <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="pipereader-和-pipewrite-类型">PipeReader 和 PipeWrite 类型</h4>
@@ -491,41 +520,41 @@
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">    // io.Pipe() 用于创建一个同步的内存管道
-</span></span><span class="line"><span class="cl">    pipeReader, pipeWriter := io.Pipe()
-</span></span><span class="line"><span class="cl">    go PipeWrite(pipeWriter)
-</span></span><span class="line"><span class="cl">    go PipeRead(pipeReader)
-</span></span><span class="line"><span class="cl">    time.Sleep(30 * time.Second)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// io.Pipe() 用于创建一个同步的内存管道
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">pipeReader</span><span class="p">,</span> <span class="nx">pipeWriter</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">Pipe</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="nf">PipeWrite</span><span class="p">(</span><span class="nx">pipeWriter</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="nf">PipeRead</span><span class="p">(</span><span class="nx">pipeReader</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">30</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func PipeWrite(writer *io.PipeWriter){
-</span></span><span class="line"><span class="cl">    data := []byte(&#34;Go语言中文网&#34;)
-</span></span><span class="line"><span class="cl">    for i := 0; i &lt; 3; i++{
-</span></span><span class="line"><span class="cl">        n, err := writer.Write(data)
-</span></span><span class="line"><span class="cl">        if err != nil{
-</span></span><span class="line"><span class="cl">            fmt.Println(err)
-</span></span><span class="line"><span class="cl">            return
-</span></span><span class="line"><span class="cl">        }
-</span></span><span class="line"><span class="cl">        fmt.Printf(&#34;写入字节 %d\n&#34;,n)
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    writer.CloseWithError(errors.New(&#34;写入段已关闭&#34;))
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">PipeWrite</span><span class="p">(</span><span class="nx">writer</span> <span class="o">*</span><span class="nx">io</span><span class="p">.</span><span class="nx">PipeWriter</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">data</span> <span class="o">:=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Go语言中文网&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">writer</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;写入字节 %d\n&#34;</span><span class="p">,</span><span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">writer</span><span class="p">.</span><span class="nf">CloseWithError</span><span class="p">(</span><span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;写入段已关闭&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func PipeRead(reader *io.PipeReader){
-</span></span><span class="line"><span class="cl">    buf := make([]byte, 128)
-</span></span><span class="line"><span class="cl">    for{
-</span></span><span class="line"><span class="cl">        fmt.Println(&#34;接口端开始阻塞5秒钟...&#34;)
-</span></span><span class="line"><span class="cl">        time.Sleep(5 * time.Second)
-</span></span><span class="line"><span class="cl">        fmt.Println(&#34;接收端开始接受&#34;)
-</span></span><span class="line"><span class="cl">        n, err := reader.Read(buf)
-</span></span><span class="line"><span class="cl">        if err != nil{
-</span></span><span class="line"><span class="cl">            fmt.Println(err)
-</span></span><span class="line"><span class="cl">            return
-</span></span><span class="line"><span class="cl">        }
-</span></span><span class="line"><span class="cl">        fmt.Printf(&#34;收到字节: %d\n buf内容: %s\n&#34;,n,buf)
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">PipeRead</span><span class="p">(</span><span class="nx">reader</span> <span class="o">*</span><span class="nx">io</span><span class="p">.</span><span class="nx">PipeReader</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">buf</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;接口端开始阻塞5秒钟...&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;接收端开始接受&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;收到字节: %d\n buf内容: %s\n&#34;</span><span class="p">,</span><span class="nx">n</span><span class="p">,</span><span class="nx">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>有点类似于无缓冲channel</p>
@@ -539,7 +568,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func ReadAtLeast(r Reader, buf []byte, min int) (n int, err error)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ReadAtLeast</span><span class="p">(</span><span class="nx">r</span> <span class="nx">Reader</span><span class="p">,</span> <span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">min</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>ReadAtLeast 将 r 读取到 buf 中，直到读了最少 min 个字节为止。</code>它返回复制的字节数，如果读取的字节较少，还会返回一个错误。若没有读取到字节，错误就只是 EOF。如果一个 EOF 发生在读取了少于 min 个字节之后，ReadAtLeast 就会返回 ErrUnexpectedEOF。若 min 大于 buf 的长度，ReadAtLeast 就会返回 ErrShortBuffer。对于返回值，当且仅当 err == nil 时，才有 n &gt;= min。</p>
@@ -549,7 +578,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func ReadFull(r Reader, buf []byte) (n int, err error)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ReadFull</span><span class="p">(</span><span class="nx">r</span> <span class="nx">Reader</span><span class="p">,</span> <span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>ReadFull 精确地从 r 中将 len(buf) 个字节读取到 buf 中。</code>它返回复制的字节数，如果读取的字节较少，还会返回一个错误。若没有读取到字节，错误就只是 EOF。如果一个 EOF 发生在读取了一些但不是所有的字节后，ReadFull 就会返回 ErrUnexpectedEOF。对于返回值，当且仅当 err == nil 时，才有 n == len(buf)。</p>
@@ -562,8 +591,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func MultiReader(readers ...Reader) Reader
-</span></span><span class="line"><span class="cl">func MultiWriter(writers ...Writer) Writer
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">MultiReader</span><span class="p">(</span><span class="nx">readers</span> <span class="o">...</span><span class="nx">Reader</span><span class="p">)</span> <span class="nx">Reader</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">MultiWriter</span><span class="p">(</span><span class="nx">writers</span> <span class="o">...</span><span class="nx">Writer</span><span class="p">)</span> <span class="nx">Writer</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>它们接收多个 Reader 或 Writer，返回一个 Reader 或 Writer。我们可以猜想到这两个函数就是操作多个 Reader 或 Writer 就像操作一个。</p>
@@ -590,24 +619,24 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	readers := []io.Reader{
-</span></span><span class="line"><span class="cl">		strings.NewReader(&#34;from strings reader&#34;),
-</span></span><span class="line"><span class="cl">		bytes.NewBufferString(&#34;sssfrom bytes buffer&#34;),
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	reader := io.MultiReader(readers...)
-</span></span><span class="line"><span class="cl">	data := make([]byte, 0, 128)
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 15)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">	<span class="nx">readers</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="s">&#34;from strings reader&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">bytes</span><span class="p">.</span><span class="nf">NewBufferString</span><span class="p">(</span><span class="s">&#34;sssfrom bytes buffer&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">reader</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">MultiReader</span><span class="p">(</span><span class="nx">readers</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">data</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">buf</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		n, err := reader.Read(buf)
-</span></span><span class="line"><span class="cl">		if err != nil {
-</span></span><span class="line"><span class="cl">			fmt.Println(err)
-</span></span><span class="line"><span class="cl">			break
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		fmt.Println(string(buf[:n]))
-</span></span><span class="line"><span class="cl">		data = append(data, buf[:n]...)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;%s\n&#34;, data)
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">n</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">data</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[:</span><span class="nx">n</span><span class="p">]</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出：</p>
@@ -621,12 +650,12 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">from strings re
-</span></span><span class="line"><span class="cl">ader
-</span></span><span class="line"><span class="cl">sssfrom bytes b
-</span></span><span class="line"><span class="cl">uffer
-</span></span><span class="line"><span class="cl">EOF
-</span></span><span class="line"><span class="cl">from strings readersssfrom bytes buffer
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">from</span> <span class="nx">strings</span> <span class="nx">re</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ader</span>
+</span></span><span class="line"><span class="cl"><span class="nx">sssfrom</span> <span class="nx">bytes</span> <span class="nx">b</span>
+</span></span><span class="line"><span class="cl"><span class="nx">uffer</span>
+</span></span><span class="line"><span class="cl"><span class="nx">EOF</span>
+</span></span><span class="line"><span class="cl"><span class="nx">from</span> <span class="nx">strings</span> <span class="nx">readersssfrom</span> <span class="nx">bytes</span> <span class="nx">buffer</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>代码中首先构造了一个 io.Reader 的 slice，由 strings.Reader 和 bytes.Buffer 两个实例组成，然后通过 MultiReader 得到新的 Reader，循环读取新 Reader 中的内容。从输出结果可以看到，第一次调用 Reader 的 Read 方法获取到的是 slice 中第一个元素的内容(第一个元素读完后才会读第二个元素)……也就是说，<code>MultiReader 只是逻辑上将多个 Reader 组合起来，并不能通过调用一次 Read 方法获取所有 Reader 的内容，而是顺序读取Reader切片中的所有Reader。在所有的 Reader 内容都被读完后，Reader 会返回 EOF。</code></p>
@@ -646,17 +675,17 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    file, err := os.Create(&#34;tmp.txt&#34;)
-</span></span><span class="line"><span class="cl">    if err != nil {
-</span></span><span class="line"><span class="cl">        panic(err)
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    defer file.Close()
-</span></span><span class="line"><span class="cl">    writers := []io.Writer{
-</span></span><span class="line"><span class="cl">        file,
-</span></span><span class="line"><span class="cl">        os.Stdout,
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    writer := io.MultiWriter(writers...)
-</span></span><span class="line"><span class="cl">    writer.Write([]byte(&#34;Go语言中文网&#34;))
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="nx">file</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;tmp.txt&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">writers</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">file</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">writer</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">MultiWriter</span><span class="p">(</span><span class="nx">writers</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">writer</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Go语言中文网&#34;</span><span class="p">))</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>这段程序执行后先生成 tmp.txt 文件，然后同时在文件和屏幕中都输出：Go语言中文网。这和 Unix 中的 tee 命令类似。</p>
@@ -668,7 +697,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func TeeReader(r Reader, w Writer) Reader
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">TeeReader</span><span class="p">(</span><span class="nx">r</span> <span class="nx">Reader</span><span class="p">,</span> <span class="nx">w</span> <span class="nx">Writer</span><span class="p">)</span> <span class="nx">Reader</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>TeeReader 返回一个 Reader，<code>它将从 r 中读到的数据写入 w 中。所有经由它处理的从 r 的读取都匹配于对应的对 w 的写入。它没有内部缓存，当读取 r 中的内容时，会无缓冲的将读取内容写入到 Writer 中。任何在写入时遇到的错误都将作为读取错误返回。</code></p>
@@ -682,11 +711,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	file, _ := os.OpenFile(&#34;tmp.txt&#34;, os.O_WRONLY|os.O_APPEND, 0666)
-</span></span><span class="line"><span class="cl">	reader := io.TeeReader(strings.NewReader(&#34;Go语言中文网&#34;), file)
-</span></span><span class="line"><span class="cl">	reader.Read(make([]byte, 20))
-</span></span><span class="line"><span class="cl">	// close() 要在读取完成后再关闭 (不能往已经关闭的file中写内容)
-</span></span><span class="line"><span class="cl">	file.Close()
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">	<span class="nx">file</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="s">&#34;tmp.txt&#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">,</span> <span class="mo">0666</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">reader</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">TeeReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="s">&#34;Go语言中文网&#34;</span><span class="p">),</span> <span class="nx">file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">reader</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// close() 要在读取完成后再关闭 (不能往已经关闭的file中写内容)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以使用TeeReader来计算文件hash值，通过 TeeReader 和 io.ReadAll() 读取文件后再 sha256 占用的内存来看， TeeReader 占用的内存更少</p>
@@ -714,26 +743,26 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 创建临时文件
-</span></span><span class="line"><span class="cl">	out, err := os.Create(&#34;test.tmp&#34;)
-</span></span><span class="line"><span class="cl">	if err != nil {
-</span></span><span class="line"><span class="cl">		log.Fatal(err)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	defer out.Close()
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">	<span class="c1">// 创建临时文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">out</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;test.tmp&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// 要读取的文件
-</span></span><span class="line"><span class="cl">	resp, err := http.Get(&#34;https://golang.google.cn/dl/go1.18.2.src.tar.gz&#34;)
-</span></span><span class="line"><span class="cl">	if err != nil {
-</span></span><span class="line"><span class="cl">		log.Fatal(err)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	defer resp.Body.Close()
+</span></span><span class="line"><span class="cl">	<span class="c1">// 要读取的文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;https://golang.google.cn/dl/go1.18.2.src.tar.gz&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	h := sha256.New()
-</span></span><span class="line"><span class="cl">	// 将read和write绑定
-</span></span><span class="line"><span class="cl">	tee := io.TeeReader(resp.Body, h)
-</span></span><span class="line"><span class="cl">	// 读取tee就相当于从resp.Body读取内容，会同时将内容写入h中
-</span></span><span class="line"><span class="cl">	io.Copy(out, tee)
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;%x&#34;, h.Sum(nil))
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span> <span class="o">:=</span> <span class="nx">sha256</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 将read和write绑定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">tee</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">TeeReader</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">,</span> <span class="nx">h</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 读取tee就相当于从resp.Body读取内容，会同时将内容写入h中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">io</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="nx">out</span><span class="p">,</span> <span class="nx">tee</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nf">Sum</span><span class="p">(</span><span class="kc">nil</span><span class="p">))</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>还可以用此方法实现简易的下载进度条，只需要定义一个结构体struct，并让它实现io.Writer，然后在自己的Write()方法中实现每次读多少字节就增加多少字节数即可。</p>
@@ -744,9 +773,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Download Started
-</span></span><span class="line"><span class="cl">Downloading... 21097206 B complete 
-</span></span><span class="line"><span class="cl">Download Finished
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">Download</span> <span class="nx">Started</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Downloading</span><span class="o">...</span> <span class="mi">21097206</span> <span class="nx">B</span> <span class="nx">complete</span> 
+</span></span><span class="line"><span class="cl"><span class="nx">Download</span> <span class="nx">Finished</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="ioutil">ioutil</h3>
@@ -759,10 +788,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// As of Go 1.16, this function simply calls io.ReadAll.
-</span></span><span class="line"><span class="cl">func ReadAll(r io.Reader) ([]byte, error) {
-</span></span><span class="line"><span class="cl">	return io.ReadAll(r)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// As of Go 1.16, this function simply calls io.ReadAll.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">ReadAll</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadAll</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="nopcloser-函数">NopCloser 函数</h4>
@@ -796,19 +825,19 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	var s string
-</span></span><span class="line"><span class="cl">	var a string
-</span></span><span class="line"><span class="cl">	var b string
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">s</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">a</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">b</span> <span class="kt">string</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// 输入//a //b //c 可以正常获取，但是去掉/后，当前和之后的值就无法获取，如//a b //c 打印的值为 1 0 0
-</span></span><span class="line"><span class="cl">	fmt.Scanf(&#34;//%s //%s //%s&#34;, &amp;s, &amp;a, &amp;b)
-</span></span><span class="line"><span class="cl">	// 输入s的值后回车不会结束
-</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;s, &amp;a, &amp;b)
-</span></span><span class="line"><span class="cl">	// 输入s的值后回车会提前结束
-</span></span><span class="line"><span class="cl">	fmt.Scanln(&amp;s, &amp;a, &amp;b)
+</span></span><span class="line"><span class="cl">	<span class="c1">// 输入//a //b //c 可以正常获取，但是去掉/后，当前和之后的值就无法获取，如//a b //c 打印的值为 1 0 0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Scanf</span><span class="p">(</span><span class="s">&#34;//%s //%s //%s&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">s</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 输入s的值后回车不会结束
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 输入s的值后回车会提前结束
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Scanln</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">b</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	fmt.Println(len(s), len(a), len(b))
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="println和print拼接字符串">Println和Print拼接字符串</h4>
@@ -824,9 +853,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    type Stringer interface {
-</span></span><span class="line"><span class="cl">        String() string
-</span></span><span class="line"><span class="cl">    }
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="kd">type</span> <span class="nx">Stringer</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>根据 Go 语言中实现接口的定义，一个类型只要有 <code>String() string</code> 方法，我们就说它实现了 Stringer 接口。如果格式化输出某种类型的值，只要它实现了 String() 方法，那么就会调用 String() 方法进行处理。因此为了避免无限递归循环，在自己实现的String()方法中只要涉及到fmt包输出的代码，一定不要直接输出方法接收者，因为当打印方法接收者时，它又会去调用String()，然后在String()中又出现了打印，就这样子无限递归下去直到爆栈。</p>
@@ -851,23 +880,23 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type people struct {
-</span></span><span class="line"><span class="cl">	Name string
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">people</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (p *people) String() string {
-</span></span><span class="line"><span class="cl">	// fatal error: stack overflow
-</span></span><span class="line"><span class="cl">	fmt.Println(p)
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">people</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// fatal error: stack overflow
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// 返回值的不定参数必须是没有实现String()的类型，return p.Name 是没问题的，但是如果fmt.Sprintf(&#34;print: %v&#34;, p)就会爆栈
-</span></span><span class="line"><span class="cl">	return fmt.Sprintf(&#34;print: %v&#34;, p.Name)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="c1">// 返回值的不定参数必须是没有实现String()的类型，return p.Name 是没问题的，但是如果fmt.Sprintf(&#34;print: %v&#34;, p)就会爆栈
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;print: %v&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	p := &amp;people{}
-</span></span><span class="line"><span class="cl">	p.Name = &#34;abc&#34;
-</span></span><span class="line"><span class="cl">	fmt.Println(p)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">people</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">p</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="s">&#34;abc&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="formatter-接口">Formatter 接口</h4>
@@ -879,9 +908,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    type Formatter interface {
-</span></span><span class="line"><span class="cl">        Format(f State, c rune)
-</span></span><span class="line"><span class="cl">    }
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="kd">type</span> <span class="nx">Formatter</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">Format</span><span class="p">(</span><span class="nx">f</span> <span class="nx">State</span><span class="p">,</span> <span class="nx">c</span> <span class="kt">rune</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>官方文档中关于该接口方法的说明：</p>
@@ -902,14 +931,14 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (p *people) Format(f fmt.State, c rune) {
-</span></span><span class="line"><span class="cl">	if c == &#39;s&#39; {
-</span></span><span class="line"><span class="cl">		f.Write([]byte(&#34;good_&#34; + p.Name))
-</span></span><span class="line"><span class="cl">	} else {
-</span></span><span class="line"><span class="cl">		// 没有此句，会导致 fmt.Printf(&#34;%s&#34;, p) 啥也不输出
-</span></span><span class="line"><span class="cl">		f.Write([]byte(&#34;not found&#34;))
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">people</span><span class="p">)</span> <span class="nf">Format</span><span class="p">(</span><span class="nx">f</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">State</span><span class="p">,</span> <span class="nx">c</span> <span class="kt">rune</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">c</span> <span class="o">==</span> <span class="sc">&#39;s&#39;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">f</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;good_&#34;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Name</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 没有此句，会导致 fmt.Printf(&#34;%s&#34;, p) 啥也不输出
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">f</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;not found&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>这样，people便实现了Formatter接口。这时再运行：</p>
@@ -921,10 +950,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	p := &amp;people{}
-</span></span><span class="line"><span class="cl">	p.Name = &#34;abc&#34;
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;11 %s 22\n&#34;, p)
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;11 %d 22\n&#34;, p)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">	<span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">people</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">p</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="s">&#34;abc&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;11 %s 22\n&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;11 %d 22\n&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出为：</p>
@@ -934,8 +963,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">11 good_abc 22
-</span></span><span class="line"><span class="cl">11 not found 22
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="mi">11</span> <span class="nx">good_abc</span> <span class="mi">22</span>
+</span></span><span class="line"><span class="cl"><span class="mi">11</span> <span class="nx">not</span> <span class="nx">found</span> <span class="mi">22</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里需要解释以下几点：</p>
@@ -966,21 +995,21 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    type State interface {
-</span></span><span class="line"><span class="cl">        // Write is the function to call to emit formatted output to be printed.
-</span></span><span class="line"><span class="cl">        // Write 函数用于打印出已格式化的输出。
-</span></span><span class="line"><span class="cl">        Write(b []byte) (ret int, err error)
-</span></span><span class="line"><span class="cl">        // Width returns the value of the width option and whether it has been set.
-</span></span><span class="line"><span class="cl">        // Width 返回宽度选项的值以及它是否已被设置。
-</span></span><span class="line"><span class="cl">        Width() (wid int, ok bool)
-</span></span><span class="line"><span class="cl">        // Precision returns the value of the precision option and whether it has been set.
-</span></span><span class="line"><span class="cl">        // Precision 返回精度选项的值以及它是否已被设置。
-</span></span><span class="line"><span class="cl">        Precision() (prec int, ok bool)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="kd">type</span> <span class="nx">State</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// Write is the function to call to emit formatted output to be printed.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// Write 函数用于打印出已格式化的输出。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">Write</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// Width returns the value of the width option and whether it has been set.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// Width 返回宽度选项的值以及它是否已被设置。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">Width</span><span class="p">()</span> <span class="p">(</span><span class="nx">wid</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// Precision returns the value of the precision option and whether it has been set.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// Precision 返回精度选项的值以及它是否已被设置。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">Precision</span><span class="p">()</span> <span class="p">(</span><span class="nx">prec</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        // Flag returns whether the flag c, a character, has been set.
-</span></span><span class="line"><span class="cl">        // Flag 返回标记 c（一个字符）是否已被设置。
-</span></span><span class="line"><span class="cl">        Flag(c int) bool
-</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">        <span class="c1">// Flag returns whether the flag c, a character, has been set.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// Flag 返回标记 c（一个字符）是否已被设置。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">Flag</span><span class="p">(</span><span class="nx">c</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="gostringer-接口">GoStringer 接口</h4>
@@ -992,9 +1021,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (this *Person) GoString() string {
-</span></span><span class="line"><span class="cl">        return &#34;&amp;Person{Name is &#34;+this.Name+&#34;, Age is &#34;+strconv.Itoa(this.Age)+&#34;, Sex is &#34;+strconv.Itoa(this.Sex)+&#34;}&#34;
-</span></span><span class="line"><span class="cl">    }
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Person</span><span class="p">)</span> <span class="nf">GoString</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s">&#34;&amp;Person{Name is &#34;</span><span class="o">+</span><span class="nx">this</span><span class="p">.</span><span class="nx">Name</span><span class="o">+</span><span class="s">&#34;, Age is &#34;</span><span class="o">+</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span><span class="o">+</span><span class="s">&#34;, Sex is &#34;</span><span class="o">+</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">Sex</span><span class="p">)</span><span class="o">+</span><span class="s">&#34;}&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个时候再执行</p>
@@ -1004,8 +1033,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    p := &amp;Person{&#34;polaris&#34;, 28, 0}
-</span></span><span class="line"><span class="cl">    fmt.Printf(&#34;%#v&#34;, p)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Person</span><span class="p">{</span><span class="s">&#34;polaris&#34;</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">0</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%#v&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出：</p>
@@ -1014,7 +1043,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    &amp;Person{Name is polaris, Age is 28, Sex is 0}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="o">&amp;</span><span class="nx">Person</span><span class="p">{</span><span class="nx">Name</span> <span class="nx">is</span> <span class="nx">polaris</span><span class="p">,</span> <span class="nx">Age</span> <span class="nx">is</span> <span class="mi">28</span><span class="p">,</span> <span class="nx">Sex</span> <span class="nx">is</span> <span class="mi">0</span><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>一般的，我们不需要实现该接口。</code></p>
@@ -1037,16 +1066,16 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    type Reader struct {
-</span></span><span class="line"><span class="cl">        buf          []byte        // 缓存
-</span></span><span class="line"><span class="cl">        rd           io.Reader    // 底层的io.Reader
-</span></span><span class="line"><span class="cl">        // r:从buf中读走的字节（偏移）；w:buf中填充内容的偏移；
-</span></span><span class="line"><span class="cl">        // w - r 是buf中可被读的长度（缓存数据的大小），也是Buffered()方法的返回值
-</span></span><span class="line"><span class="cl">        r, w         int
-</span></span><span class="line"><span class="cl">        err          error        // 读过程中遇到的错误
-</span></span><span class="line"><span class="cl">        lastByte     int        // 最后一次读到的字节（ReadByte/UnreadByte)
-</span></span><span class="line"><span class="cl">        lastRuneSize int        // 最后一次读到的Rune的大小 (ReadRune/UnreadRune)
-</span></span><span class="line"><span class="cl">    }
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="kd">type</span> <span class="nx">Reader</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">buf</span>          <span class="p">[]</span><span class="kt">byte</span>        <span class="c1">// 缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">rd</span>           <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span>    <span class="c1">// 底层的io.Reader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// r:从buf中读走的字节（偏移）；w:buf中填充内容的偏移；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// w - r 是buf中可被读的长度（缓存数据的大小），也是Buffered()方法的返回值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">r</span><span class="p">,</span> <span class="nx">w</span>         <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">err</span>          <span class="kt">error</span>        <span class="c1">// 读过程中遇到的错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">lastByte</span>     <span class="kt">int</span>        <span class="c1">// 最后一次读到的字节（ReadByte/UnreadByte)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">lastRuneSize</span> <span class="kt">int</span>        <span class="c1">// 最后一次读到的Rune的大小 (ReadRune/UnreadRune)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>bufio 包提供了两个实例化 bufio.Reader 对象的函数：NewReader 和 NewReaderSize。其中，NewReader 函数是调用 NewReaderSize 函数实现的：</p>
@@ -1058,10 +1087,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    func NewReader(rd io.Reader) *Reader {
-</span></span><span class="line"><span class="cl">        // 默认缓存大小：defaultBufSize=4096
-</span></span><span class="line"><span class="cl">        return NewReaderSize(rd, defaultBufSize)
-</span></span><span class="line"><span class="cl">    }
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="kd">func</span> <span class="nf">NewReader</span><span class="p">(</span><span class="nx">rd</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="o">*</span><span class="nx">Reader</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 默认缓存大小：defaultBufSize=4096
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="nf">NewReaderSize</span><span class="p">(</span><span class="nx">rd</span><span class="p">,</span> <span class="nx">defaultBufSize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="readslicereadbytesreadstring-和-readline-方法">ReadSlice、ReadBytes、ReadString 和 ReadLine 方法</h5>
@@ -1071,7 +1100,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    func (b *Reader) ReadSlice(delim byte) (line []byte, err error)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadSlice</span><span class="p">(</span><span class="nx">delim</span> <span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">line</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>ReadSlice 从输入中读取内容，直到遇到第一个界定符（delim）为止，返回一个指向缓存中字节的 slice 指针，在下次调用读操作（read）时，slice内容会发生变化。举例说明：</p>
@@ -1086,13 +1115,13 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    reader := bufio.NewReader(strings.NewReader(&#34;http://studygolang.com. \nIt is the home of gophers&#34;))
-</span></span><span class="line"><span class="cl">    line, _ := reader.ReadSlice(&#39;\n&#39;)
-</span></span><span class="line"><span class="cl">    fmt.Printf(&#34;the line:%s\n&#34;, line)
-</span></span><span class="line"><span class="cl">    // 这里可以换上任意的 bufio 的 Read/Write 操作
-</span></span><span class="line"><span class="cl">    n, _ := reader.ReadSlice(&#39;\n&#39;)
-</span></span><span class="line"><span class="cl">    fmt.Printf(&#34;the line:%s\n&#34;, line)
-</span></span><span class="line"><span class="cl">    fmt.Println(string(n))
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="s">&#34;http://studygolang.com. \nIt is the home of gophers&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">line</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadSlice</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;the line:%s\n&#34;</span><span class="p">,</span> <span class="nx">line</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里可以换上任意的 bufio 的 Read/Write 操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">n</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadSlice</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;the line:%s\n&#34;</span><span class="p">,</span> <span class="nx">line</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">n</span><span class="p">))</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出：</p>
@@ -1104,10 +1133,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    the line:http://studygolang.com. 
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    the line:It is the home of gophers
-</span></span><span class="line"><span class="cl">    It is the home of gophers
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="nx">the</span> <span class="nx">line</span><span class="p">:</span><span class="nx">http</span><span class="p">:</span><span class="c1">//studygolang.com. 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="nx">the</span> <span class="nx">line</span><span class="p">:</span><span class="nx">It</span> <span class="nx">is</span> <span class="nx">the</span> <span class="nx">home</span> <span class="nx">of</span> <span class="nx">gophers</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">It</span> <span class="nx">is</span> <span class="nx">the</span> <span class="nx">home</span> <span class="nx">of</span> <span class="nx">gophers</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>从结果可以看出，第一次ReadSlice的结果（line），在第二次调用读操作后，内容发生了变化。也就是说，<code>ReadSlice 返回的 []byte 是指向 Reader 中的 buffer ，而不是 copy 一份返回。</code>正因为ReadSlice 返回的数据会被下次的 I/O 操作重写，因此许多的客户端会选择使用 ReadBytes 或者 ReadString 来代替。这两个方法就不会出现第二次读取会覆盖第一次的结果。</p>
@@ -1129,8 +1158,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    line, err := reader.ReadBytes(&#39;\n&#39;)
-</span></span><span class="line"><span class="cl">    line = bytes.TrimRight(line, &#34;\r\n&#34;)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="nx">line</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadBytes</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">line</span> <span class="p">=</span> <span class="nx">bytes</span><span class="p">.</span><span class="nf">TrimRight</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;\r\n&#34;</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>这样既读取了一行，也去掉了行尾结束符。</p>
@@ -1153,20 +1182,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	reader := bufio.NewReader(strings.NewReader(&#34;http://studygolang.com. \n It is the home of gophers&#34;))
-</span></span><span class="line"><span class="cl">	s, _ := reader.Peek(20)
-</span></span><span class="line"><span class="cl">	fmt.Println(string(s))
-</span></span><span class="line"><span class="cl">	reader.ReadBytes(&#39;\n&#39;)
-</span></span><span class="line"><span class="cl">	s1, _ := reader.Peek(20)
-</span></span><span class="line"><span class="cl">	fmt.Println(string(s1))
-</span></span><span class="line"><span class="cl">	s2, _ := reader.Peek(20)
-</span></span><span class="line"><span class="cl">	fmt.Println(string(s2))
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">	<span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="s">&#34;http://studygolang.com. \n It is the home of gophers&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Peek</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">reader</span><span class="p">.</span><span class="nf">ReadBytes</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s1</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Peek</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">s1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s2</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Peek</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">s2</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// result:
-</span></span><span class="line"><span class="cl">	// http://studygolang.c
-</span></span><span class="line"><span class="cl"> 	// It is the home of g
-</span></span><span class="line"><span class="cl"> 	// It is the home of g
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">	<span class="c1">// result:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// http://studygolang.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> 	<span class="c1">// It is the home of g
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> 	<span class="c1">// It is the home of g
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>观察源码可以发现，它返回的 []byte 只是 buffer 中的引用，在下次IO操作后结果会发生改变，可见该方法对多 goroutine 是不安全的，也就是在多并发环境下，不能依赖其结果。</p>
 <p><code>Peek 方法如果返回的 []byte 长度小于 n，这时返回的 </code>err != nil <code> ，用于解释为啥会小于 n。如果 Peek 的 n 大于 reader 设定的 buffer 长度，err 会是 ErrBufferFull。</code></p>
@@ -1188,18 +1217,18 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    const input = &#34;This is The Golang Standard Library.\nWelcome you!&#34;
-</span></span><span class="line"><span class="cl">    scanner := bufio.NewScanner(strings.NewReader(input))
-</span></span><span class="line"><span class="cl">    scanner.Split(bufio.ScanWords)
-</span></span><span class="line"><span class="cl">    count := 0
-</span></span><span class="line"><span class="cl">    for scanner.Scan() {
-</span></span><span class="line"><span class="cl">        count++
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    // 读取途中报错会结束for循环，并将错误传递出来 
-</span></span><span class="line"><span class="cl">    if err := scanner.Err(); err != nil {
-</span></span><span class="line"><span class="cl">        fmt.Fprintln(os.Stderr, &#34;reading input:&#34;, err)
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    fmt.Println(count)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="kd">const</span> <span class="nx">input</span> <span class="p">=</span> <span class="s">&#34;This is The Golang Standard Library.\nWelcome you!&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">scanner</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewScanner</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">input</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">scanner</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">bufio</span><span class="p">.</span><span class="nx">ScanWords</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">count</span> <span class="o">:=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">scanner</span><span class="p">.</span><span class="nf">Scan</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">count</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 读取途中报错会结束for循环，并将错误传递出来 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">scanner</span><span class="p">.</span><span class="nf">Err</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;reading input:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">count</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="splitfunc-类型">SplitFunc 类型</h5>
@@ -1208,7 +1237,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"> type SplitFunc func(data []byte, atEOF bool) (advance int, token []byte, err error)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"> <span class="kd">type</span> <span class="nx">SplitFunc</span> <span class="kd">func</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">atEOF</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">(</span><span class="nx">advance</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">token</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>SplitFunc 定义了 用于对输入进行分词的 split 函数的签名。参数 data 是还未处理的数据，atEOF 标识 Reader 是否还有更多数据，有则为true（是否到了EOF）。返回值 advance 表示从输入中读取的字节数，token 表示下一个结果数据，err 则代表可能的错误。</p>
@@ -1217,7 +1246,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#34;studygolang\tpolaris\tgolangchina&#34;，通过&#34;\t&#34;进行分词，那么会得到三个token，它们的内容分别是：studygolang、polaris 和 golangchina。而 SplitFunc 的功能是：进行分词，并返回未处理的数据中第一个 token。对于这个数据，就是返回 studygolang。
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="s">&#34;studygolang\tpolaris\tgolangchina&#34;</span><span class="err">，通过</span><span class="s">&#34;\t&#34;</span><span class="err">进行分词，那么会得到三个</span><span class="nx">token</span><span class="err">，它们的内容分别是：</span><span class="nx">studygolang</span><span class="err">、</span><span class="nx">polaris</span> <span class="err">和</span> <span class="nx">golangchina</span><span class="err">。而</span> <span class="nx">SplitFunc</span> <span class="err">的功能是：进行分词，并返回未处理的数据中第一个</span> <span class="nx">token</span><span class="err">。对于这个数据，就是返回</span> <span class="nx">studygolang</span><span class="err">。</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果 data 中没有一个完整的 token，例如，在扫描行（scanning lines）时没有换行符，SplitFunc 会返回(0,nil,nil)通知 Scanner 读取更多数据到 slice 中，然后在这个更大的 slice 中 同样的读取点处，从输入中重试读取。</p>
@@ -1251,18 +1280,18 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	file, err := os.Open(&#34;tmp.txt&#34;)
-</span></span><span class="line"><span class="cl">	if err != nil {
-</span></span><span class="line"><span class="cl">		log.Fatalln(err)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	defer file.Close()
-</span></span><span class="line"><span class="cl">	scanner := bufio.NewScanner(file)
-</span></span><span class="line"><span class="cl">	for scanner.Scan() {
-</span></span><span class="line"><span class="cl">		fmt.Println(scanner.Text()) // Println will add back the final &#39;\n&#39;
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	if err := scanner.Err(); err != nil {
-</span></span><span class="line"><span class="cl">		fmt.Fprintln(os.Stderr, &#34;reading standard input:&#34;, err)
-</span></span><span class="line"><span class="cl">	}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">	<span class="nx">file</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;tmp.txt&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">scanner</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewScanner</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">scanner</span><span class="p">.</span><span class="nf">Scan</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">scanner</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span> <span class="c1">// Println will add back the final &#39;\n&#39;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">scanner</span><span class="p">.</span><span class="nf">Err</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;reading standard input:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="writer-类型和方法">Writer 类型和方法</h4>
@@ -1277,12 +1306,12 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    type Writer struct {
-</span></span><span class="line"><span class="cl">        err error        // 写过程中遇到的错误
-</span></span><span class="line"><span class="cl">        buf []byte        // 缓存
-</span></span><span class="line"><span class="cl">        n   int            // 当前缓存中的字节数
-</span></span><span class="line"><span class="cl">        wr  io.Writer    // 底层的 io.Writer 对象
-</span></span><span class="line"><span class="cl">    }
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">err</span> <span class="kt">error</span>        <span class="c1">// 写过程中遇到的错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span>        <span class="c1">// 缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">n</span>   <span class="kt">int</span>            <span class="c1">// 当前缓存中的字节数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">wr</span>  <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span>    <span class="c1">// 底层的 io.Writer 对象
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果在写数据到 Writer 的时候出现了一个错误，就不会再允许有数据被写进来了，<strong>并且所有随后的写操作都会返回该错误。</strong></p>
@@ -1300,9 +1329,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    if b.err != nil {
-</span></span><span class="line"><span class="cl">        return b.err
-</span></span><span class="line"><span class="cl">    }
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">err</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>也就是说，只要是在写的过程中遇到了错误，再次调用任何写操作都会直接返回该错误。</strong></p>
@@ -1327,20 +1356,20 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//Len()
-</span></span><span class="line"><span class="cl">func (s StuScores) Len() int {
-</span></span><span class="line"><span class="cl">    return len(s)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">//Len()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">StuScores</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//Less(): 将从低到高排序，因为这里如果s.i&lt;s.j返回的是true，则不会进行swap操作，因此可以得出升序的结果（前一个比后一个小不交换）
-</span></span><span class="line"><span class="cl">func (s StuScores) Less(i, j int) bool {
-</span></span><span class="line"><span class="cl">    return s[i].score &lt; s[j].score
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="c1">//Less(): 将从低到高排序，因为这里如果s.i&lt;s.j返回的是true，则不会进行swap操作，因此可以得出升序的结果（前一个比后一个小不交换）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">StuScores</span><span class="p">)</span> <span class="nf">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">score</span> <span class="p">&lt;</span> <span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">score</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//Swap()
-</span></span><span class="line"><span class="cl">func (s StuScores) Swap(i, j int) {
-</span></span><span class="line"><span class="cl">    s[i], s[j] = s[j], s[i]
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="c1">//Swap()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">StuScores</span><span class="p">)</span> <span class="nf">Swap</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>此外，如果临时想进行降序操作时，<em>sort</em> 包提供了 Reverse() 方法，可以允许将数据按 Less() 定义的排序方式逆序排序，而不必修改 Less() 代码。方法定义如下：</p>
@@ -1351,9 +1380,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 进行逆转操作 (重写Less方法),然后进行排序，因为切片是引用类型，因此此处逆转然后排序的其实就是之前的切片
-</span></span><span class="line"><span class="cl">	sort.Sort(sort.Reverse(stus))
-</span></span><span class="line"><span class="cl">	fmt.Println(stus)
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl">	<span class="c1">// 进行逆转操作 (重写Less方法),然后进行排序，因为切片是引用类型，因此此处逆转然后排序的其实就是之前的切片
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">sort</span><span class="p">.</span><span class="nf">Sort</span><span class="p">(</span><span class="nx">sort</span><span class="p">.</span><span class="nf">Reverse</span><span class="p">(</span><span class="nx">stus</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">stus</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>整个 Reverse() 的内部实现比较有趣：</p>
@@ -1376,21 +1405,21 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 定义了一个 reverse 结构类型，嵌入 Interface 接口
-</span></span><span class="line"><span class="cl">type reverse struct {
-</span></span><span class="line"><span class="cl">    Interface
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// 定义了一个 reverse 结构类型，嵌入 Interface 接口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">reverse</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Interface</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// reverse 结构类型的 Less() 方法拥有嵌入的 Less() 方法相反的行为
-</span></span><span class="line"><span class="cl">//Len() 和 Swap() 方法则会保持嵌入类型的方法行为
-</span></span><span class="line"><span class="cl">func (r reverse) Less(i, j int) bool {
-</span></span><span class="line"><span class="cl">    return r.Interface.Less(j, i)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="c1">// reverse 结构类型的 Less() 方法拥有嵌入的 Less() 方法相反的行为
+</span></span></span><span class="line"><span class="cl"><span class="c1">//Len() 和 Swap() 方法则会保持嵌入类型的方法行为
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="nx">reverse</span><span class="p">)</span> <span class="nf">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Interface</span><span class="p">.</span><span class="nf">Less</span><span class="p">(</span><span class="nx">j</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// 返回新的实现 Interface 接口的数据类型
-</span></span><span class="line"><span class="cl">func Reverse(data Interface) Interface {
-</span></span><span class="line"><span class="cl">    return &amp;reverse{data}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回新的实现 Interface 接口的数据类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Reverse</span><span class="p">(</span><span class="nx">data</span> <span class="nx">Interface</span><span class="p">)</span> <span class="nx">Interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">reverse</span><span class="p">{</span><span class="nx">data</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果想要查询数组中符合条件的第一个元素时，可以使用Search() 方法：</p>
@@ -1401,9 +1430,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.Search(len(stus), func(i int) bool {
-</span></span><span class="line"><span class="cl">    return stus[i].score &gt;= 91
-</span></span><span class="line"><span class="cl">    })
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">sort</span><span class="p">.</span><span class="nf">Search</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">stus</span><span class="p">),</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">stus</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">score</span> <span class="o">&gt;=</span> <span class="mi">91</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>该方法会使用“二分查找”算法来找出能使 f(x) 在(0&lt;=x&lt;n) 索引返回 ture 的最小值 i。 前提条件 : f(x)(0&lt;=x&lt;i) 均返回 false, f(x)(i&lt;=x&lt;n) 均返回 ture。 如果不存在 i 可以使 f(i) 返回 ture, 则返回 n。</p>
@@ -1432,56 +1461,56 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Person struct {
-</span></span><span class="line"><span class="cl">    Name string
-</span></span><span class="line"><span class="cl">    Age  int
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">type Persons []Person
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Person</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Age</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Persons</span> <span class="p">[]</span><span class="nx">Person</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (p Persons) Len() int {
-</span></span><span class="line"><span class="cl">    panic(&#34;implement me&#34;)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">Persons</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="s">&#34;implement me&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (p Persons) Less(i, j int) bool {
-</span></span><span class="line"><span class="cl">    panic(&#34;implement me&#34;)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">Persons</span><span class="p">)</span> <span class="nf">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="s">&#34;implement me&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (p Persons) Swap(i, j int) {
-</span></span><span class="line"><span class="cl">    panic(&#34;implement me&#34;)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">Persons</span><span class="p">)</span> <span class="nf">Swap</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="s">&#34;implement me&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h4 id="sortslice"><strong>sort.Slice</strong></h4>
+</div><h4 id="sortslice">sort.Slice</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.Slice(people, func(i, j int) bool { return people[i].Age &lt; people[j].Age }) // 按年龄升序排序
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">sort</span><span class="p">.</span><span class="nf">Slice</span><span class="p">(</span><span class="nx">people</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">people</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">Age</span> <span class="p">&lt;</span> <span class="nx">people</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">Age</span> <span class="p">})</span> <span class="c1">// 按年龄升序排序
+</span></span></span></code></pre></td></tr></table>
 </div>
-</div><h4 id="sortslicestable"><strong>sort.SliceStable</strong></h4>
+</div><h4 id="sortslicestable">sort.SliceStable</h4>
 <p>该函数完成 []interface 的稳定排序，其性能会比sort.Slice略低，通常情况下用Slice() 即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.SliceStable(people, func(i, j int) bool { return people[i].Age &gt; people[j].Age }) // 按年龄降序排序
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">sort</span><span class="p">.</span><span class="nf">SliceStable</span><span class="p">(</span><span class="nx">people</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">people</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">Age</span> <span class="p">&gt;</span> <span class="nx">people</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">Age</span> <span class="p">})</span> <span class="c1">// 按年龄降序排序
+</span></span></span></code></pre></td></tr></table>
 </div>
-</div><h4 id="sortsliceissorted"><strong>sort.SliceIsSorted</strong></h4>
+</div><h4 id="sortsliceissorted">sort.SliceIsSorted</h4>
 <p>该函数判断 []interface 是否为有序</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.SliceIsSorted(people,func(i, j int) bool { return people[i].Age &gt; people[j].Age })
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">sort</span><span class="p">.</span><span class="nf">SliceIsSorted</span><span class="p">(</span><span class="nx">people</span><span class="p">,</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">people</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">Age</span> <span class="p">&gt;</span> <span class="nx">people</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">Age</span> <span class="p">})</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>判断有序的前提是已经按对应逻辑排好序了，如排序方式为降序，那么上面的返回值则是false，需要将大于变为小于符号，因为SliceIsSorted中是判断该slice是否是升序排序。</p>
-<h4 id="sortsearch"><strong>sort.Search</strong></h4>
+<h4 id="sortsearch">sort.Search</h4>
 <p>该函数判断 []interface 是否存在指定元素 （或返回最接近的元素），其只能用于已经排好序的数组切片。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1489,11 +1518,565 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sort.Slice(a, func(i, j int) bool { return a[i] &lt; a[j] })   // 升序排序
-</span></span><span class="line"><span class="cl">index := sort.Search(len(a), func(i int) bool { return a[i] &gt;= x }) // 查找元素
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">sort</span><span class="p">.</span><span class="nf">Slice</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">a</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">})</span>   <span class="c1">// 升序排序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">index</span> <span class="o">:=</span> <span class="nx">sort</span><span class="p">.</span><span class="nf">Search</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">),</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nx">x</span> <span class="p">})</span> <span class="c1">// 查找元素
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="container-容器数据类型heaplist-和-ring">container 容器数据类型：heap、list 和 ring</h3>
+<p>该包实现了三个复杂的数据结构：堆、链表和环，使用这个包就意味着你使用这三个数据结构的时候不需要再费心从头开始写算法了。</p>
+<h4 id="堆">堆</h4>
+<p>这里的堆使用的数据结构是最小二叉树，即根节点比左边子树和右边子树的所有值都小。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Interface</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">sort</span><span class="p">.</span><span class="nx">Interface</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">Push</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{})</span> <span class="c1">// add x as element Len()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span>   <span class="c1">// remove and return element Len() - 1.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
+</div><p>可以看出，这个堆结构继承自 sort.Interface。需要实现五个方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">IntHeap</span> <span class="p">[]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">IntHeap</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span>           <span class="p">{</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">IntHeap</span><span class="p">)</span> <span class="nf">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">h</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">h</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">IntHeap</span><span class="p">)</span> <span class="nf">Swap</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span>      <span class="p">{</span> <span class="nx">h</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">h</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">h</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">h</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">IntHeap</span><span class="p">)</span> <span class="nf">Push</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="nx">h</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">h</span><span class="p">,</span> <span class="nx">x</span><span class="p">.(</span><span class="kt">int</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">IntHeap</span><span class="p">)</span> <span class="nf">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">old</span> <span class="o">:=</span> <span class="o">*</span><span class="nx">h</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">old</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">x</span> <span class="o">:=</span> <span class="nx">old</span><span class="p">[</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="nx">h</span> <span class="p">=</span> <span class="nx">old</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">x</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
+</div><p>使用堆时就需要使用 <code>container/heap</code> 包</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">h</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">IntHeap</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">heap</span><span class="p">.</span><span class="nf">Init</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">heap</span><span class="p">.</span><span class="nf">Push</span><span class="p">(</span><span class="nx">h</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">heap</span><span class="p">.</span><span class="nf">Pop</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>具体说下内部实现，是使用最小堆，索引排序从根节点开始，然后左子树，右子树的顺序方式。索引布局如下：</p>
+<blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">                  0
+</span></span><span class="line"><span class="cl">            1            2
+</span></span><span class="line"><span class="cl">         3    4       5      6
+</span></span><span class="line"><span class="cl">        7 8  9 10   11   
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>假设 (heap[1]== 小明 ) 它的左子树 (heap[3]== 小黑 ) 和右子树 (heap[4]== 大黄 )  且小明 &gt; 小黑 &gt; 大黄 ;</p>
+</blockquote>
+<p>堆内部实现了 down 和 up 函数 : down 函数用于将索引 i 处存储的值 ( 设 i=1, 即小明 ) 与它的左子树 ( 小黑 ) 和右子树 ( 大黄 ) 相比 , 将三者最小的值 (小明大于小黄) 大黄与小明的位置交换，交换后小明继续与交换后的子树 (heap[9]和 heap[10]) 相比，重复以上步骤，直到小明位置不再发生改变。</p>
+<p>up 函数用于将索引 i 处的值 ( 设 i=3, 即小黑 ) 与他的父节点 ( 小明 ) 比较，将两者较小的值放到父节点上，本例中即交换小黑和小明的位置，之后小黑继续与其父节点比较，重复以上步骤，直到小黑位置不再发生改变。</p>
+<p><code>从堆中pop时,每次pop的都是堆顶元素,即最小或最大的那个元素，假设 heap[11]== 阿花，当从堆中 Pop 一个元素的时候，会先把堆顶元素和最后一个节点的值 ( 阿花 ) 交换，然后弹出最后一个元素 (交换后的堆顶元素)，这样可以保证堆的性质不被破坏。然后对堆顶的阿花调用 down，将新的堆顶元素下沉，直到满足最小堆的性质。</code></p>
+<p>当往堆中 Push 一个元素的时候，这个元素插入到最后一个节点，本例中为 heap[12]，即作为 heap[5]的右子树，然后调用 up 函数向上比较。</p>
+<h4 id="链表">链表</h4>
+<p>链表就是一个有 prev 和 next 指针的数组了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Element</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">next</span><span class="p">,</span> <span class="nx">prev</span> <span class="o">*</span><span class="nx">Element</span>  <span class="c1">// 上一个元素和下一个元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">list</span> <span class="o">*</span><span class="nx">List</span>  <span class="c1">// 元素所在链表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Value</span> <span class="kd">interface</span><span class="p">{}</span>  <span class="c1">// 元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">List</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">root</span> <span class="nx">Element</span>  <span class="c1">// 链表的根元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">len</span>  <span class="kt">int</span>      <span class="c1">// 链表的长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>基本使用是先创建 list，然后往 list 中插入值，list 就内部创建一个 Element，并内部设置好 Element 的 next,prev 等。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;container/list&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">list</span> <span class="o">:=</span> <span class="nx">list</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">list</span><span class="p">.</span><span class="nf">PushBack</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">list</span><span class="p">.</span><span class="nf">PushBack</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;len: %v\n&#34;</span><span class="p">,</span> <span class="nx">list</span><span class="p">.</span><span class="nf">Len</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;first: %#v\n&#34;</span><span class="p">,</span> <span class="nx">list</span><span class="p">.</span><span class="nf">Front</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;second: %#v\n&#34;</span><span class="p">,</span> <span class="nx">list</span><span class="p">.</span><span class="nf">Front</span><span class="p">().</span><span class="nf">Next</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>list 对应的方法有：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Element</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="nf">Next</span><span class="p">()</span> <span class="o">*</span><span class="nx">Element</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="nf">Prev</span><span class="p">()</span> <span class="o">*</span><span class="nx">Element</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">List</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">func</span> <span class="nf">New</span><span class="p">()</span> <span class="o">*</span><span class="nx">List</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">Back</span><span class="p">()</span> <span class="o">*</span><span class="nx">Element</span>   <span class="c1">// 最后一个元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">Front</span><span class="p">()</span> <span class="o">*</span><span class="nx">Element</span>  <span class="c1">// 第一个元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">Init</span><span class="p">()</span> <span class="o">*</span><span class="nx">List</span>  <span class="c1">// 链表初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">InsertAfter</span><span class="p">(</span><span class="nx">v</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">mark</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="o">*</span><span class="nx">Element</span> <span class="c1">// 在某个元素后插入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">InsertBefore</span><span class="p">(</span><span class="nx">v</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">mark</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="o">*</span><span class="nx">Element</span>  <span class="c1">// 在某个元素前插入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="c1">// 在链表长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">MoveAfter</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">mark</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span>  <span class="c1">// 把 e 元素移动到 mark 之后
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">MoveBefore</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">mark</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span>  <span class="c1">// 把 e 元素移动到 mark 之前
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">MoveToBack</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="c1">// 把 e 元素移动到队列最后
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">MoveToFront</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="c1">// 把 e 元素移动到队列最头部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">PushBack</span><span class="p">(</span><span class="nx">v</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Element</span>  <span class="c1">// 在队列最后插入元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">PushBackList</span><span class="p">(</span><span class="nx">other</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span>  <span class="c1">// 在队列最后插入接上新队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">PushFront</span><span class="p">(</span><span class="nx">v</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Element</span>  <span class="c1">// 在队列头部插入元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">PushFrontList</span><span class="p">(</span><span class="nx">other</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="c1">// 在队列头部插入接上新队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">List</span><span class="p">)</span> <span class="nf">Remove</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="kd">interface</span><span class="p">{}</span> <span class="c1">// 删除某个元素
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="环-循环链表">环 (循环链表)</h4>
+<p>环的结构有点特殊，环的尾部就是头部，所以每个元素实际上就可以代表自身的这个环。 它不需要像 list 一样保持 list 和 element 两个结构，只需要保持一个结构就行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Ring</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">next</span><span class="p">,</span> <span class="nx">prev</span> <span class="o">*</span><span class="nx">Ring</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Value</span>      <span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们初始化环的时候，需要定义好环的大小，然后对环的每个元素进行赋值。环还提供一个 Do 方法，能遍历一遍环，对每个元素执行一个 function。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;container/ring&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ring</span> <span class="o">:=</span> <span class="nx">ring</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ring</span><span class="p">.</span><span class="nx">Value</span> <span class="p">=</span> <span class="nx">i</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ring</span> <span class="p">=</span> <span class="nx">ring</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算 1+2+3
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">s</span> <span class="o">:=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ring</span><span class="p">.</span><span class="nf">Do</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">p</span> <span class="kd">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">s</span> <span class="o">+=</span> <span class="nx">p</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;sum is&#34;</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>ring 提供的方法有:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Ring</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">func</span> <span class="nf">New</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Ring</span>  <span class="c1">// 初始化环
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Ring</span><span class="p">)</span> <span class="nf">Do</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{}))</span>  <span class="c1">// 循环环进行操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Ring</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="c1">// 环长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Ring</span><span class="p">)</span> <span class="nf">Link</span><span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Ring</span><span class="p">)</span> <span class="o">*</span><span class="nx">Ring</span> <span class="c1">// 连接两个环
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Ring</span><span class="p">)</span> <span class="nf">Move</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Ring</span> <span class="c1">// 指针从当前元素开始向后移动或者向前（n 可以为负数）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Ring</span><span class="p">)</span> <span class="nf">Next</span><span class="p">()</span> <span class="o">*</span><span class="nx">Ring</span> <span class="c1">// 当前元素的下个元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Ring</span><span class="p">)</span> <span class="nf">Prev</span><span class="p">()</span> <span class="o">*</span><span class="nx">Ring</span> <span class="c1">// 当前元素的上个元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Ring</span><span class="p">)</span> <span class="nf">Unlink</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Ring</span> <span class="c1">// 从当前元素开始，删除 n 个元素
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="进程线程和goroutine">进程、线程和goroutine</h2>
+<h3 id="创建进程">创建进程</h3>
+<p><code>os</code> 包及其子包 <code>os/exec</code> 提供了创建进程的方法。</p>
+<p>一般应该优先使用 <code>os/exec</code> 包。因为 <code>os/exec</code> 包依赖 <code>os</code> 包中关键创建进程的 API</p>
+<p>在 Unix 中，创建一个进程，通过系统调用 <code>fork</code> 实现（及其一些变种，如 vfork、clone）。在 Go 语言中，Linux 下创建进程使用的系统调用是 <code>clone</code>。</p>
+<p>很多时候，系统调用 <code>fork</code>、<code>execve</code>、<code>wait</code> 和 <code>exit</code> 会在一起出现</p>
+<ul>
+<li>fork：允许某一进程（父进程）创建一个新进程（子进程）。具体做法是，新的子进程几近于对父进程的翻版：子进程获得父进程的栈、数据段、堆和执行文本段的拷贝。可将此视为把父进程一分为二。</li>
+<li>exit(status)：终止一进程，将进程占用的所有资源（内存、文件描述符等）归还内核，交其进行再次分配。**参数 <code>status</code> 为一整型变量，表示进程的退出状态。**父进程可使用系统调用 <code>wait()</code> 来获取该状态。</li>
+<li>wait(&amp;status) 目的有二：其一，如果子进程尚未调用 <code>exit()</code> 终止，那么 <code>wait</code> 会挂起父进程（阻塞）直至子进程终止，这样可以确保父进程在子进程完成后再继续执行后续的操作；其二，子进程的终止状态通过 <code>wait</code> 的 <code>status</code> 参数返回。<code>status</code>参数是一个整数指针，通过传入 <code>wait</code> 函数的地址，父进程可以在子进程终止后获取到子进程的终止状态。</li>
+<li>execve(pathname, argv, envp) 加载一个新程序（路径名为 pathname，参数列表为 argv，环境变量列表为 envp）到当前进程的内存。这将丢弃现存的程序文本段，并为新程序重新创建栈、数据段以及堆。<strong>通常将这一动作称为执行一个新程序（舍弃旧程序）,它是实现进程间切换和程序替换的重要系统调用函数。</strong></li>
+</ul>
+<p>在 Go 语言中，没有直接提供 <code>fork</code> 系统调用的封装，而是将 <code>fork</code> 和 <code>execve</code> 合二为一，提供了 <code>syscall.ForkExec</code>。如果想只调用 <code>fork</code>，得自己通过 <code>syscall.Syscall(syscall.SYS_FORK, 0, 0, 0)</code> 实现。</p>
+<h4 id="process-及其相关方法">Process 及其相关方法</h4>
+<p><code>os.Process</code> 存储了通过 <code>StartProcess</code> 创建的进程的相关信息。</p>
+<p>一般通过 <code>StartProcess</code> 创建 <code>Process</code> 的实例，函数声明如下：</p>
+<p><code>func StartProcess(name string, argv []string, attr *ProcAttr) (*Process, error)</code></p>
+<p>它使用提供的程序名、命令行参数、属性开始一个新进程。<code>StartProcess</code> 是一个低级别的接口。<code>os/exec</code> 包提供了高级别的接口，一般应该尽量使用 <code>os/exec</code> 包。如果出错，错误的类型会是 <code>*PathError</code>。</p>
+<p>其中的参数 <code>attr</code>，类型是 <code>ProcAttr</code> 的指针，用于为 <code>StartProcess</code> 创建新进程提供一些属性。定义如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">ProcAttr</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果 Dir 非空，子进程会在创建 Process 实例前先进入该目录。（即设为子进程的当前工作目录）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Dir</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果 Env 非空，它会作为新进程的环境变量。必须采用 Environ 返回值的格式。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果 Env 为 nil，将使用 Environ 函数的返回值。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Env</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Files 指定被新进程继承的打开文件对象。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 前三个绑定为标准输入、标准输出、标准错误输出。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 依赖底层操作系统的实现可能会支持额外的文件对象。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// nil 相当于在进程开始时关闭的文件对象。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 通常用法是 Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Files</span> <span class="p">[]</span><span class="o">*</span><span class="nx">File</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 操作系统特定的创建属性。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 注意设置本字段意味着你的程序可能会执行异常甚至在某些操作系统中无法通过编译。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 看 syscall.SysProcAttr 的定义，可以知道用于控制进程的相关属性。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Sys</span> <span class="o">*</span><span class="nx">syscall</span><span class="p">.</span><span class="nx">SysProcAttr</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>FindProcess</code> 可以通过 <code>pid</code> 查找一个运行中的进程。该函数返回的 <code>Process</code> 对象可以用于获取关于底层操作系统进程的信息。在 Unix 系统中，此函数总是成功，即使 <code>pid</code> 对应的进程不存在。</p>
+<p><code>func FindProcess(pid int) (*Process, error)</code></p>
+<p><code>Process</code> 提供了四个方法：<code>Kill</code>、<code>Signal</code>、<code>Wait</code> 和 <code>Release</code>。其中 <code>Kill</code> 和 <code>Signal</code> 跟信号相关，而 <code>Kill</code> 实际上就是调用 <code>Signal</code>，发送了 <code>SIGKILL</code> 信号，强制进程退出</p>
+<p><code>Release</code> 方法用于释放 <code>Process</code> 对象相关的资源，以便将来可以被再使用（释放资源给其他程序使用）。该方法只有在确定没有调用 <code>Wait</code> 时才需要调用。Unix 中，该方法的内部实现只是将 <code>Process</code> 的 <code>pid</code> 置为 -1。</p>
+<p><code>func (p *Process) Wait() (*ProcessState, error)</code></p>
+<p>在多进程应用程序的设计中，父进程需要知道某个子进程何时改变了状态 —— 子进程终止或因收到信号而停止。<code>Wait</code> 方法就是一种用于监控子进程的技术。</p>
+<p><code>Wait</code> 方法阻塞父进程直到子进程退出，然后返回一个 <code>ProcessState</code> 描述子进程的状态和可能的错误。<code>Wait</code> 方法会释放绑定到 <code>Process</code> 的所有资源。<strong>在大多数操作系统中，<code>Process</code> 必须是当前进程的子进程，否则会返回错误。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">ProcessState</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">pid</span>    <span class="kt">int</span>                <span class="c1">// The process&#39;s id.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="nx">status</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">WaitStatus</span> <span class="c1">// System-dependent status info.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="nx">rusage</span> <span class="o">*</span><span class="nx">syscall</span><span class="p">.</span><span class="nx">Rusage</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>ProcessState</code> 保存了 <code>Wait</code> 函数报告的某个进程的信息。<code>status</code> 记录了状态原因，通过 <code>syscal.WaitStatus</code> 类型定义的方法可以判断：</p>
+<ul>
+<li>Exited()：是否正常退出，如调用 <code>os.Exit</code>；</li>
+<li>Signaled()：是否收到未处理信号而终止；</li>
+<li>CoreDump()：是否收到未处理信号而终止，同时生成 coredump 文件，如 SIGABRT；</li>
+<li>Stopped()：是否因信号而停止（SIGSTOP）；</li>
+<li>Continued()：是否因收到信号 SIGCONT 而恢复；</li>
+</ul>
+<p><code>syscal.WaitStatus</code> 还提供了其他一些方法，比如获取退出状态、信号、停止信号和中断（Trap）原因。</p>
+<p>因为 Linux 下 <code>Wait</code> 的内部实现使用的是 <code>wait4</code> 系统调用，因此，<code>ProcessState</code> 中包含了 <code>rusage</code>，用于统计进程的各类资源信息。一般情况下，<code>syscall.Rusage</code> 中定义的信息都用不到，如果实际中需要使用，可以查阅 Linux 系统调用 <code>getrusage</code> 获得相关说明 (<code>getrusage(2)</code>)。</p>
+<p><code>ProcessState</code> 结构体内部字段都是私有的，我们可以通过它提供的方法来获得一些基本信息，比如：进程是否退出、Pid、进程是否是正常退出、进程 CPU 时间、用户时间等等。</p>
+<h3 id="运行外部命令">运行外部命令</h3>
+<p>通过 <code>os</code> 包可以做到运行外部命令 (os.StartProcess) 。不过，Go 标准库为我们封装了更好用的包： <code>os/exec</code>，运行外部命令，应该优先使用它，它包装了 <code>os.StartProcess</code> 函数以便更容易的重定向标准输入和输出，使用管道连接 I/O，以及作其它的一些调整。</p>
+<h4 id="查找可执行程序">查找可执行程序</h4>
+<p><code>exec.LookPath</code> 函数在 <code>PATH</code> 指定的多个目录中搜索可执行程序。该函数返回完整路径或相对于当前路径的一个相对路径。</p>
+<p><code>func LookPath(file string) (string, error)</code></p>
+<p>如果在 <code>$PATH</code> 中没有找到可执行文件，则返回 <code>exec.ErrNotFound</code>。</p>
+<h4 id="cmd-及其相关方法">Cmd 及其相关方法</h4>
+<p><code>Cmd</code> 结构代表一个正在准备或者在执行中的外部命令，调用了 <code>Run</code>、<code>Output</code> 或 <code>CombinedOutput</code> 后，<code>Cmd</code> 实例不能被重用（已经执行无法重用）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Cmd</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Path 是将要执行的命令路径。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 该字段不能为空（也是唯一一个不能为空的字段），如为相对路径会相对于 Dir 字段。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 通过 Command 初始化时，会在需要时调用 LookPath 获得完整的路径。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Path</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Args 存放着命令的参数，第一个值是要执行的命令（Args[0])；如果为空切片或者 nil，使用 {Path} 运行。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 一般情况下，Path 和 Args 都应被 Command 函数设定。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Args</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Env 指定进程的环境变量，如为 nil，则使用当前进程的环境变量，即 os.Environ()，一般就是当前系统的环境变量。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Env</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Dir 指定命令的工作目录。如为空字符串，会在调用者的进程当前工作目录下执行。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Dir</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Stdin 指定进程的标准输入，如为 nil，进程会从空设备读取（os.DevNull）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果 Stdin 是 *os.File 的实例，进程的标准输入会直接指向这个文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 否则，会在一个单独的 goroutine 中从 Stdin 中读数据，然后将数据通过管道传递到该命令中（也就是从 Stdin 读到数据后，写入管道，该命令可以从管道读到这个数据）。在 goroutine 停止数据拷贝之前（停止的原因如遇到 EOF 或其他错误，或管道的 write 端错误），Wait() 方法会一直堵塞，直到数据拷贝的goroutine停止。这种机制确保了在Wait方法返回之前，命令执行过程中的输入数据能够完整地传递给命令。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Stdin</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Stdout 和 Stderr 指定进程的标准输出和标准错误输出。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果任意一个为 nil，Run 方法会将对应的文件描述符关联到空设备（os.DevNull）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果两个字段指向相同，同一时间最多只能有一个线程可以写入。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Stdout</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Stderr</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ExtraFiles 指定额外被新进程继承的已打开文件，不包括标准输入、标准输出、标准错误输出。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果本字段非 nil，其中的元素 i 会变成文件描述符 3+i。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">ExtraFiles</span> <span class="p">[]</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// SysProcAttr 提供可选的、各操作系统特定的 sys 属性。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// Run 方法会将它作为 os.ProcAttr 的 Sys 字段传递给 os.StartProcess 函数。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">SysProcAttr</span> <span class="o">*</span><span class="nx">syscall</span><span class="p">.</span><span class="nx">SysProcAttr</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Process 是底层的，只执行一次的进程。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Process</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">Process</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ProcessState 包含一个已经存在的进程的信息，只有在调用 Wait 或 Run 后才可用。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">ProcessState</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">ProcessState</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="command">Command</h4>
+<p>一般应该通过 <code>exec.Command</code> 函数产生 <code>Cmd</code> 实例：</p>
+<p><code>func Command(name string, arg ...string) *Cmd</code></p>
+<p>该函数返回一个 <code>*Cmd</code>，用于使用给出的参数执行 <code>name</code> 指定的程序。返回的 <code>*Cmd</code> 只设定了 <code>Path</code> 和 <code>Args</code> 两个字段。</p>
+<p>**如果 <code>name</code> 不含路径分隔符，将使用 <code>LookPath</code> 获取完整路径；否则直接使用 <code>name</code>。**参数 <code>arg</code> 不应包含命令名。</p>
+<p>得到 <code>*Cmd</code> 实例后，接下来一般有两种写法：</p>
+<ol>
+<li>调用 <code>Start()</code>，接着调用 <code>Wait()</code>，然后会阻塞父进程直到命令执行完成 (这种方式主要用在需要在start和wait之间需要处理其他逻辑的情况)；</li>
+<li>调用 <code>Run()</code>，它内部会先调用 <code>Start()</code>，接着调用 <code>Wait()</code>；</li>
+</ol>
+<h4 id="start">Start</h4>
+<p><code>func (c *Cmd) Start() error</code></p>
+<p>开始执行 <code>c</code> 包含的命令，但并不会等待该命令完成后再返回。Start() 内部调用 <code>os.StartProcess</code>，执行 <code>forkExec</code>。</p>
+<h4 id="wait">Wait</h4>
+<p><code>func (c *Cmd) Wait() error</code></p>
+<p><code>Wait</code> 会阻塞当前进程直到该命令执行完成，该命令必须是先通过 <code>Start</code> 执行。</p>
+<p>如果命令成功执行，stdin、stdout、stderr 数据传递没有问题，并且返回状态码为 0，方法的返回值为 nil；如果命令没有执行或者执行失败，会返回 <code>*ExitError</code> 类型的错误；否则返回的 error 可能是表示 I/O 问题。</p>
+<p>如果 <code>c.Stdin</code> 不是 <code>*os.File</code> 类型，<code>Wait</code> 会等待，直到数据从 <code>c.Stdin</code> 拷贝到进程的标准输入中。</p>
+<p><strong><code>Wait</code> 方法会返回命令的退出状态码并在命令执行完后释放相关的资源。</strong></p>
+<h4 id="output">Output</h4>
+<p>除了 <code>Run()</code> 是 <code>Start</code>+<code>Wait</code> 的简便写法，<code>Output()</code> 更是 <code>Run()</code> 的简便写法，外加获取外部命令的输出。</p>
+<p><code>func (c *Cmd) Output() ([]byte, error)</code></p>
+<p>它要求 <code>c.Stdout</code> 必须是 <code>nil</code> (内部第一步就是c.Stdout != nil返回错误)，内部会将 <code>bytes.Buffer</code> 赋值给 <code>c.Stdout</code>，在 <code>Run()</code> 成功返回后，会将 <code>Buffer</code> 的结果返回（<code>stdout.Bytes()</code>)。</p>
+<h4 id="combinedoutput"><strong>CombinedOutput</strong></h4>
+<p><code>Output()</code> 只返回 <code>Stdout</code> 的结果，而 <code>CombinedOutput</code> 组合了 <code>Stdout</code> 和 <code>Stderr</code> 的输出，即 <code>Stdout</code> 和 <code>Stderr</code> 都赋值为同一个 <code>bytes.Buffer</code>。</p>
+<h4 id="stdoutpipestderrpipe-和-stdinpipe"><strong>StdoutPipe、StderrPipe 和 StdinPipe</strong></h4>
+<p>除了上面介绍的 <code>Output</code> 和 <code>CombinedOutput</code> 直接获取命令输出结果外，还可以通过 <code>StdoutPipe</code> 返回的 <code>io.ReadCloser</code> 来获取输出；相应的 <code>StderrPipe</code> 得到错误信息；而 <code>StdinPipe</code> 则可以往命令写入数据。</p>
+<p><code>func (c *Cmd) StdoutPipe() (io.ReadCloser, error)</code></p>
+<p><code>StdoutPipe</code> 方法返回一个在命令 <code>Start</code> 执行后与命令标准输出关联的管道。<code>Wait</code> 方法会在命令结束后会自动关闭这个管道，所以一般不需要手动关闭该管道。但是如果在从管道读取完全部数据之前调用 <code>Wait</code> 出错了，则必须手动关闭。因此建议获取后直接defer close，即使已经关闭了再次关闭也没事，只是会因为已经关闭返回失败而已。</p>
+<p><code>func (c *Cmd) StderrPipe() (io.ReadCloser, error)</code> 逻辑和 <code>StdoutPipe</code> 类似，只是关联的是标准错误输出。而 <code>StdinPipe </code>关联的是标准输入，Wait也会自动关闭这个管道，必要时调用者可以直接通过调用 <code>Close</code> 方法来强行关闭管道。<strong>例如，有时候标准输入必须要关闭后，命令执行才能完成，此时调用者需要显式地关闭管道。</strong></p>
+<p>因为这些管道虽然在Start之前定义，但是结果要在 <code> Start</code>之后 <code>Wait </code>之前才能获取（Wait会关闭管道），所以，要使用这些方法，一般只能使用 <code>Start </code>+<code>Wait </code>组合，使用 <code>Run</code>就必须需要为管道开一个新的goroutine。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">Command</span><span class="p">(</span><span class="s">&#34;ls&#34;</span><span class="p">)</span>  
+</span></span><span class="line"><span class="cl"><span class="nx">r</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">StdoutPipe</span><span class="p">()</span>  
+</span></span><span class="line"><span class="cl"><span class="nf">gofunc</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ReadAll会一直循环直到返回EOF，命令结束时就会发送EOF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">s</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadAll</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}()</span>  
+</span></span><span class="line"><span class="cl"><span class="c1">// 通过等待5S可以发现ls的结果会在5S后一齐打印  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>  
+</span></span><span class="line"><span class="cl"><span class="nx">cmd</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="进程终止">进程终止</h3>
+<p><code>os.Exit()</code> 函数会终止当前进程，对应的系统调用不是 <code>_exit</code>，而是 <code>exit_group</code>。</p>
+<p><code>func Exit(code int)</code></p>
+<p><code>Exit</code> 让当前进程以给出的状态码 <code>code</code> 退出。一般来说，状态码 0 表示成功，非 0 表示出错。Exit 会让进程立刻终止，defer 函数都不会被执行。因此如果需要执行defer函数最好使用return来结束函数。</p>
+
 </section>
 
 
