@@ -46,23 +46,6 @@
 </description>
         </item>
         <item>
-        <title>Kubernetes 入门</title>
-        <link>https://xiaonuoz.github.io/p/kubernetes-%E5%85%A5%E9%97%A8/</link>
-        <pubDate>Sun, 09 Apr 2023 00:00:00 +0000</pubDate>
-        
-        <guid>https://xiaonuoz.github.io/p/kubernetes-%E5%85%A5%E9%97%A8/</guid>
-        <description>&lt;p&gt;k8s 是一个为 &lt;strong&gt;容器化&lt;/strong&gt; 应用提供集群部署和管理的开源工具，由 Google 开发。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;主要特性：&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;高可用，不宕机，自动灾难恢复&lt;/li&gt;
-&lt;li&gt;灰度更新，不影响业务正常运转&lt;/li&gt;
-&lt;li&gt;一键回滚到历史版本&lt;/li&gt;
-&lt;li&gt;方便的伸缩扩展（应用伸缩，机器加减）、提供负载均衡&lt;/li&gt;
-&lt;li&gt;有一个完善的生态&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        </item>
-        <item>
         <title>Go 语言各种标准库的使用</title>
         <link>https://xiaonuoz.github.io/p/go-%E8%AF%AD%E8%A8%80%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
         <pubDate>Tue, 04 Apr 2023 00:00:00 +0000</pubDate>
