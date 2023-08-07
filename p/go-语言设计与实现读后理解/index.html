@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被理解的字符串，为了'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析和语法分析 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被'>
 <title>《Go 语言设计与实现》读后理解</title>
 
 <link rel='canonical' href='https://xiaonuoz.github.io/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/'>
 
 <link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='《Go 语言设计与实现》读后理解'>
-<meta property='og:description' content='此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被理解的字符串，为了'>
+<meta property='og:description' content='此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析和语法分析 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被'>
 <meta property='og:url' content='https://xiaonuoz.github.io/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/'>
 <meta property='og:site_name' content='笑傩'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-06-05T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-06-05T00:00:00&#43;00:00'/>
 <meta name="twitter:title" content="《Go 语言设计与实现》读后理解">
-<meta name="twitter:description" content="此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被理解的字符串，为了">
+<meta name="twitter:description" content="此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析和语法分析 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被">
     <link rel="shortcut icon" href="/favicon.ico" />
 
     </head>
@@ -188,12 +188,10 @@
   <ol>
     <li><a href="#编译原理">编译原理</a>
       <ol>
-        <li><a href="#词法分析">词法分析</a></li>
-        <li><a href="#语法分析">语法分析</a>
+        <li><a href="#词法分析和语法分析">词法分析和语法分析</a>
           <ol>
-            <li><a href="#文法">文法</a></li>
-            <li><a href="#分析方法">分析方法</a></li>
-            <li><a href="#lookahead">Lookahead</a></li>
+            <li><a href="#词法分析">词法分析</a></li>
+            <li><a href="#语法分析">语法分析</a></li>
           </ol>
         </li>
         <li><a href="#类型检查">类型检查</a>
@@ -202,6 +200,7 @@
             <li><a href="#静态类型和动态类型">静态类型和动态类型</a></li>
           </ol>
         </li>
+        <li><a href="#中间代码生成">中间代码生成</a></li>
       </ol>
     </li>
   </ol>
@@ -271,7 +270,8 @@
     
     <p><code>此文章为学习 《Go 语言设计与实现》的总结性文章</code></p>
 <h2 id="编译原理">编译原理</h2>
-<h3 id="词法分析">词法分析</h3>
+<h3 id="词法分析和语法分析">词法分析和语法分析</h3>
+<h4 id="词法分析">词法分析</h4>
 <p>源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被理解的字符串，为了理解这些字符我们需要做的第一件事情就是 <strong>将字符串分组</strong> ，这能够降低理解字符串的成本，简化源代码的分析过程。</p>
 <p>源文件在机器的眼中是很难理解的字符串，词法分析会将这些字符串解析成一个个token序列以便机器理解。使用的就是类似lex之类的词法分析器。</p>
 <div class="highlight"><div class="chroma">
@@ -300,9 +300,9 @@
 </div>
 </div><p>从上面的输出我们能够看到 Go 源代码的影子，lex 生成的词法分析器 lexer 通过正则匹配的方式将机器原本很难理解的字符串进行分解成很多的 Token，有利于后面的处理。</p>
 <p>早期Go是使用lex进行词法解析，但是之后还是会用Go自己实现的词法分析器分析解析出的数据。<code>而如今词法解析和词法分析都是用Go自己实现的工具。</code></p>
-<h3 id="语法分析">语法分析</h3>
+<h4 id="语法分析">语法分析</h4>
 <p>语法分析是根据某种特定的形式文法对 Token 序列构成的输入文本进行分析并确定其语法构成的过程。词法分析器输出的结果Token序列是语法分析器的输入。</p>
-<h4 id="文法">文法</h4>
+<h5 id="文法">文法</h5>
 <p>上下文无关文法 是用来形式化、精确描述某种编程语言的工具，我们能够通过文法定义一种语言的语法，它主要包含一系列用于转换字符串的生产规则。上下文无关文法中的每一个生产规则都会将规则左侧的非终结符转换成右侧的字符串，也可以理解为用左侧的规则名来表示右侧的文件具体内容，从下面代码就可以看出来右侧有很多属于Go日常开发中的常用关键词。</p>
 <p>从 <a class="link" href="https://github.com/golang/go/blob/master/src/cmd/compile/internal/syntax/parser.go"  target="_blank" rel="noopener"
     ><code>src/cmd/compile/internal/syntax/parser.go</code></a>文件中摘抄一些 Go 语言文法的生产规则：</p>
@@ -384,7 +384,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>上述的文法分别定义了 Go 语言中常量、类型和变量三种常见的结构，从文法中可以看到语言中的很多关键字 <code>const</code>、<code>type</code> 和 <code>var</code></p>
-<h4 id="分析方法">分析方法</h4>
+<h5 id="分析方法">分析方法</h5>
 <p>语法分析的分析方法一般分为自顶向下和自底向上两种，这两种方式会使用不同的方式对输入的 Token 序列进行推导：</p>
 <ul>
 <li>自顶向下分析：可以被看作找到当前输入流最左推导的过程，对于任意一个输入流，根据当前的输入符号，确定一个生产规则，使用生产规则右侧的符号替代相应的非终结符向下推导。</li>
@@ -392,7 +392,7 @@
 </ul>
 <p>自顶向下和自底向上都是从开始符号开始解析，直到整个字符串中不存在任何的非终结符，整个解析过程才会结束。个人理解就是从源文件最开始时解析，根据生产规则向下进行逐个匹配。而两者的区别是对于生产规则的匹配一个是从头到尾一个是从尾到头</p>
 <p>LL文法是一种使用自顶向下分析方法的文法。常见的四种文法 LR(0)、SLR、LR(1) 和 LALR(1) 则使用了自底向上的处理方式</p>
-<h4 id="lookahead">Lookahead</h4>
+<h5 id="lookahead">Lookahead</h5>
 <p>在语法分析中除了 LL 和 LR 这两种不同类型的语法分析方法之外，还存在另一个非常重要的概念，就是 <code>向前查看</code>，在不同生产规则发生冲突时（当前内容符合多个生产规则），当前解析器需要通过预读一些 Token 判断当前应该用什么生产规则对输入流进行展开或者归约，例如在 LALR(1) 文法中，需要预读一个 Token 保证出现冲突的生产规则能够被正确处理。</p>
 <p>Go 语言的解析器使用了 LALR(1) 的文法来解析词法分析过程中输出的 Token 序列，最右推导加向前查看构成了 Go 语言解析器的最基本原理，也是大多数编程语言的选择。<code>语法分析就是将token序列根据各种生产规则解析成抽象语法树</code></p>
 <div class="highlight"><div class="chroma">
@@ -440,6 +440,27 @@
 <p><strong><code>Go语言的编译器不仅使用静态类型检查来保证程序运行的类型安全，还会和Java一样在编程期间引入类型信息，让程序员可以使用反射来判断参数和变量的类型。当我们想要将 interface{} 转换成具体类型时就会进行动态类型检查(运行时)，如果无法发生转换就会出现程序崩溃。</code></strong></p>
 <p>类型检查是Go语言编译的第二个阶段，在词法和语法分析之后我们能得到每个文件对应的抽象语法树，随后的类型检查会遍历抽象语法树中的节点，对每个节点的类型进行检验，找出其中存在的语法错误，并且在这个过程中也会对抽象语法树进行改写，这不仅能够去除一些不会被执行的代码、对代码进行优化以提高执行效率，而且也会修改make、new等关键字对应节点的操作类型。</p>
 <p>make和new 这些内置函数其实并不会直接对应某些函数的实现，而是会在编译阶段被转换成真正存在的其他函数。make就会在类型检查阶段根据创建的具体类型(make的第一个参数) 将make 替换成特定的函数 <code>makechan</code>、<code>makeslice</code>、<code>makemap</code>，这样后面 生成中间代码阶段 就不会再处理OMAKE类型的节点了，而是会根据生成的细分类型进行处理。</p>
+<h3 id="中间代码生成">中间代码生成</h3>
+<p>词法分析和语法分析以及类型检查都属于编译器前端，它们负责对源码进行分析并检查其中存在的词法和语法错误，经过这两个阶段生成的抽象语法树已经不存在语法错误了。而中间代码生成属于编译器后端。</p>
+<p>中间代码是编译器或者虚拟机 (JAVA中的JVM) 使用的语言，它可以帮助我们分析计算机程序。在编译过程中，编译器会在 将源码转换为机器码的过程中，先将源码转换成一种中间的表示形式，即中间代码。</p>
+<p>很多人可能认为中间代码没有太多价值，可以直接将源码翻译成目标语言，这种看起来可行的办法实际上有很多问题，其中最主要的问题就是它忽略了编译器所面对的复杂场景，很多编译器都需要将源码翻译成多种机器码，那么在这种情况下直接翻译高级编程语言就比较困难，翻译程序会十分庞大。而中间代码是一种更接近机器语言的表达形式，对中间代码的优化和分析相比于直接分析高级语言会更加容易。</p>
+<p>中间代码的生成过程是从AST 抽象语法树到 SSA 中间代码的转换过程，在这期间会对语法树中的关键字再进行改写 (defer 及new之类的内置函数)，改写后的语法树会经过 <strong>多轮处理</strong> 转变成最后的SSA中间代码，相关代码中包含了大量switch语句、复杂的函数和调用栈（部分文件一个switch就占了上千行，正常开发是不允许有这种情况的）。</p>
+<p>很多Go关键字和内置函数就是在这个阶段被转换成运行时包中方法的。</p>
+<p><img src="/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-1.png"
+	width="1084"
+	height="869"
+	srcset="/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-1_huead841100c3ff60837c925a867773eb3_144316_480x0_resize_box_3.png 480w, /p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-1_huead841100c3ff60837c925a867773eb3_144316_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="124"
+		data-flex-basis="299px"
+	
+></p>
+<p><strong>中间代码就是指令集，而机器码就是最终的二进制文件。中间代码是一种特定于编程语言和平台的中间表示形式，通常比源代码更接近于机器码，但仍不是直接的机器码。</strong></p>
 
 </section>
 
