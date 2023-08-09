@@ -2,16 +2,16 @@
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析和语法分析 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被'>
-<title>《Go 语言设计与实现》读后理解</title>
+<title></title>
 
 <link rel='canonical' href='https://xiaonuoz.github.io/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/'>
 
-<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='《Go 语言设计与实现》读后理解'>
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content=''>
 <meta property='og:description' content='此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析和语法分析 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被'>
 <meta property='og:url' content='https://xiaonuoz.github.io/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/'>
 <meta property='og:site_name' content='笑傩'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-06-05T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-06-05T00:00:00&#43;00:00'/>
-<meta name="twitter:title" content="《Go 语言设计与实现》读后理解">
+<meta name="twitter:title" content="">
 <meta name="twitter:description" content="此文章为学习 《Go 语言设计与实现》的总结性文章 编译原理 词法分析和语法分析 词法分析 源代码在计算机眼中其实是一团乱麻，是一个由字符组成的、无法被">
     <link rel="shortcut icon" href="/favicon.ico" />
 
@@ -201,6 +201,12 @@
           </ol>
         </li>
         <li><a href="#中间代码生成">中间代码生成</a></li>
+        <li><a href="#机器码生成">机器码生成</a>
+          <ol>
+            <li><a href="#指令集架构">指令集架构</a></li>
+            <li><a href="#机器码生成-1">机器码生成</a></li>
+          </ol>
+        </li>
       </ol>
     </li>
   </ol>
@@ -230,7 +236,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/">《Go 语言设计与实现》读后理解</a>
+            <a href="/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/"></a>
         </h2>
     
         
@@ -460,7 +466,89 @@
 		data-flex-basis="299px"
 	
 ></p>
-<p><strong>中间代码就是指令集，而机器码就是最终的二进制文件。中间代码是一种特定于编程语言和平台的中间表示形式，通常比源代码更接近于机器码，但仍不是直接的机器码。</strong></p>
+<p><strong>中间代码就是指令集，而在机器码生成阶段会先将 SSA中间代码 转换成汇编语言最终再编译为机器码，而机器码就是最终的二进制文件。中间代码是一种特定于编程语言和平台的中间表示形式，通常比源代码更接近于机器码，但仍不是直接的机器码。</strong></p>
+<h3 id="机器码生成">机器码生成</h3>
+<p>Go语言编译的最后一个阶段是根据 SSA 中间代码生成机器码，这里谈的机器码是在目标 CPU架构上能够运行的二进制代码，而在中间代码环节的将近50 个生成中间代码的步骤中有一些过程严格上说是属于机器码生成阶段的。</p>
+<p>机器码的生成过程其实就是对 SSA 中间代码的降级过程，在SSA中间代码降级的过程中，编译器将一些值重写成了目标CPU架构的特定值，降级的过程 处理了所有 机器特定的重写规则并对代码进行了一定程度的优化；在 SSA 中间代码生成阶段的最后，Go 函数体的代码会被转换成 <a class="link" href="https://draveness.me/golang/tree/cmd/compile/internal/obj.Prog"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/obj.Prog</code></a> 结构。</p>
+<h4 id="指令集架构">指令集架构</h4>
+<p>指令集架构是计算机的抽象模型，在很多时候也被称作架构或者计算机架构，它是计算机软件和硬件之间的接口和桥梁；一个为特定指令集架构编写的应用程序能够运行在所有支持这种指令集架构的机器上，也就是说如果当前应用程序支持x86的指令集，那么就可以运行在所有使用x86指令集的机器上，这其实就是抽象层的作用。每一个指令集架构都定义了支持的数据结构、寄存器、管理主内存的硬件支持（例如内存一致、地址模拟以及虚拟内存）、支持的指令集和IO模型，指令集的引入其实就是在软件和硬件之间引入了一个抽象层，让同一个二进制文件能够在不同版本的硬件上运行。</p>
+<p>当前这里只是说是可以在同一种指令集机器上运行，并没有考虑系统，系统也是属于软件，不同的系统针对二进制文件可能有不同的处理，例如windows编译后的二进制文件放在linux上可能就无法运行，这是因为他们依赖并不相同。</p>
+<p>如果一个编程语言想要在所有的机器上运行，它就可以将中间代码分别转换成使用不同指令集架构的机器码，这可比为不同硬件单独移植要简单的太多了。</p>
+<h5 id="复杂指令集cisc和精简指令集risc">复杂指令集（CISC）和精简指令集（RISC）</h5>
+<p>最常见的指令集架构分类方法是根据指令的复杂度将其分为 复杂指令集（CISC）和精简指令集（RISC），复杂指令集架构包含了很多特定的指令，但是其中的一些指令很少会被程序使用，但是又不能舍弃。而精简指令集只实现了经常被使用的指令，不常用的操作都会通过组合简单指令来实现。</p>
+<p>因此复杂指令集性能更强大，因为它在电路板上焊了特定的指令集，但是这也意味着功耗更高，体积更大，而精简指令集由于是组合而来，它会弱一些，但是它功耗和体积会小点。</p>
+<p>复杂指令集的特点就是指令数目多且复杂，每条指令的字节长度并不相等，x86就是常见的复杂指令集处理器，它的指令长度大小范围非常广，从 1 到 15 字节不等，对于长度不固定的指令，计算机必须额外对指令进行判断，这需要付出额外的性能损失。</p>
+<p>而精简指令集对指令的数目和寻址方式做了精简，大大减少指令数量的同时也更容易实现，指令集中的每一个指令都使用标准的字节长度、执行时间相比复杂指令集会少很多，处理器在处理指令时也可以流水执行，提高了对并行的支持。</p>
+<p>ARM 作为一种常见的精简指令集处理器，使用了 4个字节来作为指令集的固定长度，解决了因判断指令长度造成的性能损失问题。精简指令集其实就是利用了我们耳熟能详的二八原则，用20%的基础指令和它们的组合来解决大部分问题。</p>
+<p>其宗旨就是通过优化设计，使得用尽可能少的基础指令可以覆盖尽可能多的操作需求。剩余的少部分特殊问题会在实际情况中通过如微码指令、专门的硬件单元等方法解决。</p>
+<p>最开始的计算机使用复杂指令集是因为当时计算机的性能和内存都比较有限，业界需要尽可能地减少机器需要执行的指令，所以更倾向于高度编码、长度不等以及多操作数的指令。不过随着计算机性能的提升，出现了精简指令集这种牺牲代码密度换取简单实现的设计；除此之外，硬件的飞速提升还带来了更多的寄存器和更高的时钟频率，软件开发人员也不用再直接接触汇编代码，而是通过编译器和汇编器生成指令，复杂的机器指令对于编译器来说很难利用，所以精简指令在这种场景下更适合。</p>
+<p>复杂指令集和精简指令集的使用是设计上的权衡，经过这么多年的发展，两种指令集也在相互借鉴和学习，与最开始刚被设计出来时已经有了较大的差别。</p>
+<h4 id="机器码生成-1">机器码生成</h4>
+<p>机器码的生成在 Go 的编译器中主要由两部分协同工作，其中一部分是负责 SSA 中间代码降级和根据目标架构进行特定处理的 <a class="link" href="https://github.com/golang/go/tree/master/src/cmd/compile/internal/ssa"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/ssa</code></a> 包，另一部分是负责生成机器码的 <a class="link" href="https://github.com/golang/go/tree/master/src/cmd/internal/obj"  target="_blank" rel="noopener"
+    ><code>cmd/internal/obj</code></a></p>
+<h5 id="ssa降级">SSA降级</h5>
+<p>SSA 降级是在中间代码生成的过程中完成的，其中将近 50 轮处理的过程中，<code>lower</code> 以及后面的阶段都属于 SSA 降级这一过程，这么多轮的处理会对架构进行特定的优化和重写并生成 <a class="link" href="https://github.com/golang/go/blob/da54dfb6a1f3bef827b9ec3780c98fde77a97d11/src/cmd/internal/obj/link.go#L284"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/obj.Prog</code></a> 指令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">passes</span> <span class="p">=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="nx">pass</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span><span class="nx">name</span><span class="p">:</span> <span class="s">&#34;lower&#34;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">:</span> <span class="nx">lower</span><span class="p">,</span> <span class="nx">required</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span><span class="nx">name</span><span class="p">:</span> <span class="s">&#34;lowered deadcode for cse&#34;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">:</span> <span class="nx">deadcode</span><span class="p">},</span> <span class="c1">// deadcode immediately before CSE avoids CSE making dead values live again
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">{</span><span class="nx">name</span><span class="p">:</span> <span class="s">&#34;lowered cse&#34;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">:</span> <span class="nx">cse</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span><span class="nx">name</span><span class="p">:</span> <span class="s">&#34;trim&#34;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">:</span> <span class="nx">trim</span><span class="p">},</span> <span class="c1">// remove empty blocks
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>重写的过程会将通用的 SSA中间代码 转换成目标架构特定的指令。可以通过对指令的压缩和优化减少在目标硬件上执行所需要的时间和资源。而紧接着就会使用obj包将SSA中间代码转换成汇编代码再编译为机器码。</p>
+<p><a class="link" href="https://draveness.me/golang/tree/cmd/compile/internal/gc.buildssa"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.buildssa</code></a> 中的 <code>lower</code> 和随后的多个阶段会对 SSA 进行转换、检查和优化，生成机器特定的中间代码（之前属于中间代码生成阶段）， <code>cmd/compile/internal/gc.compileSSA</code> 中的genssa会创建一个新的 <a class="link" href="https://draveness.me/golang/tree/cmd/compile/internal/gc.Progs"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.Progs</code></a> 结构并将生成的 SSA 中间代码都存入新建的结构体中，至此SSA降级结束，随后调用的 pp.Flush() - <a class="link" href="https://draveness.me/golang/tree/cmd/compile/internal/gc.Progs.Flush"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.Progs.Flush</code></a> 会使用 <a class="link" href="https://github.com/golang/go/tree/master/src/cmd/internal/obj"  target="_blank" rel="noopener"
+    ><code>cmd/internal/obj</code></a> 包中的汇编器将 SSA 转换成汇编代码并编译成机器码。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">compileSSA</span><span class="p">(</span><span class="nx">fn</span> <span class="o">*</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">worker</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span> <span class="o">:=</span> <span class="nf">buildssa</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">worker</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">pp</span> <span class="o">:=</span> <span class="nf">newProgs</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">worker</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">pp</span><span class="p">.</span><span class="nf">Free</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">genssa</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">pp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">pp</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>转换汇编代码和编译成机器码都是由pp.Flush() 中的<a class="link" href="https://draveness.me/golang/tree/cmd/internal/obj.Flushplist"  target="_blank" rel="noopener"
+    ><code>cmd/internal/obj.Flushplist</code></a> 中的 <code>Preprocess</code> 和 <code>Assemble</code> 方法组合完成的，这两个方法非常复杂，且会根据不同架构执行不同的方法，比如x86架构就会执行<a class="link" href="https://draveness.me/golang/tree/cmd/internal/obj/x86.preprocess"  target="_blank" rel="noopener"
+    ><code>cmd/internal/obj/x86.preprocess</code></a> 和 <a class="link" href="https://draveness.me/golang/tree/cmd/internal/obj/x86.span6"  target="_blank" rel="noopener"
+    ><code>cmd/internal/obj/x86.span6</code></a> 。</p>
+<h5 id="汇编器">汇编器</h5>
+<p>汇编器是将汇编语言翻译为机器语言的程序，Go 语言的汇编器是基于 Plan 9 汇编器的输入类型设计的，不过Go 语言对于汇编语言 Plan 9 和汇编器的资料十分缺乏。</p>
+<p>流程为：</p>
+<p>源码  -&gt;  词法解析  -&gt;  语法解析  -&gt;  抽象语法树  -&gt;  类型检验  -&gt;  抽象语法树  -&gt;  中间代码  -&gt;  汇编  -&gt;  机器码</p>
 
 </section>
 

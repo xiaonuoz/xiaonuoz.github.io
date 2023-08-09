@@ -7,7 +7,7 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <lastBuildDate>Mon, 05 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaonuoz.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>《Go 语言设计与实现》读后理解</title>
+        <title></title>
         <link>https://xiaonuoz.github.io/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/</link>
         <pubDate>Mon, 05 Jun 2023 00:00:00 +0000</pubDate>
         
@@ -204,7 +204,89 @@
 		data-flex-basis=&#34;299px&#34;
 	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;中间代码就是指令集，而机器码就是最终的二进制文件。中间代码是一种特定于编程语言和平台的中间表示形式，通常比源代码更接近于机器码，但仍不是直接的机器码。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;中间代码就是指令集，而在机器码生成阶段会先将 SSA中间代码 转换成汇编语言最终再编译为机器码，而机器码就是最终的二进制文件。中间代码是一种特定于编程语言和平台的中间表示形式，通常比源代码更接近于机器码，但仍不是直接的机器码。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;机器码生成&#34;&gt;机器码生成&lt;/h3&gt;
+&lt;p&gt;Go语言编译的最后一个阶段是根据 SSA 中间代码生成机器码，这里谈的机器码是在目标 CPU架构上能够运行的二进制代码，而在中间代码环节的将近50 个生成中间代码的步骤中有一些过程严格上说是属于机器码生成阶段的。&lt;/p&gt;
+&lt;p&gt;机器码的生成过程其实就是对 SSA 中间代码的降级过程，在SSA中间代码降级的过程中，编译器将一些值重写成了目标CPU架构的特定值，降级的过程 处理了所有 机器特定的重写规则并对代码进行了一定程度的优化；在 SSA 中间代码生成阶段的最后，Go 函数体的代码会被转换成 &lt;a class=&#34;link&#34; href=&#34;https://draveness.me/golang/tree/cmd/compile/internal/obj.Prog&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/compile/internal/obj.Prog&lt;/code&gt;&lt;/a&gt; 结构。&lt;/p&gt;
+&lt;h4 id=&#34;指令集架构&#34;&gt;指令集架构&lt;/h4&gt;
+&lt;p&gt;指令集架构是计算机的抽象模型，在很多时候也被称作架构或者计算机架构，它是计算机软件和硬件之间的接口和桥梁；一个为特定指令集架构编写的应用程序能够运行在所有支持这种指令集架构的机器上，也就是说如果当前应用程序支持x86的指令集，那么就可以运行在所有使用x86指令集的机器上，这其实就是抽象层的作用。每一个指令集架构都定义了支持的数据结构、寄存器、管理主内存的硬件支持（例如内存一致、地址模拟以及虚拟内存）、支持的指令集和IO模型，指令集的引入其实就是在软件和硬件之间引入了一个抽象层，让同一个二进制文件能够在不同版本的硬件上运行。&lt;/p&gt;
+&lt;p&gt;当前这里只是说是可以在同一种指令集机器上运行，并没有考虑系统，系统也是属于软件，不同的系统针对二进制文件可能有不同的处理，例如windows编译后的二进制文件放在linux上可能就无法运行，这是因为他们依赖并不相同。&lt;/p&gt;
+&lt;p&gt;如果一个编程语言想要在所有的机器上运行，它就可以将中间代码分别转换成使用不同指令集架构的机器码，这可比为不同硬件单独移植要简单的太多了。&lt;/p&gt;
+&lt;h5 id=&#34;复杂指令集cisc和精简指令集risc&#34;&gt;复杂指令集（CISC）和精简指令集（RISC）&lt;/h5&gt;
+&lt;p&gt;最常见的指令集架构分类方法是根据指令的复杂度将其分为 复杂指令集（CISC）和精简指令集（RISC），复杂指令集架构包含了很多特定的指令，但是其中的一些指令很少会被程序使用，但是又不能舍弃。而精简指令集只实现了经常被使用的指令，不常用的操作都会通过组合简单指令来实现。&lt;/p&gt;
+&lt;p&gt;因此复杂指令集性能更强大，因为它在电路板上焊了特定的指令集，但是这也意味着功耗更高，体积更大，而精简指令集由于是组合而来，它会弱一些，但是它功耗和体积会小点。&lt;/p&gt;
+&lt;p&gt;复杂指令集的特点就是指令数目多且复杂，每条指令的字节长度并不相等，x86就是常见的复杂指令集处理器，它的指令长度大小范围非常广，从 1 到 15 字节不等，对于长度不固定的指令，计算机必须额外对指令进行判断，这需要付出额外的性能损失。&lt;/p&gt;
+&lt;p&gt;而精简指令集对指令的数目和寻址方式做了精简，大大减少指令数量的同时也更容易实现，指令集中的每一个指令都使用标准的字节长度、执行时间相比复杂指令集会少很多，处理器在处理指令时也可以流水执行，提高了对并行的支持。&lt;/p&gt;
+&lt;p&gt;ARM 作为一种常见的精简指令集处理器，使用了 4个字节来作为指令集的固定长度，解决了因判断指令长度造成的性能损失问题。精简指令集其实就是利用了我们耳熟能详的二八原则，用20%的基础指令和它们的组合来解决大部分问题。&lt;/p&gt;
+&lt;p&gt;其宗旨就是通过优化设计，使得用尽可能少的基础指令可以覆盖尽可能多的操作需求。剩余的少部分特殊问题会在实际情况中通过如微码指令、专门的硬件单元等方法解决。&lt;/p&gt;
+&lt;p&gt;最开始的计算机使用复杂指令集是因为当时计算机的性能和内存都比较有限，业界需要尽可能地减少机器需要执行的指令，所以更倾向于高度编码、长度不等以及多操作数的指令。不过随着计算机性能的提升，出现了精简指令集这种牺牲代码密度换取简单实现的设计；除此之外，硬件的飞速提升还带来了更多的寄存器和更高的时钟频率，软件开发人员也不用再直接接触汇编代码，而是通过编译器和汇编器生成指令，复杂的机器指令对于编译器来说很难利用，所以精简指令在这种场景下更适合。&lt;/p&gt;
+&lt;p&gt;复杂指令集和精简指令集的使用是设计上的权衡，经过这么多年的发展，两种指令集也在相互借鉴和学习，与最开始刚被设计出来时已经有了较大的差别。&lt;/p&gt;
+&lt;h4 id=&#34;机器码生成-1&#34;&gt;机器码生成&lt;/h4&gt;
+&lt;p&gt;机器码的生成在 Go 的编译器中主要由两部分协同工作，其中一部分是负责 SSA 中间代码降级和根据目标架构进行特定处理的 &lt;a class=&#34;link&#34; href=&#34;https://github.com/golang/go/tree/master/src/cmd/compile/internal/ssa&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/compile/internal/ssa&lt;/code&gt;&lt;/a&gt; 包，另一部分是负责生成机器码的 &lt;a class=&#34;link&#34; href=&#34;https://github.com/golang/go/tree/master/src/cmd/internal/obj&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/internal/obj&lt;/code&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h5 id=&#34;ssa降级&#34;&gt;SSA降级&lt;/h5&gt;
+&lt;p&gt;SSA 降级是在中间代码生成的过程中完成的，其中将近 50 轮处理的过程中，&lt;code&gt;lower&lt;/code&gt; 以及后面的阶段都属于 SSA 降级这一过程，这么多轮的处理会对架构进行特定的优化和重写并生成 &lt;a class=&#34;link&#34; href=&#34;https://github.com/golang/go/blob/da54dfb6a1f3bef827b9ec3780c98fde77a97d11/src/cmd/internal/obj/link.go#L284&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/compile/internal/obj.Prog&lt;/code&gt;&lt;/a&gt; 指令：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;passes&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;pass&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;lower&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;lower&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;required&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;lowered deadcode for cse&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;deadcode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;},&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// deadcode immediately before CSE avoids CSE making dead values live again
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;lowered cse&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;cse&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;trim&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;trim&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;},&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// remove empty blocks
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;重写的过程会将通用的 SSA中间代码 转换成目标架构特定的指令。可以通过对指令的压缩和优化减少在目标硬件上执行所需要的时间和资源。而紧接着就会使用obj包将SSA中间代码转换成汇编代码再编译为机器码。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://draveness.me/golang/tree/cmd/compile/internal/gc.buildssa&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/compile/internal/gc.buildssa&lt;/code&gt;&lt;/a&gt; 中的 &lt;code&gt;lower&lt;/code&gt; 和随后的多个阶段会对 SSA 进行转换、检查和优化，生成机器特定的中间代码（之前属于中间代码生成阶段）， &lt;code&gt;cmd/compile/internal/gc.compileSSA&lt;/code&gt; 中的genssa会创建一个新的 &lt;a class=&#34;link&#34; href=&#34;https://draveness.me/golang/tree/cmd/compile/internal/gc.Progs&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/compile/internal/gc.Progs&lt;/code&gt;&lt;/a&gt; 结构并将生成的 SSA 中间代码都存入新建的结构体中，至此SSA降级结束，随后调用的 pp.Flush() - &lt;a class=&#34;link&#34; href=&#34;https://draveness.me/golang/tree/cmd/compile/internal/gc.Progs.Flush&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/compile/internal/gc.Progs.Flush&lt;/code&gt;&lt;/a&gt; 会使用 &lt;a class=&#34;link&#34; href=&#34;https://github.com/golang/go/tree/master/src/cmd/internal/obj&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/internal/obj&lt;/code&gt;&lt;/a&gt; 包中的汇编器将 SSA 转换成汇编代码并编译成机器码。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;compileSSA&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fn&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;Node&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;worker&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;nx&#34;&gt;f&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;buildssa&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;worker&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;nx&#34;&gt;pp&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;newProgs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;worker&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;k&#34;&gt;defer&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;pp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Free&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;nf&#34;&gt;genssa&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;pp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;nx&#34;&gt;pp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Flush&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;转换汇编代码和编译成机器码都是由pp.Flush() 中的&lt;a class=&#34;link&#34; href=&#34;https://draveness.me/golang/tree/cmd/internal/obj.Flushplist&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/internal/obj.Flushplist&lt;/code&gt;&lt;/a&gt; 中的 &lt;code&gt;Preprocess&lt;/code&gt; 和 &lt;code&gt;Assemble&lt;/code&gt; 方法组合完成的，这两个方法非常复杂，且会根据不同架构执行不同的方法，比如x86架构就会执行&lt;a class=&#34;link&#34; href=&#34;https://draveness.me/golang/tree/cmd/internal/obj/x86.preprocess&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/internal/obj/x86.preprocess&lt;/code&gt;&lt;/a&gt; 和 &lt;a class=&#34;link&#34; href=&#34;https://draveness.me/golang/tree/cmd/internal/obj/x86.span6&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;cmd/internal/obj/x86.span6&lt;/code&gt;&lt;/a&gt; 。&lt;/p&gt;
+&lt;h5 id=&#34;汇编器&#34;&gt;汇编器&lt;/h5&gt;
+&lt;p&gt;汇编器是将汇编语言翻译为机器语言的程序，Go 语言的汇编器是基于 Plan 9 汇编器的输入类型设计的，不过Go 语言对于汇编语言 Plan 9 和汇编器的资料十分缺乏。&lt;/p&gt;
+&lt;p&gt;流程为：&lt;/p&gt;
+&lt;p&gt;源码  -&amp;gt;  词法解析  -&amp;gt;  语法解析  -&amp;gt;  抽象语法树  -&amp;gt;  类型检验  -&amp;gt;  抽象语法树  -&amp;gt;  中间代码  -&amp;gt;  汇编  -&amp;gt;  机器码&lt;/p&gt;
 </description>
         </item>
         <item>
