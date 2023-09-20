@@ -209,6 +209,32 @@
         </li>
       </ol>
     </li>
+    <li><a href="#数据结构">数据结构</a>
+      <ol>
+        <li><a href="#数组">数组</a>
+          <ol>
+            <li><a href="#初始化">初始化</a></li>
+            <li><a href="#访问和赋值">访问和赋值</a></li>
+          </ol>
+        </li>
+        <li><a href="#切片">切片</a>
+          <ol>
+            <li><a href="#数据结构-1">数据结构</a></li>
+            <li><a href="#初始化-1">初始化</a></li>
+            <li><a href="#访问元素">访问元素</a></li>
+            <li><a href="#追加和扩容">追加和扩容</a></li>
+            <li><a href="#拷贝切片">拷贝切片</a></li>
+          </ol>
+        </li>
+        <li><a href="#哈希表">哈希表</a>
+          <ol>
+            <li><a href="#设计原理">设计原理</a></li>
+            <li><a href="#数据结构-2">数据结构</a></li>
+            <li><a href="#初始化-2">初始化</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -549,6 +575,759 @@
 <p>汇编器是将汇编语言翻译为机器语言的程序，Go 语言的汇编器是基于 Plan 9 汇编器的输入类型设计的，不过Go 语言对于汇编语言 Plan 9 和汇编器的资料十分缺乏。</p>
 <p>流程为：</p>
 <p>源码  -&gt;  词法解析  -&gt;  语法解析  -&gt;  抽象语法树  -&gt;  类型检验  -&gt;  抽象语法树  -&gt;  中间代码  -&gt;  汇编  -&gt;  机器码</p>
+<h2 id="数据结构">数据结构</h2>
+<h3 id="数组">数组</h3>
+<p>数组是由相同类型元素的集合组成的数据结构，计算机会为数组分配一块连续的内存来保存其中的元素，我们可以利用数组中元素的索引来快速访问特定的元素。</p>
+<p>数组作为一种基本的数据类型，我们通常会从两个维度描述数组，也就是数组中存储的元素类型和数组最大能存储的元素个数。Go语言中 数组在初始化之后大小就无法改变，它的大小在初始化时就已经确定了，存储元素类型相同、但是大小不同的数组类型在Go 语言看来是两个完全不同的类型，只有两个条件都相同才是同一个类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewArray</span><span class="p">(</span><span class="nx">elem</span> <span class="o">*</span><span class="nx">Type</span><span class="p">,</span> <span class="nx">bound</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">Type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">bound</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;NewArray: invalid bound %v&#34;</span><span class="p">,</span> <span class="nx">bound</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">t</span> <span class="o">:=</span> <span class="nf">New</span><span class="p">(</span><span class="nx">TARRAY</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">t</span><span class="p">.</span><span class="nx">Extra</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Array</span><span class="p">{</span><span class="nx">Elem</span><span class="p">:</span> <span class="nx">elem</span><span class="p">,</span> <span class="nx">Bound</span><span class="p">:</span> <span class="nx">bound</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">t</span><span class="p">.</span><span class="nf">SetNotInHeap</span><span class="p">(</span><span class="nx">elem</span><span class="p">.</span><span class="nf">NotInHeap</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>编译期间的数组类型是由上述的 <a class="link" href="https://draveness.me/golang/tree/cmd/compile/internal/types.NewArray"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/types.NewArray</code></a> 函数生成的，该类型包含两个字段，分别是元素类型 <code>Elem</code> 和数组的大小 <code>Bound</code>，这两个字段共同构成了数组类型，而当前数组是否应该在堆栈中初始化也在编译期就确定了。</p>
+<h4 id="初始化">初始化</h4>
+<p>Go语言的数组有两种不同的创建方式，一种是显式的指定数组大小，另一种是使用 <code>[...]T</code> 声明数组，Go语言会在编译期间通过源码自动推导数组的大小。这两种声明方式在运行期间得到的结果是完全相同的，后一种声明方式在编译期间就会被转换成前一种，这就是编译器对数组大小的推导。</p>
+<h5 id="上限推导">上限推导</h5>
+<p>这两种不同的声明方式会导致编译器做出完全不同的处理，如果使用 <code>[10]T</code> 的方式，那么变量的类型在编译进行到类型检查阶段就会被提取出来，随后会调用NewArray函数创建包含数组大小的结构体。</p>
+<p>如果使用 <code>[...]T</code> 的方式声明数组，编译器会在 <a class="link" href="https://draveness.me/golang/tree/cmd/compile/internal/gc.typecheckcomplit"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.typecheckcomplit</code></a> 函数中先对该数组的大小进行推导，其中的 <code>typecheckarraylit </code>函数会通过遍历元素的方式来计算数组中元素的数量，再调用NewArray函数创建数组结构体。</p>
+<p>所以，<code>[...]T{1, 2, 3}</code> 和 <code>[3]T{1, 2, 3}</code> 在运行时是完全等价的，<code>[...]T</code> 这种初始化方式也只是 Go 语言为我们提供的一种语法糖，当我们不想计算数组中的元素个数时可以通过这种方法减少一些工作量。</p>
+<h5 id="语句转换">语句转换</h5>
+<p>对于一个由字面量组成的数组（字面量在数组中指的就是初始化时附带的元素集合，即 <code>[4]int{1,2,3,4}</code>中的[1,2,3,4]就是字面量），根据数组初始化的元素数量的不同，编译器会在负责 初始化 字面量的 <a class="link" href="https://draveness.me/golang/tree/cmd/compile/internal/gc.anylit"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.anylit</code></a> 函数中做两种不同的优化：</p>
+<ol>
+<li>当元素数量小于或者等于 4 个时，会直接将数组中的元素放置在栈上；</li>
+<li>当元素数量大于 4 个时，会将数组中的元素放置到静态区并在运行时取出；</li>
+</ol>
+<p>大于4个放置在静态区是因为 当数组元素较多时，栈上分配可能导致栈溢出等问题，所以会先在静态存储区初始化然后拷贝到栈上，不要纠结初始化并赋值和先初始化后赋值谁快谁慢的问题，在编译阶段会对 <code>[4]int{1,2,3,4}</code>进行展开，变成先声明后一一赋值的形式，日常开发不用考虑初始化时元素个数的情况。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">arr</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="nx">statictmp_0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">statictmp_0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nx">statictmp_0</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="nx">statictmp_0</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="p">=</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl"><span class="nx">statictmp_0</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="p">=</span> <span class="mi">5</span>
+</span></span><span class="line"><span class="cl"><span class="nx">arr</span> <span class="p">=</span> <span class="nx">statictmp_0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="访问和赋值">访问和赋值</h4>
+<p>无论是在栈上还是静态存储区，数组在内存中都是一连串的内存空间，我们通过指向数组开头的指针、元素的数量以及元素类型占的空间大小表示数组。如果我们不知道数组中元素的数量，访问时可能发生索引越界；而如果不知道数组中元素类型的大小，就没办法知道一次应该取出多少字节的数据，无论丢失了哪个信息，我们都没办法知道这片连续的内存空间到底存储了什么数据。</p>
+<p>数组访问越界是非常严重的错误，Go 语言中可以在编译期间的静态类型检查判断数组越界，但是由于切片的大小是动态扩容的，切片就没办法在编译期间判断出是否越界的问题，<a class="link" href="https://draveness.me/golang/tree/cmd/compile/internal/gc.typecheck1"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.typecheck1</code></a> 会验证访问数组的索引。</p>
+<ol>
+<li>访问数组的索引是非整数时，报错 “non-integer array index %v”；</li>
+<li>访问数组的索引是负数时，报错 “invalid array index %v (index must be non-negative)&quot;；</li>
+<li>访问数组的索引越界时，报错 “invalid array index %v (out of bounds for %d-element array)&quot;；</li>
+</ol>
+<p>数组和字符串的一些简单越界错误都会在编译期间发现，但是如果使用变量去访问数组或者字符串时，编译器就无法提前发现错误，我们需要 Go 语言在运行时来阻止不合法的访问。Go 语言运行时在发现数组、切片和字符串的越界操作会由运行时的 <a class="link" href="https://draveness.me/golang/tree/runtime.panicIndex"  target="_blank" rel="noopener"
+    ><code>runtime.panicIndex</code></a> 和 <a class="link" href="https://draveness.me/golang/tree/runtime.goPanicIndex"  target="_blank" rel="noopener"
+    ><code>runtime.goPanicIndex</code></a> 触发程序的运行时错误并导致异常崩溃退出。</p>
+<p>只有当编译器无法对数组下标是否越界作出判断时才会加入 <code>PanicBounds</code> 指令（即<a class="link" href="https://draveness.me/golang/tree/runtime.panicIndex"  target="_blank" rel="noopener"
+    ><code>runtime.panicIndex</code></a> 函数）交给运行时进行判断，在使用常量数组下标时，如果静态类型检查阶段通过就会生成非常简单的中间代码。</p>
+<p>生成ssa.html:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">check</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">outOfRange</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">arr</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">elem</span> <span class="o">:=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">elem</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">$</span> <span class="nx">GOSSAFUNC</span><span class="p">=</span><span class="nx">outOfRange</span> <span class="k">go</span> <span class="nx">build</span> <span class="nx">array</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl"><span class="nx">dumped</span> <span class="nx">SSA</span> <span class="nx">to</span> <span class="p">.</span><span class="o">/</span><span class="nx">ssa</span><span class="p">.</span><span class="nx">html</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>访问arr[2]生成的对应的SSA代码(start 阶段)：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">b1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">v14</span> <span class="p">(</span><span class="err">?</span><span class="p">)</span> <span class="p">=</span> <span class="nx">Const64</span> <span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">v21</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">=</span> <span class="nx">LocalAddr</span> <span class="p">&lt;</span><span class="o">*</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">{</span><span class="nx">arr</span><span class="p">}</span> <span class="nx">v2</span> <span class="nx">v20</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">v22</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">=</span> <span class="nx">PtrIndex</span> <span class="p">&lt;</span><span class="o">*</span><span class="kt">int</span><span class="p">&gt;</span> <span class="nx">v21</span> <span class="nx">v14</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">v23</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">=</span> <span class="nx">Load</span> <span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="nx">v22</span> <span class="nf">v20</span> <span class="p">(</span><span class="nx">elem</span><span class="p">[</span><span class="kt">int</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>v21是寻址获取数组地址，v22是利用 <code>PtrIndex</code>  通过数组地址和下标计算出目标元素的地址，最后使用 <code>Load</code> 操作将指针中的元素加载到内存中</p>
+<p>Go语言对于数组的访问还是有着比较多的检查的，它不仅会在编译期间提前发现一些简单的越界错误并插入用于检测数组上限的 <code>PanicBounds</code> 函数调用，还会在运行期间通过插入的函数来保证数组不会发生越界。</p>
+<p>数组的赋值和更新操作 <code>a[2] = 2</code> 也会生成SSA中间代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">b1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">v21</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">=</span> <span class="nx">LocalAddr</span> <span class="p">&lt;</span><span class="o">*</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">{</span><span class="nx">arr</span><span class="p">}</span> <span class="nx">v2</span> <span class="nx">v19</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">v22</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">=</span> <span class="nx">PtrIndex</span> <span class="p">&lt;</span><span class="o">*</span><span class="kt">int</span><span class="p">&gt;</span> <span class="nx">v21</span> <span class="nx">v13</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">v23</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">=</span> <span class="nx">Store</span> <span class="p">&lt;</span><span class="nx">mem</span><span class="p">&gt;</span> <span class="p">{</span><span class="kt">int</span><span class="p">}</span> <span class="nx">v22</span> <span class="nx">v20</span> <span class="nx">v19</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>赋值的过程中会先确定目标数组的地址，再通过 <code>PtrIndex</code> 获取目标元素的地址，最后使用 <code>Store</code> 指令将数据存入地址中。而如果下标不是常量也会有 <code>PanicBounds</code> 函数调用来避免越界。</p>
+<p>总结一下就是，数组的访问和赋值需要同时依赖编译器和运行时，它的大多数操作在编译期间都会转换成直接读写内存，并在中间代码生成阶段，如果在编译期间无法判断数组是否越界（即下标非常量），编译器还会插入运行时方法 <a class="link" href="https://draveness.me/golang/tree/runtime.panicIndex"  target="_blank" rel="noopener"
+    ><code>runtime.panicIndex</code></a> 调用防止发生越界错误。</p>
+<h3 id="切片">切片</h3>
+<p>数组在Go 语言中没有那么常用，更常用的数据结构是切片，即动态数组，其长度并不固定，可以随时向切片中追加元素，它会在容量不足时自动扩容。</p>
+<h4 id="数据结构-1">数据结构</h4>
+<p>编译期间的切片是 <a class="link" href="https://github.com/golang/go/blob/3b2a578166bdedd94110698c971ba8990771eb89/src/cmd/compile/internal/types/type.go#L346"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/types.Slice</code></a> 类型的，但是在运行时切片是由 <a class="link" href="https://github.com/golang/go/blob/41d8e61a6b9d8f9db912626eb2bbc535e929fefc/src/reflect/value.go#L1994"  target="_blank" rel="noopener"
+    ><code>reflect.SliceHeader</code></a> 结构体表示，其中:</p>
+<ul>
+<li><code>Data</code> 是指向底层数组的指针;</li>
+<li><code>Len</code> 是当前切片的长度；</li>
+<li><code>Cap</code> 是当前切片的容量，即 <code>Data</code> 数组的大小：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">SliceHeader</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Data</span> <span class="kt">uintptr</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Len</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Cap</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Data 是一片连续的内存空间，这片内存空间可以用于存储切片中的全部元素，元素在底层存储时都是连续的，因此可以将切片理解成一片连续的内存空间加上长度与容量的标识。</p>
+<p>切片与数组的关系非常密切，切片引入了一个抽象层，提供了对底层数组中部分连续片段的引用，而作为数组的引用，我们可以在运行期间修改它的长度和范围。当切片底层的数组长度不足以存放新增元素时就会触发扩容，扩容会导致其指向另一个新的底层数组，不过在上层看来切片是没有变化的，上层只需要与切片打交道，不需要关心底层数组的变化。</p>
+<p>数组的内存布局在编译时就已经确定（长度固定），在运行时可以直接读写内存的特定位置，而切片是在运行时确定结构的，因为切片的长度可能会变化，依赖运行时来支持动态调整大小等操作。</p>
+<h4 id="初始化-1">初始化</h4>
+<p>Go 语言中包含三种初始化切片的方式：</p>
+<ol>
+<li>通过下标的方式获得数组或者切片的一部分；</li>
+<li>使用字面量初始化新的切片；</li>
+<li>使用关键字 <code>make</code> 创建切片：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="nx">or</span> <span class="nx">slice</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">slice</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">slice</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="使用下标">使用下标</h5>
+<p>使用下标创建切片是最原始也是最接近汇编语言的方式，它是所有方法中最为底层的一种，编译器会将 <code>arr[0:3]</code> 或者 <code>slice[0:3]</code> 等语句转换成 <code>OpSliceMake</code> 操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">opslicemake</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">newSlice</span><span class="p">()</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">arr</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">slice</span> <span class="o">:=</span> <span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">slice</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// GOSSAFUNC=newSlice go build arr1.go
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过 <code>GOSSAFUNC</code> 变量编译上述代码可以得到一系列 SSA 中间代码，其中 <code>slice := arr[0:1]</code> 语句在 “decompose builtin” 阶段对应的代码如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nf">v9</span> <span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="p">=</span> <span class="nx">SelectN</span> <span class="p">&lt;</span><span class="o">*</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="nf">v7</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">arr</span><span class="p">[</span><span class="o">*</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">],</span> <span class="nx">slice</span><span class="p">.</span><span class="nx">ptr</span><span class="p">[</span><span class="o">*</span><span class="kt">int</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="nf">v12</span> <span class="p">(</span><span class="err">?</span><span class="p">)</span> <span class="p">=</span> <span class="nx">Const64</span> <span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">(</span><span class="nx">slice</span><span class="p">.</span><span class="nx">len</span><span class="p">[</span><span class="kt">int</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nf">v15</span> <span class="p">(</span><span class="err">?</span><span class="p">)</span> <span class="p">=</span> <span class="nx">Const64</span> <span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="p">(</span><span class="nx">slice</span><span class="p">.</span><span class="nx">cap</span><span class="p">[</span><span class="kt">int</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">name</span> <span class="o">&amp;</span><span class="nx">arr</span><span class="p">[</span><span class="o">*</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">]:</span> <span class="nx">v9</span>
+</span></span><span class="line"><span class="cl"><span class="nx">name</span> <span class="nx">slice</span><span class="p">.</span><span class="nx">ptr</span><span class="p">[</span><span class="o">*</span><span class="kt">int</span><span class="p">]:</span> <span class="nx">v9</span>
+</span></span><span class="line"><span class="cl"><span class="nx">name</span> <span class="nx">slice</span><span class="p">.</span><span class="nx">len</span><span class="p">[</span><span class="kt">int</span><span class="p">]:</span> <span class="nx">v12</span>
+</span></span><span class="line"><span class="cl"><span class="nx">name</span> <span class="nx">slice</span><span class="p">.</span><span class="nx">cap</span><span class="p">[</span><span class="kt">int</span><span class="p">]:</span> <span class="nx">v15</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>SliceMake</code> 操作会接受四个参数创建新的切片，元素类型、数组指针、切片大小和容量，从 <code>ssa.html</code> 中可以发现它的ptr指针指向的依然是原arr数组，而不是重新创建一个新的底层数组，<strong>因此使用下标来初始化切片不会拷贝原数组或者原切片中的数据，它只会创建一个指向原数组的切片结构体，因此修改新切片的数据也会修改到原切片（两者指针指向同一片内存）。</strong></p>
+<h5 id="字面量">字面量</h5>
+<p>当我们使用字面量 <code>[]int{1, 2, 3}</code> 创建新的切片时，<a class="link" href="https://github.com/golang/go/blob/3b2a578166bdedd94110698c971ba8990771eb89/src/cmd/compile/internal/gc/sinit.go#L590"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.slicelit</code></a> 函数会在编译期间将它展开成如下所示的代码片段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 声明底层数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">vstat</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 赋值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">vstat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">vstat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nx">vstat</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 创建底层数组指针
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">vauto</span> <span class="o">*</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span> <span class="p">=</span> <span class="nb">new</span><span class="p">([</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 指针指向底层数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">*</span><span class="nx">vauto</span> <span class="p">=</span> <span class="nx">vstat</span>
+</span></span><span class="line"><span class="cl"><span class="nx">slice</span> <span class="o">:=</span> <span class="nx">vauto</span><span class="p">[:]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>根据切片中的元素数量对底层数组的大小进行推断并创建一个数组；</li>
+<li>将这些字面量元素存储到初始化的数组中；</li>
+<li>创建一个同样指向 <code>[3]int</code> 类型的数组指针；</li>
+<li>将静态存储区的数组 <code>vstat</code> 赋值给 <code>vauto</code> 指针所在的地址；</li>
+<li>通过 <code>[:]</code> 操作获取一个底层使用 <code>vauto</code> 的切片；</li>
+</ol>
+<p>第 5 步中的 <code>[:]</code> 就是使用下标创建切片的方法，从这一点我们也能看出 <code>[:]</code> 操作是创建切片最底层的一种方法。</p>
+<h5 id="关键字">关键字</h5>
+<p>如果使用字面量的方式创建切片，大部分的工作都会在编译期间完成。但是当我们使用 make 关键字来创建切片时，很多工作都需要运行时的参与；调用方必须向 make 函数传入切片的大小以及可选的容量，类型检查阶段时会校验入参（判断len必须，且cap&gt;=len）并将 <code>OMAKE</code> 节点转换成 <code>OMAKESLICE</code>，然后在中间代码生成阶段会依据两个条件来转换 <code>OMAKESLICE</code> 类型的节点：</p>
+<ol>
+<li>切片的大小和容量是否足够小；</li>
+<li>切片是否发生了内存逃逸；</li>
+</ol>
+<p>当切片发生内存逃逸或者非常大时，切片的初始化会延后至运行时的<a class="link" href="https://github.com/golang/go/blob/3b2a578166bdedd94110698c971ba8990771eb89/src/runtime/slice.go#L83"  target="_blank" rel="noopener"
+    ><code>runtime.makeslice</code></a> 在堆上初始化切片（即汇编语言代码中不会有初始化切片的代码，而是一个调用 <code> runtime.makeslice</code> 的函数），如果切片不会发生内存逃逸且非常小的时候，它会在编译阶段直接转换初始化切片的代码。例如  <code>make([]int, 3, 4)</code> 会被直接转换成如下所示的代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">arr</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="nx">n</span> <span class="o">:=</span> <span class="nx">arr</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述代码会初始化数组并通过下标 <code>[:3]</code> 得到数组对应的切片，这两部分操作都会在编译阶段完成（只是生成代码，内存分配肯定还是在程序运行时，但是不会再调用 <code>runtime.makeslice</code>初始化切片），而这种方式初始化的切片会放在栈上，其底层数组会根据数组的规则放在栈或者静态存储区中。</p>
+<p>运行时函数 <code>runtime.makeslice</code>的实现很简单：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">makeslice</span><span class="p">(</span><span class="nx">et</span> <span class="o">*</span><span class="nx">_type</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">mem</span><span class="p">,</span> <span class="nx">overflow</span> <span class="o">:=</span> <span class="nx">math</span><span class="p">.</span><span class="nf">MulUintptr</span><span class="p">(</span><span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">cap</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">overflow</span> <span class="o">||</span> <span class="nx">mem</span> <span class="p">&gt;</span> <span class="nx">maxAlloc</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&gt;</span> <span class="nx">cap</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">mem</span><span class="p">,</span> <span class="nx">overflow</span> <span class="o">:=</span> <span class="nx">math</span><span class="p">.</span><span class="nf">MulUintptr</span><span class="p">(</span><span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">len</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">overflow</span> <span class="o">||</span> <span class="nx">mem</span> <span class="p">&gt;</span> <span class="nx">maxAlloc</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">panicmakeslicelen</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">panicmakeslicecap</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">mallocgc</span><span class="p">(</span><span class="nx">mem</span><span class="p">,</span> <span class="nx">et</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述函数的主要工作是计算切片需要占用的内存空间并在堆上申请一片连续的内存供切片使用。它的计算方式是：</p>
+<p><em><strong>内存空间 = 切片中单个元素大小 * 切片容量</strong></em></p>
+<p>当然实际情况中还需要考虑内存对齐、垃圾回收的情况，最终切片申请的内存不一样是公式计算出来的内存，但是肯定会大于等于公式值。</p>
+<p>编译期间可以检查出很多错误，不过有些问题在编译器是检查不出来的。在运行时创建切片的过程中如果发生了以下错误会直接触发运行时错误并崩溃：</p>
+<ol>
+<li>内存空间的大小发生了溢出；</li>
+<li>申请的内存大于最大可分配的内存；</li>
+<li>传入的长度小于 0 或者长度大于容量（传入的len是变量时，编译阶段无法判断是否小于cap）；</li>
+</ol>
+<p><a class="link" href="https://draveness.me/golang/tree/runtime.makeslice"  target="_blank" rel="noopener"
+    ><code>runtime.makeslice</code></a> 在最后调用的 <a class="link" href="https://draveness.me/golang/tree/runtime.mallocgc"  target="_blank" rel="noopener"
+    ><code>runtime.mallocgc</code></a> 是用于申请内存的函数，这个函数的实现比较复杂，如果遇到了比较小的对象会直接初始化在 Go 语言调度器里面的 P 结构中（不只是针对于切片），而大于 32KB 的对象会在堆上初始化。在Go语言的调度器中，对于较小的对象，为了减少内存分配的开销，会将这些对象直接初始化在P的本地内存池中，而不是在堆上分配。这个过程称为&quot;P本地对象缓存&quot;，而对于大于32KB的对象，它们往往会直接在堆上进行初始化，因为对于较大的对象，为它们分配独立的堆内存比较合理，这可以更好地管理内存碎片和利用堆的垃圾回收机制。</p>
+<p>总结一下切片的分配逻辑：</p>
+<p><strong>如果切片容量非常小且没有发生内存逃逸时，它会存储在栈中，其底层数组会根据数组的规则放在栈或者静态存储区中；如果切片容量大或者发生了内存逃逸，此时会判断其申请的内存是否大于32KB，大于则会分配在堆上，小于则会分配到P的本地内存池中。当然这只是简单的理解，实际上还需要考虑到内存管理机制等情况。</strong></p>
+<p>使用下标方式创建切片，其底层数组由开发者自己创建；而字面量和关键字的方式创建底层数组都是由编译期或运行时声明创建。</p>
+<h4 id="访问元素">访问元素</h4>
+<p>使用 <code>len</code> 和 <code>cap</code> 获取长度或者容量是切片最常见的操作，编译器会将它们看成两种特殊操作，即 <code>OLEN</code> 和 <code>OCAP</code>，<a class="link" href="https://github.com/golang/go/blob/41d8e61a6b9d8f9db912626eb2bbc535e929fefc/src/cmd/compile/internal/gc/ssa.go#L2054"  target="_blank" rel="noopener"
+    ><code>gc.state.expr</code></a> 函数会在 <code>SSA中间代码生成阶段</code> 将它们分别转换成 <code>OpSliceLen </code>和 <code>OpSliceCap</code></p>
+<p>访问切片结构中的字段可能会触发 “decompose builtin” 阶段的优化，<code>len(slice)</code> 或者 <code>cap(slice)</code> 在某些情况下会直接替换成切片的长度或者容量 （<code>v13 (?) = Const64 &lt;int&gt;`` [5]</code>），不需要在运行时获取。</p>
+<p>除了获取切片的长度和容量之外，访问切片中元素使用的 <code>OINDEX</code> 操作也会在中间代码生成期间转换成对地址的直接访问。除此之外，编译期间也会将包含 <code>range</code> 关键字的遍历转换成形式更简单的循环</p>
+<p><strong>测试发现直接替换成切片长度或容量以及访问元素只会出现在切片定义在函数内部且它没有发生内存逃逸的情况，如果发生了内存逃逸或者直接定义在外部，编译期是无法判断它的长度容量以及是否会扩容导致切片移动到其他内存区的（其他函数也可以使用或扩容它）</strong></p>
+<h4 id="追加和扩容">追加和扩容</h4>
+<p>使用 <code>append</code> 关键字向切片中追加元素也是常见的切片操作，中间代码生成阶段的<a class="link" href="https://github.com/golang/go/blob/ac0ba6707c1655ea4316b41d06571a0303cc60eb/src/cmd/compile/internal/gc/ssa.go#L2841"  target="_blank" rel="noopener"
+    ><code>gc.state.append</code></a> 方法会根据返回值是否会覆盖原变量来选择进入两种流程</p>
+<p>如果 <code>append</code> 返回的新切片不需要赋值回原有的变量（即没有变量接收append后新切片的指针），就会进入如下的处理流程：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// append(slice, 1, 2, 3)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="o">:=</span> <span class="nx">slice</span>
+</span></span><span class="line"><span class="cl"><span class="nx">newlen</span> <span class="o">:=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">newlen</span> <span class="p">&gt;</span> <span class="nx">cap</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="p">=</span> <span class="nf">growslice</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nx">newlen</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">newlen</span> <span class="p">=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="p">)</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="p">=</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span> <span class="nf">makeslice</span><span class="p">(</span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">newlen</span><span class="p">,</span> <span class="nx">cap</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>首先会解构切片结构体获取它的数组指针、大小和容量，如果在追加元素后切片的大小大于容量，那么就会调用 <code>runtime.growslice </code> 对切片进行扩容并将旧的元素依次加入切片。</p>
+<p>如果使用 <code>slice = append(slice, 1, 2, 3)</code> 语句，那么 <code>append</code> 后的新切片会覆盖原切片变量，这时 <code>gc.state.append</code> 方法会使用另一种方式展开关键字：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// slice = append(slice, 1, 2, 3)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">a</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">slice</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="o">:=</span> <span class="nx">slice</span>
+</span></span><span class="line"><span class="cl"><span class="nx">newlen</span> <span class="o">:=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">uint</span><span class="p">(</span><span class="nx">newlen</span><span class="p">)</span> <span class="p">&gt;</span> <span class="nb">uint</span><span class="p">(</span><span class="nx">cap</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">newptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">newcap</span> <span class="p">=</span> <span class="nf">growslice</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nx">newlen</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">vardef</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">   <span class="o">*</span><span class="nx">a</span><span class="p">.</span><span class="nx">cap</span> <span class="p">=</span> <span class="nx">newcap</span>
+</span></span><span class="line"><span class="cl">   <span class="o">*</span><span class="nx">a</span><span class="p">.</span><span class="nx">ptr</span> <span class="p">=</span> <span class="nx">newptr</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">newlen</span> <span class="p">=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="nx">a</span><span class="p">.</span><span class="nx">len</span> <span class="p">=</span> <span class="nx">newlen</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="p">)</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="p">=</span> <span class="mi">3</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>它与前面逻辑最大的区别在于得到的新切片是否会赋值给原变量，首先会定义一个 a 临时变量，它指向的就是原切片，然后获取原切片的数组指针、大小和容量，如果扩容后的大小大于原cap就会发生扩容并更新原切片的cap和指针为新切片，无论是否发生扩容都会更新len和元素数据。</p>
+<p>如果选择覆盖原有变量就不需要担心切片发生拷贝影响性能，编译期对这种常见情况进行了优化。</p>
+<p>当切片的容量不足时，我们会调用 <code>runtime.growslice</code> 函数为切片扩容，扩容是为切片分配新的内存空间并拷贝原切片中元素的过程，在分配内存空间之前需要先缺点新的切片容量，运行时根据切片的当前容量选择不同的策略进行扩容 (go 1.18版本及以后更新的扩容机制)：</p>
+<ol>
+<li>如果当前容量扩大两倍后依然小于期望容量就会直接使用期望容量；</li>
+<li>如果当前切片的长度小于 256 就会将容量翻倍；</li>
+<li>如果当前切片的长度大于 256 就会每次以 <code>newcap += (newcap + 3*256) / 4</code> 的方式缓慢增长，直到新容量大于期望容量；之前版本中超过了阈值之后，基本为恒定的1.25倍增长，而现在超过了阈值之后，增长比例是会动态调整的，增长比例会从2倍逐渐向1.25倍靠拢。</li>
+</ol>
+<p>但是这仅仅会确定切片的大致容量，下面还需要根据切片中的元素大小进行内存对齐，<a class="link" href="https://github.com/golang/go/blob/ac0ba6707c1655ea4316b41d06571a0303cc60eb/src/runtime/msize.go#L13"  target="_blank" rel="noopener"
+    ><code>runtime.roundupsize</code></a> 函数会将<strong>待申请的内存向上取整</strong>，取整时会使用 <a class="link" href="https://github.com/golang/go/blob/b634f5d97a6e65f19057c00ed2095a1a872c7fa8/src/runtime/sizeclasses.go#L84"  target="_blank" rel="noopener"
+    ><code>runtime.class_to_size</code></a> 数组()，使用该数组中的整数可以提高内存的分配效率并减少内存碎片。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">var class_to_size = [_NumSizeClasses]uint16{0, 8, 16, 24, 32, 48, 64, ...}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们申请内存时，内存管理模块会根据这个数组帮我们匹配到足够大且最接近的规格，比如切片要申请40字节，但是没有这个规模的，就会申请到48字节。</p>
+<p>如果计算新容量时发生了内存溢出或者请求的内存超过了上限就会发生panic 退出程序。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">arr</span> <span class="p">[]</span><span class="kt">int64</span>
+</span></span><span class="line"><span class="cl"><span class="nx">arr</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当我们执行上述代码时，会触发 <code>runtime.growslice</code> 函数扩容 <code>arr</code> 切片并传入期望的新容量 5，int64占8字节，所以这时期望分配的内存大小为 40 字节；由于没有这个字节规模，考虑到内存对齐，运行时会调用 <a class="link" href="https://github.com/golang/go/blob/ac0ba6707c1655ea4316b41d06571a0303cc60eb/src/runtime/msize.go#L13"  target="_blank" rel="noopener"
+    ><code>runtime.roundupsize</code></a>向上取整内存的大小到 48 字节，所以新切片的容量为 48 / 8 = 6。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">    <span class="c1">// a 底层是一个slice结构体，此时len=4 cap=8，len和cap只会在make和append时发生修改
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">a</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// b 是另一个slice结构体，此时len=7 cap=8，由于没有超过cap，不会扩容，ab指向的依然是相同的底层数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">b</span> <span class="o">:=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// a根据a扩容，由于a记录的len为4，因此会从第5个数扩容，那么3就会变成4，而不是从第8位开始
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 源码append函数是根据SliceHeader结构的len来进行扩容赋值的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//  newlen = len + 3
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// *a.len = newlen
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// *(ptr+len) = 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// *(ptr+len+1) = 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// *(ptr+len+2) = 3
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="拷贝切片">拷贝切片</h4>
+<p>当我们使用 <code>copy(a, b)</code> 的形式对切片进行拷贝时，编译期间的 <a class="link" href="https://github.com/golang/go/blob/ac0ba6707c1655ea4316b41d06571a0303cc60eb/src/cmd/compile/internal/gc/walk.go#L3093"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.copyany</code></a> 也会分两种情况处理拷贝操作，如果当前 <code>copy</code> 不是在运行时调用的，<code>copy(a, b)</code> 会被直接转换成下面的代码 (常用的拷贝情况)：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">n</span> <span class="p">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">n</span> <span class="p">=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">a</span><span class="p">.</span><span class="nx">ptr</span> <span class="o">!=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">ptr</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">memmove</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">n</span><span class="o">*</span><span class="nf">sizeof</span><span class="p">(</span><span class="nf">elem</span><span class="p">(</span><span class="nx">a</span><span class="p">)))</span> 
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述代码中的 <code>runtime.memmove</code> 会负责拷贝内存。而如果拷贝是在运行时发生的，例如：<code>go copy(a, b)</code> (根据go关键字的特性可以知道，copy函数会先获取ab的值，执行到时才会调用具体函数)，编译器会使用 <code>runtime.slicecopy </code>替换运行期间调用的 <code>copy</code>。</p>
+<p>无论是在编译期间拷贝还是运行时拷贝，两种拷贝方式都会通过 <code>runtime.memmove</code> 函数将整块内存的内容拷贝到目标的内存区域中。相比于依次拷贝元素，<code>runtime.memmove</code> 能够提供更好的性能。不过需要注意的是，整块拷贝内存仍然会占用非常多的资源，对大切片进行拷贝操作时一定要注意对性能的影响。</p>
+<p>扩容切片时如果容量不够也会使用 <code>runtime.memmove</code> 将原切片拷贝至扩容后的新切片，然后再依次加入要新增的元素。</p>
+<p>切片的很多功能都是在运行时执行的，无论是初始化切片，还是对切片进行追加和扩容都是需要运行时的支持的，因此在遇见大切片扩容或者拷贝时就可能会发生大规模的内存拷贝，一定要减少类似操作（如提前设置容量避免扩容时容量不够发生切片拷贝），避免影响程序性能。</p>
+<h3 id="哈希表">哈希表</h3>
+<p>哈希是除了数组之外最常见的数据结构，它表示的是键值对之间的映射关系。它是计算机科学中最重要的数据结构之一，这不仅因为它 O(1) 的读写性能非常优秀，还因为它提供了键值之间的映射。想要实现一个性能优异的哈希表，需要注意两个关键点 —— 哈希函数和冲突解决方法。</p>
+<h4 id="设计原理">设计原理</h4>
+<h5 id="哈希函数">哈希函数</h5>
+<p>实现哈希表的关键点在于哈希函数的选择，哈希函数的选择在很大程度上能够决定哈希表的读写性能。在理想情况下，哈希函数应该能够将不同键映射到不同的索引上，这要求 <strong>哈希函数的输出范围（取)大于输入范围（存)</strong> ，但是由于键的数量会远远大于能映射的范围，所以在实际使用时，这个理想的效果是不可能实现的。</p>
+<p>比较实际的方式是让哈希函数的结果能够尽可能的均匀分布，然后通过工程上的手段解决哈希碰撞的问题。哈希函数映射的结果一定要尽可能均匀，结果不均匀的哈希函数会带来更多的哈希冲突以及更差的读写性能。</p>
+<p>如果使用结果分布较为均匀的哈希函数，那么哈希的增删改查的时间复杂度为 <strong>O</strong>(<strong>1</strong>)；但是如果哈希函数的结果分布不均匀，那么所有操作的时间复杂度可能会达到 <strong>O</strong>(<strong>n</strong>) （查询任何一个值都会遍历一遍map)，由此看来，使用好的哈希函数是至关重要的。</p>
+<h5 id="解决冲突">解决冲突</h5>
+<p>在通常情况下，哈希函数输入的范围一定会远远大于输出的范围，所以在使用哈希表时一定会遇到冲突，哪怕我们使用了完美的哈希函数，当输入的键足够多也会产生冲突。然而多数的哈希函数都是不够完美的，所以仍然存在发生哈希碰撞的可能，这时就需要一些方法来解决哈希碰撞的问题，常见方法的就是开放寻址法和拉链法。</p>
+<blockquote>
+<p>需要注意的是，这里提到的哈希碰撞不一定是多个键对应的哈希完全相等，可能是多个哈希的部分相等，例如：两个键对应哈希的前四个字节相同。</p>
+</blockquote>
+<h6 id="开放寻址法">开放寻址法</h6>
+<p>这种方法的核心思想是 <strong>依次 探测和比较 底层数组中的元素 来判断目标键值对是否存在于哈希表中</strong> ，如果我们使用开放寻址法来实现哈希表，那么实现哈希表底层的数据结构就是数组，不过因为数组的长度有限，向哈希表写入 [ author, draven] 这个键值对时会从如下的索引开始遍历：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">index</span> <span class="o">:=</span> <span class="nf">hash</span><span class="p">(</span><span class="s">&#34;author&#34;</span><span class="p">)</span> <span class="o">%</span> <span class="nx">array</span><span class="p">.</span><span class="nx">len</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当我们向当前哈希表写入新的数据时，如果发生了冲突，就会将键值对写入到下一个内存为空的位置。如果向下遍历时发现这个key存在就会修改其值。当我们读取数据时，就会先获取键的哈希并取模，如果获取到的索引对应的key与比对的key不相等，就会继续查找后面的元素，直到找到目标元素或者内存为空。</p>
+<p>开放寻址法中对性能影响最大的是 负<strong>载因子</strong> ，它是数组中元素的数量与数组大小的比值。随着负载因子的增加，线性探测的平均用时就会逐渐增加（碰撞几率增加导致每次查询需要向后移动查询的次数增加)，这会影响哈希表的读写性能。当负载率超过 70% 之后，哈希表的性能就会急剧下降，而一旦负载率达到 100%，整个哈希表就会完全失效，这时查找和插入任意元素的时间复杂度都是 <strong>O</strong>(<strong>n</strong>) ，这时需要遍历数组中的全部元素，所以在实现哈希表时一定要关注负载因子的变化。</p>
+<h6 id="拉链法">拉链法</h6>
+<p>与开放寻址法相比，拉链法才是哈希表最常见的实现方法，大多数编程语言都是用拉链法来实现哈希表，它的实现比较开放寻址法稍微复杂一些，但是平均查找的长度也比较短，各个用于存储节点的内存都是动态申请的，可以节省比较多的存储空间（拉链的形式，发生冲突时才会申请内存存储冲突kv)。</p>
+<p>实现拉链法一般会使用数组加上链表，不过一些编程语言会在拉链法的哈希中引入红黑树以优化性能，拉链法会使用链表数组作为哈希底层的数据结构，我们可以将它看成可以扩展的二维数组：
+<img src="/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-2.png"
+	width="1200"
+	height="630"
+	srcset="/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-2_hu317b262f90599d075b7c6aae3bb455b6_34692_480x0_resize_box_3.png 480w, /p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-2_hu317b262f90599d075b7c6aae3bb455b6_34692_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image2.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="457px"
+	
+></p>
+<p>如上图所示，当我们需要将一个键值对 (Key6, Value6) 写入哈希表时，键值对中的键 Key6 都会先经过一个哈希函数，哈希函数返回的哈希会帮助我们选择一个桶，和开放寻址法一样，选择桶的方式是直接对哈希返回的结果取模：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">index</span> <span class="o">:=</span> <span class="nf">hash</span><span class="p">(</span><span class="s">&#34;Key6&#34;</span><span class="p">)</span> <span class="o">%</span> <span class="nx">array</span><span class="p">.</span><span class="nx">len</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>选择了 2 号桶后就可以遍历当前桶中的链表了，在遍历链表的过程中会遇到以下两种情况：</p>
+<ol>
+<li>找到键相同的键值对 — 更新键对应的值；</li>
+<li>没有找到键相同的键值对 — 在链表的末尾追加新的键值对；</li>
+</ol>
+<p>如果要在哈希表中获取某个键对应的值，首先取模命中相应的桶，然后依次遍历桶中的链表，遍历到相同key则返回值，如果遍历到链表的末尾也没有找到期望的键，就表示哈希表中没有该键对应的值。</p>
+<p>在一个性能比较好的哈希表中，每一个桶中都应该有 0 ～ 1 个元素，有时会有 2 ~ 3 个，很少会超过这个数量。计算哈希、定位桶和遍历链表三个过程是哈希表读写操作的主要开销，使用拉链法实现的哈希也有装载因子这一概念：</p>
+<blockquote>
+<p>装载因子 <strong>:=元素数量</strong> ÷桶数量</p>
+</blockquote>
+<p>与开放地址法一样，拉链法的装载因子越大，哈希的读写性能就越差。在一般情况下使用拉链法的哈希表装载因子都不会超过 1，当哈希表的装载因子较大时会触发哈希的扩容，创建更多的桶来存储哈希中的元素，保证性能不会出现严重的下降。如果有 1000 个桶的哈希表存储了 10000 个键值对，它的性能是保存 1000 个键值对的 1/10，但是仍然比在链表中直接读写好 1000 倍 (从1000个桶里面读取10000个数据，最差读取一个数据需要链表查10次，而直接从链表中读取数据，最差需要链表查10000次，每个数据都要查询，因此比链表直接读写好1000 倍)。</p>
+<h4 id="数据结构-2">数据结构</h4>
+<p>Go语言运行时同时使用了</p>
+<p>Go 语言运行时同时使用了多个数据结构组合来表示哈希表，其中 <a class="link" href="https://github.com/golang/go/blob/41d8e61a6b9d8f9db912626eb2bbc535e929fefc/src/runtime/map.go#L115"  target="_blank" rel="noopener"
+    ><code>runtime.hmap</code></a> 是最核心的结构体：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">hmap</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">count</span>     <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">flags</span>     <span class="kt">uint8</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">B</span>         <span class="kt">uint8</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">noverflow</span> <span class="kt">uint16</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">hash0</span>     <span class="kt">uint32</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">buckets</span>    <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">oldbuckets</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">nevacuate</span>  <span class="kt">uintptr</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">extra</span> <span class="o">*</span><span class="nx">mapextra</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">mapextra</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">overflow</span>    <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">oldoverflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">nextOverflow</span> <span class="o">*</span><span class="nx">bmap</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li><code>count</code> 表示当前哈希表中的元素数量；</li>
+<li><code>B</code> 表示当前哈希表持有的 <code>buckets</code> 数量，但是因为哈希表中桶的数量都 2 的倍数，所以该字段会存储对数，也就是 <code>len(buckets) == 2^B</code>；</li>
+<li><code>hash0</code> 是哈希的种子，它能为哈希函数的结果引入随机性，这个值在创建哈希表时确定，并在调用哈希函数时作为参数传入；</li>
+<li><code>oldbuckets</code> 是哈希在扩容时用于保存之前 <code>buckets</code> 的字段；</li>
+<li><code>noverflow</code> 为map中溢出桶的数量。当溢出桶太多时，map 会进行 same-size map growth，其实质是避免桶过大导致内存泄露。<code>extra</code> 存储map中的溢出桶；</li>
+</ol>
+<p>哈希表 <code>runtime.hmap</code> 的桶是 <code>runtime.bmap</code>。每一个 <code>runtime.bmap</code> 都能存储8个键值对，当哈希表中存储的数据过多时，单个桶已经装满就会使用 <code>extra.nextOverflow</code> 中的桶来存储溢出的数据。</p>
+<p>上面两种不同的桶在内存中是连续存储的（即底层是一个数组，正常桶集和排列，然后溢出桶集和排列），它们分别被称为正常桶和溢出桶，溢出桶是在Go语言还使用C语言实现时使用的设计，由于它能够减少扩容的频率所以一直使用至今。</p>
+<p><code>runtime.bmap</code> 在go源代码中的定义只包含一个简单的 <code>tophash</code> 字段，它存储了键的哈希的高8位，通过比较不同键的哈希的高8位可以减少访问键值对次数以提高性能（从判断键整体的不同变为了先判断高8位，符合再继续判断）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">bmap</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">tophash</span> <span class="p">[</span><span class="nx">bucketCnt</span><span class="p">]</span><span class="kt">uint8</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>随着哈希表存储的数据逐渐增多，我们会扩容哈希表或者使用溢出桶来存储溢出的数据，不会让单个桶中的数据超过8个，不过溢出桶只是临时的解决方案，创建过多的溢出桶最终也会导致哈希的扩容（溢出桶以链表的形式存在，不扩容的话，查询的速率就会变的非常慢）。</p>
+<h4 id="初始化-2">初始化</h4>
+<h5 id="字面量-1">字面量</h5>
+<p>现代的编程语言基本都支持使用字面量的方式来初始化哈希，一般都会使用 <code>key: value</code> 的语法来表示键值对，Go 语言中也不例外：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">hash</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;1&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;3&#34;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;5&#34;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们需要在初始化哈希时声明键值对的类型，这种使用字面量初始化的方式最终都会通过 <a class="link" href="https://github.com/golang/go/blob/ac0ba6707c1655ea4316b41d06571a0303cc60eb/src/cmd/compile/internal/gc/sinit.go#L753"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.maplit</code></a> 初始化，我们来分析一下该函数初始化哈希的过程：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">maplit</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">m</span> <span class="o">*</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">init</span> <span class="o">*</span><span class="nx">Nodes</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">a</span> <span class="o">:=</span> <span class="nf">nod</span><span class="p">(</span><span class="nx">OMAKE</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">a</span><span class="p">.</span><span class="nx">Esc</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">Esc</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">a</span><span class="p">.</span><span class="nx">List</span><span class="p">.</span><span class="nf">Set2</span><span class="p">(</span><span class="nf">typenod</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">Type</span><span class="p">),</span> <span class="nf">nodintconst</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">List</span><span class="p">.</span><span class="nf">Len</span><span class="p">())))</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">litas</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">init</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">entries</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">List</span><span class="p">.</span><span class="nf">Slice</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">entries</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">25</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// Build list of var[c] = expr.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// Use temporaries so that mapassign1 can have addressable key, elem.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当哈希表中的元素数量少于或者等于25个时，编译器会将字面量初始化的结构体转换成以下的代码，将所有的键值对一次性加入到哈希表中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">hash</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="s">&#34;1&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="s">&#34;3&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="s">&#34;5&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">6</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这种初始化字面量的方式与数组和切片几乎完全相同，由此看来集和类型的初始化在Go 语言中有着相同的处理逻辑。</p>
+<p>但是一旦哈希表中的元素数量超过25个，编译器会创建两个数组分别存储键和值，这些键值对会通过如下所示的for循环加入哈希：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">hash</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">26</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">vstatk</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;1&#34;</span><span class="p">,</span> <span class="s">&#34;2&#34;</span><span class="p">,</span> <span class="s">&#34;3&#34;</span><span class="p">,</span> <span class="o">...</span> <span class="err">，</span> <span class="s">&#34;26&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">vstatv</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">...</span> <span class="p">,</span> <span class="mi">26</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">vstak</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">hash</span><span class="p">[</span><span class="nx">vstatk</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="p">=</span> <span class="nx">vstatv</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里的 <code>vstatk</code> 和 <code>vstatv</code> 还会根据切片字面量的初始化被编辑器继续展开。无论哈希使用哪种方法，使用字面量初始化的过程都会使用Go 语言中的关键字 <code>make</code> 来创建新的哈希并通过最原始的 <code>[ ]</code> 语法向哈希表中追加元素。</p>
 
 </section>
 
