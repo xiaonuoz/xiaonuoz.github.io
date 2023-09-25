@@ -231,6 +231,7 @@
             <li><a href="#设计原理">设计原理</a></li>
             <li><a href="#数据结构-2">数据结构</a></li>
             <li><a href="#初始化-2">初始化</a></li>
+            <li><a href="#读写操作">读写操作</a></li>
           </ol>
         </li>
       </ol>
@@ -1472,8 +1473,336 @@
 <li>当桶的数量小于 2的四次方时( b =4)，由于数据较少、使用溢出桶的可能性较低，会省略创建溢出桶的过程以减少额外开销；</li>
 <li>当桶的数量大于等于 2的四次方时，会额外创建 2的 (b-4) 个溢出桶；</li>
 </ul>
-<p>即无论b是否大于4都会创建普通桶，但是如果b 大于等于4则会额外创建多余的溢出桶。正常桶和溢出桶在内存中的空间是连续的，只是被 <code>runtime.hmap</code> 中的不同字段引用，当溢出桶数量较多且为空的溢出桶不多时则会通过 <code>runtime.newobject</code> 来创建新的溢出桶。</p>
-
+<p>即无论b是否大于4都会创建正常桶，但是如果b 大于等于4则会额外创建多余的溢出桶。正常桶和溢出桶在内存中的空间是连续的，只是被 <code>runtime.hmap</code> 中的不同字段引用，当溢出桶数量较多时则会通过 <code>runtime.newobject</code> 来扩容创建新的溢出桶。</p>
+<h4 id="读写操作">读写操作</h4>
+<p>哈希表的访问一般都是通过下标或者遍历进行的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">hash</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">hash</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// k, v
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这两种方式虽然都能读取哈希表的数据，但是使用的函数和底层原理完全不同，前者需要知道哈希的键并且一次只能获取单个键对应的值，而后者可以遍历哈希中的全部键值对，访问数据时也不需要预先知道哈希的键，不过它的时间复杂度是ON。</p>
+<p>数据结构的写一般指的都是增加、删除和修改，增加和修改字段都是使用索引和赋值语句，而删除字典中的数据需要使用关键字 <code>delete</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span>
+</span></span><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">newValue</span>
+</span></span><span class="line"><span class="cl"><span class="nb">delete</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="访问">访问</h5>
+<p>在编译的类型检查期间，<code>hash[key]</code> 以及类似的操作都会被转换成哈希的 <code>OINDEXMAP</code> 操作，中间代码生成阶段会将这些 <code>OINDEXMAP</code> 操作转换成如下代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">v</span>     <span class="o">:=</span> <span class="nx">hash</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="c1">// =&gt; v     := *mapaccess1(maptype, hash, &amp;key)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">v</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">hash</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="c1">// =&gt; v, ok := mapaccess2(maptype, hash, &amp;key)
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>赋值语句左侧接收的参数个数会决定使用的运行时方法：</p>
+<ul>
+<li>当接收一个参数时，会使用 <code>mapaccess1</code> ，该函数仅会返回一个指向目标值的指针；</li>
+<li>当接收两个参数时，会使用 <code>mapaccess2</code> ，除了返回目标值之外，它还会返回一个用于表示当前键对应的值是否存在的布尔值；</li>
+</ul>
+<p><code>mapaccess1</code> 会先通过哈希表设置的哈希函数、哈希种子获取当前key键对应的哈希，再通过 <code>runtime.bucketMask</code> 和 <code>runtime.add</code> 拿到该键值对所在的桶序号和哈希高位的8位数字。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">mapaccess1</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">key</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">alg</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">key</span><span class="p">.</span><span class="nx">alg</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 获取hash
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">hash</span> <span class="o">:=</span> <span class="nx">alg</span><span class="p">.</span><span class="nf">hash</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">hash0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 获取桶序号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">m</span> <span class="o">:=</span> <span class="nf">bucketMask</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">b</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nf">add</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span><span class="p">,</span> <span class="p">(</span><span class="nx">hash</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">)</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 获取高8位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">top</span> <span class="o">:=</span> <span class="nf">tophash</span><span class="p">(</span><span class="nx">hash</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">bucketloop</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 依次遍历 b 这个桶链表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="p">;</span> <span class="nx">b</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">;</span> <span class="nx">b</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">overflow</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 遍历单个桶，寻找高8位哈希相同的，然后取值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">bucketCnt</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">top</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">emptyRest</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="k">break</span> <span class="nx">bucketloop</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">				<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">k</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">alg</span><span class="p">.</span><span class="nf">equal</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">v</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">)</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">valuesize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="nx">v</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 返回对应类型的零值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">zeroVal</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 <code>bucketloop</code> 循环中，哈希会依次遍历对应桶的正常桶和溢出桶中的数据（之前获取的桶序号是数据所在桶的正常桶，而如果正常桶满了会存储到溢出桶中，正常桶中会有记录溢出桶指针的字段，以链表的形式存在，再满就是溢出桶存有指向溢出桶指针的字段），它会先比较 获取的哈希的高8位和桶中存储的 <code>tophash</code> 是否相等，后比较传入的 和桶中的值以加速数据的读写。</p>
+<p>用于选择桶序号的是哈希的最低几位，而用于加速访问的是哈希的高8位，这种设计能够减少同一个桶中有大量相等 <code>tophash</code>的概率影响性能。</p>
+<p><img src="/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-3.png"
+	width="1200"
+	height="610"
+	srcset="/p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-3_hu1f83d595401afecd320ae5dc4d390f9d_30905_480x0_resize_box_3.png 480w, /p/go-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%90%8E%E7%90%86%E8%A7%A3/media/image-3_hu1f83d595401afecd320ae5dc4d390f9d_30905_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="196"
+		data-flex-basis="472px"
+	
+></p>
+<p>如上图所示，每一个桶都是一整片内存空间，当发现桶中的 <code>tophash</code> 与传入键的 <code>tophash</code> 匹配之后，我们会通过指针和偏移量获取哈希中存储的 <code>key[i]</code> 与key相比较，如果两者相同就会根据指针和偏移量获取对应值的指针并返回，不同则会继续循环，直到遇见相同或者 正常桶和溢出桶都遍历完。</p>
+<p>另一个同样用于访问哈希表中数据的 <code>runtime.mapaccess2</code> 只是在 <code>mapaccess1</code> 的基础上多返回了一个标识 键值对是否存在的布尔值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">mapaccess2</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">key</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span> <span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">,</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="nx">bucketloop</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">;</span> <span class="nx">b</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">;</span> <span class="nx">b</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">overflow</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">bucketCnt</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">...</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">alg</span><span class="p">.</span><span class="nf">equal</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">v</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">)</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">valuesize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="nx">v</span><span class="p">,</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">zeroVal</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的过程是在正常情况下，访问哈希表中元素时的表现，然而和数组一样，哈希表可能会在负载因子过高或者溢出桶过多时进行扩容，而哈希表扩容并不是原子过程，它是逐步迁移的，后续会介绍在扩容过程中如何保证哈希的访问。</p>
+<h5 id="写入新增修改">写入（新增、修改）</h5>
+<p>当形如 <code>hash[k]</code> 的表达式出现在赋值符号的左侧时，该表达式也会在编译期间转换成 <code>runtime.mapassign</code> 函数的调用，该函数与 <code>runtime.mapaccess1</code> 比较相似，我们将其分成几部分依次分析，首先是函数会根据传入的键拿到对应的哈希和桶：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">mapassign</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">key</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">alg</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">key</span><span class="p">.</span><span class="nx">alg</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">hash</span> <span class="o">:=</span> <span class="nx">alg</span><span class="p">.</span><span class="nf">hash</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">hash0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">flags</span> <span class="p">^=</span> <span class="nx">hashWriting</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">again</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">bucket</span> <span class="o">:=</span> <span class="nx">hash</span> <span class="o">&amp;</span> <span class="nf">bucketMask</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">b</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span><span class="p">)</span> <span class="o">+</span> <span class="nx">bucket</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">top</span> <span class="o">:=</span> <span class="nf">tophash</span><span class="p">(</span><span class="nx">hash</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后通过遍历比较桶中存储的 <code>tophash</code> 和键的哈希，如果找到了相同结果就会返回目标位置的地址。</p>
+<p>其中 <code>inserti</code> 表示目标元素的在桶中的索引（<code>tophash</code> 的位置），<code>insertk </code>和 <code>val </code>分别表示键值对的地址，获得目标地址之后会通过算术计算寻址获得键值对 <code>k </code>和 <code>val</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">inserti</span> <span class="o">*</span><span class="kt">uint8</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">insertk</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">val</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+</span></span><span class="line"><span class="cl"><span class="nx">bucketloop</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">bucketCnt</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">top</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nx">inserti</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="nx">inserti</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">					<span class="nx">insertk</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">					<span class="nx">val</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">)</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">valuesize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">emptyRest</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="k">break</span> <span class="nx">bucketloop</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">				<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">k</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">!</span><span class="nx">alg</span><span class="p">.</span><span class="nf">equal</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">val</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">)</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">valuesize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">			<span class="k">goto</span> <span class="nx">done</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">ovf</span> <span class="o">:=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">overflow</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">ovf</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">b</span> <span class="p">=</span> <span class="nx">ovf</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述的 for 循环会依次遍历对应的正常桶和溢出桶中存储的数据，整个过程会分别判断 <code>tophash</code> 是否相等、<code>key</code> 是否相等，遍历结束后会从循环中跳出。</p>
+<p>而如果新增时桶已经满了，哈希就会调用 <code>runtime.hmap.newoverflow</code> 创建新桶或者使用 <code>runtime.hmap</code> 预先 在 <code>noverflow</code> 中创键好的桶来保存数据（然后之前的桶以链表的形式指向新的溢出桶），新建的桶不仅会被追加到已有的全部桶的末尾，还会增加哈希表的 <code>noverflow</code> 计数器。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="c1">// 如果inserti为空则说明高8位没有符合这个哈希的键，属于新增操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">inserti</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">newb</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nf">newoverflow</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">inserti</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">newb</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">insertk</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">newb</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">val</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">insertk</span><span class="p">,</span> <span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">typedmemmove</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">key</span><span class="p">,</span> <span class="nx">insertk</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="nx">inserti</span> <span class="p">=</span> <span class="nx">top</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">count</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 修改操作，key存在
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">done</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">val</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果当前键值对在哈希中不存在，哈希会为新的键值对规划存储的内存地址，通过 <code>runtime.typedmemmove</code> 将键移动到对应的内存空间中并返回键对应值的地址 <code>val</code>。如果当前键值对在哈希表中存在，那么就会直接返回 <code>val </code>值的目标区域的内存地址（见上面23行 <code>goto done</code>），哈希并不会在 <code>runtime.mapassign</code> 这个运行时函数中将值拷贝到桶中，这个函数只会计算并返回对应值的内存地址，真正的赋值操作是在编译期间插入的（编译期生成插入代码，然后运行时执行）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 执行mapassign
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mo">0001</span><span class="mi">8</span> <span class="p">(</span><span class="o">+</span><span class="mi">5</span><span class="p">)</span> <span class="nx">CALL</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">mapassign_fast64</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 24(SP) 返回了val值地址，即让寄存器DI 指向 val 的内存地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mo">00020</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="nx">MOVQ</span> <span class="mi">24</span><span class="p">(</span><span class="nx">SP</span><span class="p">),</span> <span class="nx">DI</span>               <span class="p">;;</span> <span class="nx">DI</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">value</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 将字符串的地址存储到寄存器AX 中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mo">00026</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="nx">LEAQ</span> <span class="k">go</span><span class="p">.</span><span class="kt">string</span><span class="p">.</span><span class="s">&#34;88&#34;</span><span class="p">(</span><span class="nx">SB</span><span class="p">),</span> <span class="nx">AX</span>   <span class="p">;;</span> <span class="nx">AX</span> <span class="p">=</span> <span class="o">&amp;</span><span class="s">&#34;88&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 将字符串 &#34;88&#34; 存储到目标地址上
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mo">00027</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="nx">MOVQ</span> <span class="nx">AX</span><span class="p">,</span> <span class="p">(</span><span class="nx">DI</span><span class="p">)</span>                 <span class="p">;;</span> <span class="o">*</span><span class="nx">DI</span> <span class="p">=</span> <span class="nx">AX</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
 </section>
 
 
