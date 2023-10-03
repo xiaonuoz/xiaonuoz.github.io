@@ -232,6 +232,7 @@
             <li><a href="#数据结构-2">数据结构</a></li>
             <li><a href="#初始化-2">初始化</a></li>
             <li><a href="#读写操作">读写操作</a></li>
+            <li><a href="#总结">总结</a></li>
           </ol>
         </li>
       </ol>
@@ -1217,6 +1218,7 @@
 <li><code>hash0</code> 是哈希的种子，它能为哈希函数的结果引入随机性，这个值在创建哈希表时确定，并在调用哈希函数时作为参数传入；</li>
 <li><code>oldbuckets</code> 是哈希在扩容时用于保存之前 <code>buckets</code> 的字段；</li>
 <li><code>noverflow</code> 为map中溢出桶的数量。当溢出桶太多时，map 会进行 same-size map growth，其实质是避免桶过大导致内存泄露。<code>extra</code> 存储map中的溢出桶；</li>
+<li><code>nevacuate</code> 表示扩容进度，小于此地址的 <code>buckets</code> 迁移完成</li>
 </ol>
 <p>哈希表 <code>runtime.hmap</code> 的桶是 <code>runtime.bmap</code>。每一个 <code>runtime.bmap</code> 都能存储8个键值对，当哈希表中存储的数据过多时，单个桶已经装满就会使用 <code>extra.nextOverflow</code> 中的桶来存储溢出的数据。</p>
 <p>上面两种不同的桶在内存中是连续存储的（即底层是一个数组，正常桶集和排列，然后溢出桶集和排列），它们分别被称为正常桶和溢出桶，溢出桶是在Go语言还使用C语言实现时使用的设计，由于它能够减少扩容的频率所以一直使用至今。</p>
@@ -1802,7 +1804,233 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mo">00027</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="nx">MOVQ</span> <span class="nx">AX</span><span class="p">,</span> <span class="p">(</span><span class="nx">DI</span><span class="p">)</span>                 <span class="p">;;</span> <span class="o">*</span><span class="nx">DI</span> <span class="p">=</span> <span class="nx">AX</span>
 </span></span></code></pre></td></tr></table>
 </div>
+</div><h5 id="扩容">扩容</h5>
+<p>前面介绍哈希的写入过程时其实省略了扩容操作，随着哈希表中元素的逐渐增加，哈希的性能也会逐渐恶化，所以我们需要更多的桶和更大的内存来保证哈希的读写性能：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">mapassign</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">key</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">!</span><span class="nx">h</span><span class="p">.</span><span class="nf">growing</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nf">overLoadFactor</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">count</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="o">||</span> <span class="nf">tooManyOverflowBuckets</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">noverflow</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">hashGrow</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">goto</span> <span class="nx">again</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
+</div><p><code>runtime.mapassign</code> 函数会在以下两种情况发生时触发哈希的扩容：</p>
+<ol>
+<li>负载因子已经超过6.5；</li>
+<li>哈希使用了太多的溢出桶；</li>
+</ol>
+<p>由于Go语言哈希的扩容不是一个原子的过程，所以还需要判断当前哈希是否已经处于扩容状态 <code>!h.growing()</code>，避免二次扩容造成混乱。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">)</span> <span class="nf">growing</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 只有在扩容时，oldbuckets才不会为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="nx">h</span><span class="p">.</span><span class="nx">oldbuckets</span> <span class="o">!=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>根据触发的条件不同，扩容的方式分成两种，如果这次扩容是溢出的桶太多导致的，那么这次扩容就是等量扩容 <code>sameSizeGrow</code>，它是一种特殊情况下发生的扩容，当我们持续向哈希中插入数据然后后续将它们删除时，由于哈希表中的数据量没有超过阈值，但是又因为插入导致积累了过多的溢出桶，数据分布过于分散，就会造成缓慢的内存泄露。因此一旦哈希中出现了过多的溢出桶，就会创建新桶来保存数据，减少内存占用，垃圾回收会清理掉老的溢出桶并释放内存。</p>
+<p>扩容的入口是 <a class="link" href="https://github.com/golang/go/blob/ac0ba6707c1655ea4316b41d06571a0303cc60eb/src/runtime/map.go#L1026"  target="_blank" rel="noopener"
+    ><code>runtime.hashGrow</code></a>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">hashGrow</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">bigger</span> <span class="o">:=</span> <span class="nb">uint8</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">!</span><span class="nf">overLoadFactor</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">count</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">bigger</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">h</span><span class="p">.</span><span class="nx">flags</span> <span class="o">|=</span> <span class="nx">sameSizeGrow</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">oldbuckets</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">newbuckets</span><span class="p">,</span> <span class="nx">nextOverflow</span> <span class="o">:=</span> <span class="nf">makeBucketArray</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="o">+</span><span class="nx">bigger</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">B</span> <span class="o">+=</span> <span class="nx">bigger</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">flags</span> <span class="p">=</span> <span class="nx">flags</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">oldbuckets</span> <span class="p">=</span> <span class="nx">oldbuckets</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span> <span class="p">=</span> <span class="nx">newbuckets</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">noverflow</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">oldoverflow</span> <span class="p">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">overflow</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">overflow</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">nextOverflow</span> <span class="p">=</span> <span class="nx">nextOverflow</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>哈希在扩容过程中会通过 <code>runtime.makeBucketArray</code> 来创建一组新桶和预创建的溢出桶，随后将原有的桶数组设置到 <code>oldbuckets</code> 上并将新的空桶设置到 <code>buckets</code> 上，溢出桶也使用了相同的逻辑更新。</p>
+<p>我们在 <code>runtime.hashGrow</code>中还看不出来等量扩容和翻倍扩容的太多区别，等量扩容创建的新桶数量和旧桶一样，该函数中只是创建了新的桶，并没有对数据进行拷贝和转移。无论是等量还是翻倍，数据迁移的过程是在 <a class="link" href="https://github.com/golang/go/blob/ac0ba6707c1655ea4316b41d06571a0303cc60eb/src/runtime/map.go#L1137"  target="_blank" rel="noopener"
+    ><code>runtime.evacuate</code></a>中完成的，它会对传入桶中的元素进行再分配。</p>
+<p>如果是翻倍扩容， <code>runtime.evacuate</code> 会将一个旧桶中的数据分流到两个新桶中，所以它会创建两个用于保存分配上下文的 <code>runtime.evacDst</code> 结构体，这两个结构体分别指向了一个新桶。如果是等量扩容，那么旧桶和新桶之间就是一对一的关系，只会初始化一个 <code>runtime.evacDst</code> 也不会进行分流，只会重新排列哈希让其分布紧凑。</p>
+<p>在分流时，只使用哈希函数是不能定位到具体的一个桶，哈希函数只会返回很长的哈希，我们还需要一些方法将哈希映射到具体的桶上面。一般都会使用取模或者位操作来获取桶的编号，加入当前哈希中包含4个桶，那么它的桶掩码就是0b11(3)，使用位操作就会得到3，那么我们就会在3号桶中存储该数据：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="mh">0xb72bfae3f3285244c4732ce457cca823bc189e0b</span> <span class="o">&amp;</span> <span class="mb">0b11</span> <span class="c1">#=&gt; 0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果新的哈希表有8个桶，在大多数情况下，原来经过桶掩码 0b11 结果为3的数据也会因为桶掩码增加了一位变成 <code>0b111</code> 而分流到新的3号和7号桶中，所有数据也都会被 <code>runtime.typememmove</code> 拷贝到目标桶中，两个桶一个拿一半数据，散布均与。</p>
+<p><code>runtime.evacuate</code> 最后会调用 <code>runtime.advanceEvacuationMark</code> 来增加哈希的 <code>nevacuate</code> 计数器，并在所有的旧桶都迁移分流完成后清空哈希的 <code>oldbuckets</code> 和 <code>oldoverflow</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">advanceEvacuationMark</span><span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">newbit</span> <span class="kt">uintptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">stop</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="o">+</span> <span class="mi">1024</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">stop</span> <span class="p">&gt;</span> <span class="nx">newbit</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">stop</span> <span class="p">=</span> <span class="nx">newbit</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="o">!=</span> <span class="nx">stop</span> <span class="o">&amp;&amp;</span> <span class="nf">bucketEvacuated</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="o">==</span> <span class="nx">newbit</span> <span class="p">{</span> <span class="c1">// newbit == # of oldbuckets
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">h</span><span class="p">.</span><span class="nx">oldbuckets</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">extra</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">oldoverflow</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">h</span><span class="p">.</span><span class="nx">flags</span> <span class="o">&amp;^=</span> <span class="nx">sameSizeGrow</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>之前在分析哈希表访问函数 <code>runtime.mapaccess1</code> 时其实省略了扩容期间获取键值对的逻辑，当哈希表的 <code>oldbuckets</code> 存在时，会先定位到旧桶并尝试从中获取对应键值对，然后再从新桶中获取键值对。因为旧桶的元素还没有被分流，其中还保存着我们需要使用的数据，所以旧桶会替代新创建的空桶提供数据。</p>
+<p>在 <code>runtime.mapassign</code> 中也省略了一段逻辑，当哈希表正处于扩容状态时，每次向哈希表写入值都会触发 <code>runtime.growWork</code> 增加拷贝哈希表中的内容。即写入数据时会顺便进行将旧桶数据迁移至新桶的工作，当然这个不是一次性迁移全部。</p>
+<p>当然除了写入操作之外，删除操作也会在哈希表扩容期间触发 <code>runtime.growWork</code>，触发的方式和代码与写的逻辑几乎完全相同，都是计算当前值所在的桶，然后对桶元素进行迁移。</p>
+<p>需要注意的是，为了保证元素在map中的唯一性，当一个元素从旧桶迁移到新桶时，它会被从旧桶中删除。而一旦所有的元素都已经成功迁移到新桶中，旧桶就会被销毁，释放内存。这个销毁操作发生在所有数据都成功迁移后。</p>
+<p>简单总结一下哈希表扩容的设计和原理，哈希在存储元素过多时会触发扩容操作，会将桶的数量翻倍，扩容过程不是原子操作的，而是通过 <code>runtime.growWork</code> 增量触发的，避免一次性扩容带来的性能瞬时抖动，在扩容期间访问哈希表时会使用旧桶，向哈希表写入或删除数据时会触发旧桶元素的分流迁移。除了这种正常的扩容之外，为了解决大量写入、删除造成的内存泄露问题，哈希引入了 <code>sameSizeGrow</code> 等量扩容 这一机制，在出现较多溢出桶时会整理哈希的内存减少空间的占用。</p>
+<h5 id="删除">删除</h5>
+<p>如果想要删除哈希中的元素，就需要使用go 语言中的 <code>delete</code> 关键字，这个关键字的唯一作用就是将某一个键值对从哈希表中删除，无论该键对应的值是否存在，这个内置函数都不会返回任何结果。</p>
+<p>在编译期间，<code>delete</code> 关键字会被转换成操作为 <code>ODELETE</code> 的节点，而 <a class="link" href="https://github.com/golang/go/blob/41d8e61a6b9d8f9db912626eb2bbc535e929fefc/src/cmd/compile/internal/gc/walk.go#L411"  target="_blank" rel="noopener"
+    ><code>cmd/compile/internal/gc.walkexpr</code></a> 会将 <code>ODELETE</code> 节点转换成 <code>runtime.mapdelete</code> 函数簇中的一个，包括 <code>runtime.mapdelete</code> 、<code>mapdelete_faststr</code>、<code>mapdelete_fast32</code>、<code>mapdelete_fast64</code></p>
+<p>这四个函数的实现都是差不多的。哈希表的删除逻辑与写入逻辑很相似，只是触发哈希的删除需要使用关键字 <code>delete</code>，如果在删除期间遇到了哈希表的扩容，就会先分流扩容桶中的元素，分流结束后会找到桶中的目标元素完成键值对的删除工作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">mapdelete</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">key</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nf">growing</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">growWork</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">bucket</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="nx">search</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">;</span> <span class="nx">b</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">;</span> <span class="nx">b</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">overflow</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">bucketCnt</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">top</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">emptyRest</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="k">break</span> <span class="nx">search</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">				<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">k</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">k2</span> <span class="o">:=</span> <span class="nx">k</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">!</span><span class="nx">alg</span><span class="p">.</span><span class="nf">equal</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">k2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="c1">// kv都设置为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)(</span><span class="nx">k</span><span class="p">)</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">v</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="o">+</span><span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">)</span><span class="o">+</span><span class="nx">i</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">valuesize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">			<span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)(</span><span class="nx">v</span><span class="p">)</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">emptyOne</span>
+</span></span><span class="line"><span class="cl">			<span class="o">...</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="总结">总结</h4>
+<p>Go 语言使用拉链法来解决哈希碰撞的问题，它的访问、写入和删除等操作都会在编译期间转换成运行时的函数和方法。哈希在每一个桶中存储键对应哈希的前8位，当对哈希进行操作时，这些 <code>tophash</code> 就成为可以帮助哈希快速遍历桶中元素的缓存（储存高8位是为了减少==操作带来的开销。如果高8位不同，它们的值必不相同，否则可能相同，这时候再用==操作判断)。</p>
+<p>哈希表的每个桶都只能存储8个键值对，一旦当前哈希的某个桶超出8个，新的键值对就会存储到哈希的溢出桶中。随着键值对数量的增加，溢出桶的数量和哈希的负载因子也会逐渐升高，负载因子超过6.5就会触发翻倍扩容，而如果删除键值对过多，溢出桶依然存在就会触发等量扩容，使数据更紧凑。元素的再分配过程也是在调用写和删除操作时增量进行的，不属于原子操作，不会造成性能的瞬时巨大抖动。</p>
+<p>哈希由于扩容只有写操作（插入、删除）才会触发迁移桶，当这类操作不频繁时就有可能在比较长时间内都是处在一个比之前内存大2倍的状态，必须所有桶都迁完之后才会一次性释放掉内存，因此如果一个map读非常多，写操作不多时，建议在初始化时分配好容量，避免一直处于扩容状态。</p>
+
 </section>
 
 
