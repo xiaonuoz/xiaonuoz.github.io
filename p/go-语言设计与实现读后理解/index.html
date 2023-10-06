@@ -235,6 +235,13 @@
             <li><a href="#总结">总结</a></li>
           </ol>
         </li>
+        <li><a href="#字符串">字符串</a>
+          <ol>
+            <li><a href="#数据结构-3">数据结构</a></li>
+            <li><a href="#解析过程">解析过程</a></li>
+            <li><a href="#拼接">拼接</a></li>
+          </ol>
+        </li>
       </ol>
     </li>
   </ol>
@@ -2030,6 +2037,189 @@
 <p>Go 语言使用拉链法来解决哈希碰撞的问题，它的访问、写入和删除等操作都会在编译期间转换成运行时的函数和方法。哈希在每一个桶中存储键对应哈希的前8位，当对哈希进行操作时，这些 <code>tophash</code> 就成为可以帮助哈希快速遍历桶中元素的缓存（储存高8位是为了减少==操作带来的开销。如果高8位不同，它们的值必不相同，否则可能相同，这时候再用==操作判断)。</p>
 <p>哈希表的每个桶都只能存储8个键值对，一旦当前哈希的某个桶超出8个，新的键值对就会存储到哈希的溢出桶中。随着键值对数量的增加，溢出桶的数量和哈希的负载因子也会逐渐升高，负载因子超过6.5就会触发翻倍扩容，而如果删除键值对过多，溢出桶依然存在就会触发等量扩容，使数据更紧凑。元素的再分配过程也是在调用写和删除操作时增量进行的，不属于原子操作，不会造成性能的瞬时巨大抖动。</p>
 <p>哈希由于扩容只有写操作（插入、删除）才会触发迁移桶，当这类操作不频繁时就有可能在比较长时间内都是处在一个比之前内存大2倍的状态，必须所有桶都迁完之后才会一次性释放掉内存，因此如果一个map读非常多，写操作不多时，建议在初始化时分配好容量，避免一直处于扩容状态。</p>
+<h3 id="字符串">字符串</h3>
+<p>字符串是Go 语言中的基础数据类型，虽然字符串往往被看做一个整体，但是它实际上是一片连续的内存空间。字符串是由字符组成的数组，数组会占用一片连续的内存空间，而内存空间存储的字节共同组成了字符串，Go 语言中的字符串只是一个只读的字节数组。</p>
+<p>如果是代码中存在的字符串，编译器会将其标记成只读数据 <code>SRODATA</code>，只读意味着字符串会被分配到只读的内存空间，Go 语言只是不支持直接去修改 <code>string</code> 类型变量的内存空间，仍然可以通过在 <code>string</code> 和 <code>[]byte</code> 类型之间反复转换实现修改这一目的（转换为byte切片即可修改，但是此时是申请了一片新的可读写的内存空间)。</p>
+<p>Java、Python 以及很多编程语言的字符串也都是不可变的，这种不可变的特性可以保证我们不会引用到意外发生改变的值，而因为 Go 语言的字符串可以作为哈希的键，所以如果哈希的键是可变的，不仅会增加哈希实现的复杂度，还可能会影响哈希的比较。</p>
+<h4 id="数据结构-3">数据结构</h4>
+<p>字符串在 Go 语言中的接口其实非常简单，它就像一个另类的切片，每一个字符串在运行时都会使用 <code>reflect.StringHeader</code> 表示，其中包含指向字节数组的指针和数组的大小。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">StringHeader</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Data</span> <span class="kt">uintptr</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Len</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>与切片的结构体相比，字符串只少了一个表示容量的 <code>Cap</code> 字段，而正是因为切片在 Go 语言的运行时表示与字符串高度相似，所以我们经常会说字符串是一个只读的切片类型。</p>
+<p>字符串作为只读类型，我们并不会向字符串直接追加元素改变其本身的内存空间，所有在字符串上的写入操作都是通过拷贝实现的。</p>
+<h4 id="解析过程">解析过程</h4>
+<p>解析器会在词法分析阶段解析字符串，词法分析阶段会对源文件中的字符串进行切片和分组，将原有无意义的字符流转换成 Token 序列。我们可以使用两种字面量方式在 Go 语言中声明字符串，即双引号和反引号:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">str1</span> <span class="o">:=</span> <span class="s">&#34;this is a string&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">str2</span> <span class="o">:=</span> <span class="s">`this is another
+</span></span></span><span class="line"><span class="cl"><span class="s">string`</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>两种不同的声明方式其实也意味着 Go 语言编译器需要能够区分并且正确解析两种不同的字符串格式。解析字符串使用的扫描器 <code>cmd/compile/internal/syntax.scanner</code> 会将输入的字符串转换成 Token 流，<code>stdString</code> 方法是它用来解析使用双引号的标准字符串：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">scanner</span><span class="p">)</span> <span class="nf">stdString</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nf">startLit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">getr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 遇见双引号跳过处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">r</span> <span class="o">==</span> <span class="sc">&#39;&#34;&#39;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 逃逸双引号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">r</span> <span class="o">==</span> <span class="sc">&#39;\\&#39;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">s</span><span class="p">.</span><span class="nf">escape</span><span class="p">(</span><span class="sc">&#39;&#34;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 不能有换行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">r</span> <span class="o">==</span> <span class="sc">&#39;\n&#39;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">s</span><span class="p">.</span><span class="nf">ungetr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">s</span><span class="p">.</span><span class="nb">error</span><span class="p">(</span><span class="s">&#34;newline in string&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">r</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">s</span><span class="p">.</span><span class="nf">errh</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">line</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">col</span><span class="p">,</span> <span class="s">&#34;string not terminated&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">nlsemi</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">lit</span> <span class="p">=</span> <span class="nb">string</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nf">stopLit</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">kind</span> <span class="p">=</span> <span class="nx">StringLit</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">tok</span> <span class="p">=</span> <span class="nx">_Literal</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从这个方法的实现我们能分析出 Go 语言处理标准字符串的逻辑：</p>
+<ol>
+<li>标准字符串使用双引号表示开头和结尾；</li>
+<li>标准字符串需要使用反斜杠 <code>\</code> 来逃逸双引号；</li>
+<li>标准字符串不能出现换行 <code>\n</code>，隐式换行也不行；</li>
+</ol>
+<p>使用反引号声明的原始字符串的解析规则就非常简单了，<code>syntax.scanner.rawString</code> 会将非反引号的所有字符都划分到当前字符串的范围中，所以我们可以使用它支持复杂的多行字符串：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">scanner</span><span class="p">)</span> <span class="nf">rawString</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nf">startLit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">getr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">r</span> <span class="o">==</span> <span class="sc">&#39;`&#39;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">r</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">s</span><span class="p">.</span><span class="nf">errh</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">line</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">col</span><span class="p">,</span> <span class="s">&#34;string not terminated&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">nlsemi</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">lit</span> <span class="p">=</span> <span class="nb">string</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nf">stopLit</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">kind</span> <span class="p">=</span> <span class="nx">StringLit</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">tok</span> <span class="p">=</span> <span class="nx">_Literal</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>无论是标准字符串还是原始字符串都会被标记成 <code>StringLit</code> 并传递到语法分析阶段。</p>
+<p>在语法分析阶段，与字符串相关的表达式都会由 <code>cmd/compile/internal/gc.noder.basicLit</code>方法处理：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">noder</span><span class="p">)</span> <span class="nf">basicLit</span><span class="p">(</span><span class="nx">lit</span> <span class="o">*</span><span class="nx">syntax</span><span class="p">.</span><span class="nx">BasicLit</span><span class="p">)</span> <span class="nx">Val</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="nx">s</span> <span class="o">:=</span> <span class="nx">lit</span><span class="p">.</span><span class="nx">Value</span><span class="p">;</span> <span class="nx">lit</span><span class="p">.</span><span class="nx">Kind</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">syntax</span><span class="p">.</span><span class="nx">StringLit</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 删除结束换行符 \r
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;`&#39;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">s</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="s">&#34;\r&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">u</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Unquote</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">Val</span><span class="p">{</span><span class="nx">U</span><span class="p">:</span> <span class="nx">u</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>无论是 <code>import</code> 语句中包的路径(双引号)、结构体中的字段标签还是表达式中的字符串都会使用这个方法将原生字符串中最后的换行符删除并对字符串 Token 进行 Unquote，也就是去掉字符串两边的引号等无关干扰，还原其本来的面目。</p>
+<p><a class="link" href="https://github.com/golang/go/blob/9c91cab0da9814a598f2c4f7568b6276ff972672/src/strconv/quote.go#L368"  target="_blank" rel="noopener"
+    ><code>strconv.Unquote</code></a> 处理了很多边界条件导致实现非常复杂，其中不仅包括引号，还包括 UTF-8 等编码的处理逻辑。</p>
+<h4 id="拼接">拼接</h4>
+<p>Go 语言拼接字符串会使用 <code>+</code> 符号，编译器会将该符号对应的 <code>OADD</code> 节点转换成 <code>OADDSTR</code> 类型的节点，随后在 <code>gc.walkexpr</code> 中调用 <code>gc.addstr</code> 函数生成用于拼接字符串的代码，它能帮助我们在编译期间选择合适的函数对字符串进行拼接，该函数会根据拼接的字符串数量选择不同的逻辑：</p>
 
 </section>
 
