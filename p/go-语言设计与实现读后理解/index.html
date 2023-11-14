@@ -262,6 +262,11 @@
             <li><a href="#动态派发">动态派发</a></li>
           </ol>
         </li>
+        <li><a href="#反射">反射</a>
+          <ol>
+            <li><a href="#三大法则">三大法则</a></li>
+          </ol>
+        </li>
       </ol>
     </li>
   </ol>
@@ -2797,6 +2802,26 @@
 <p>在关闭编译器优化的情况下(<code>-gcflags=-N</code>)，动态派发生成的指令会带来约18%左右的额外性能开销，这些性能开销在一个复杂的系统中不会带来太多的影响。一个项目不可能只使用动态派发，而且如果我们开启编译器优化后，动态派发的额外开销会降低至约5%左右，这对应用性能的整体影响就更小了，而编译器优化是默认开启的，并且一般程序并没有低延时、高吞吐量的需求，所以与使用接口带来的好处相比，动态派发的额外开销往往是可以忽略的。</p>
 <p>需要注意的是使用结构体实现接口带来的开销会大于使用指针实现，甚至有一倍的差距，因为接口转成具体类型会拷贝一次，然后调用方法又会再拷贝一次。动态派发在结构体上的表现非常差，因此尽量避免使用结构体类型来实现接口。</p>
 <p>使用结构体带来的巨大性能差异不只是接口转换的原因，主要是因为 Go 语言在函数调用时是传值的，动态派发的过程只是放大了参数拷贝带来的影响。</p>
+<h3 id="反射">反射</h3>
+<p>虽然反射在大多数的应用和服务中并不常见，但是很多框架都依赖go语言的反射机制简化代码。因为Go语言的语法元素很少、设计简单，所以它没有特别强的表达能力，但是Go语言的 <code>reflect</code> 包能够弥补它在语法上 <code>reflect.Type</code> 的一些劣势。</p>
+<p><code>reflect</code> 实现了运行时的反射能力，能够让程序操作不同类型的对象。反射包中有两对非常重要的函数和类型，两个函数分别是：</p>
+<ul>
+<li><code>reflect.TypeOf</code> 能获取类型信息，与 <code>reflect.Type</code> 对应；</li>
+<li><code>reflect.ValueOf</code> 能获取数据的运行时表示，与 <code>reflect.Value</code> 对应；</li>
+</ul>
+<p>类型 <code>reflect.Type</code> 是反射包定义的一个接口，我们可以使用 <code>reflect.TypeOf</code> 函数获取任意变量的类型，<code>reflect.Type</code> 接口中定义了一些有趣的方法，<code>MethodByName</code> 可以获取当前类型的对应方法的引用、<code>Implements</code> 可以判断当前类型是否实现了某个接口等等。</p>
+<p>反射包中的 <code>reflect.Value</code> 的类型与 <code>reflect.Type</code> 不同，它被声明成了结构体。这个结构体没有对外暴露的字段，但是提供了获取和写入数据的方法。</p>
+<p>反射包中的所有方法基本都是围绕着 <code>reflect.Type</code> 和 <code>reflect.Value</code> 这两个类型来设计的。</p>
+<h4 id="三大法则">三大法则</h4>
+<p>运行时反射是程序在运行期间检查其自身结构的一种方式。反射带来的灵活性是一把双刃剑，它作为一种元编程方式可以减少重复代码，但是过量的使用反射会使程序逻辑变得难以理解并且运行缓慢。</p>
+<h5 id="第一法则从-interface-变量可以反射出反射对象">第一法则：从 <code>interface{}</code> 变量可以反射出反射对象</h5>
+<p>反射的第一法则是能将Go语言的 <code>interface{}</code> 变量转换成反射对象。当我们执行 <code>reflect.ValueOf(1)</code> 时，虽然看起来是获取了基本类型 <code>int</code> 对应的反射类型，但是由于 <code>reflect.TypeOf</code>、<code>reflect.ValueOf</code> 这两个方法的入参都是 <code>interface{}</code>类型，所以在方法执行的过程中发生了类型转换。</p>
+<p>因为Go语言的函数调用都是值传递的，所以变量会在函数调用时进行类型转换。基本类型 <code>int</code> 会转换成 <code>interface{}</code>类型，这也就是为什么第一条法则是从接口到反射对象。如果我们认为Go语言的类型和反射类型处于两个不同的世界，那么 <code>reflect.TypeOf</code> 和 <code>reflect.ValueOf</code> 就是连接这两个世界的桥梁。</p>
+<p>总而言之，使用 <code>reflect.TypeOf</code> 和 <code>reflect.ValueOf</code> 能够获取Go语言中的变量对应的反射对象。而一旦获取了反射对象。我们就能得到跟当前类型相关的数据和操作，并可以使用这些在运行时获取的结构来执行方法。</p>
+<h5 id="第二法则从反射对象可以获取-interface-变量">第二法则：从反射对象可以获取 <code>interface{}</code> 变量</h5>
+<p>反射的第二法则是我们可以从反射对象获取到 <code>interface{}</code>变量。既然能够将接口类型的变量转换成反射对象，那么一定需要其他方法将反射对象还原成接口类型的变量。<code>reflect.Value.Interface</code> 就能完成这项工作。调用 <code>reflect.Value.Interface</code> 方法只能获得 <code>interface{}</code> 类型的变量，如果想要将其还原成最原始的状态还需要经过显式类型转换。</p>
+<h5 id="第三法则要修改反射对象其值必须可设置">第三法则：要修改反射对象，其值必须可设置</h5>
+<p>Go语言反射的最后一条法则</p>
 
 </section>
 
