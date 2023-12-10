@@ -274,19 +274,19 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type person struct {
-</span></span><span class="line"><span class="cl">	Name string
-</span></span><span class="line"><span class="cl">	Age  int
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	p1 := person{&#34;张三&#34;,19}
-</span></span><span class="line"><span class="cl">	b, _ := json.Marshal(p1)
-</span></span><span class="line"><span class="cl">	fmt.Println(string(b))
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">person</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Age</span>  <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">p1</span> <span class="p">:</span><span class="o">=</span> <span class="n">person</span><span class="p">{</span><span class="s2">&#34;张三&#34;</span><span class="p">,</span><span class="mi">19</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">b</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">Marshal</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	var p2 person
-</span></span><span class="line"><span class="cl">	json.Unmarshal(b, &amp;p2)	//结构体是值传递，如果不使用指针就只会修改副本，不会修改p2原有的内容
-</span></span><span class="line"><span class="cl">	fmt.Println(p2)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">p2</span> <span class="n">person</span>
+</span></span><span class="line"><span class="cl">	<span class="n">json</span><span class="o">.</span><span class="n">Unmarshal</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p2</span><span class="p">)</span>	<span class="o">//</span><span class="err">结构体是值传递，如果不使用指针就只会修改副本，不会修改</span><span class="n">p2原有的内容</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>Marshal()会返回两个值，一个json内容一个错误值，可以用If语句接受错误，然后用return让main函数中断，<strong>return在函数中的意义：如果函数返回值有定义，则return表示返回数据，如果没有定义返回值，return就表示退出此函数，在main函数中有return就表示中断程序但是不会报错</strong></p>

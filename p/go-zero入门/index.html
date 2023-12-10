@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='安装依赖 1 go install github.com/zeromicro/go-zero/tools/goctl@latest 查看是否安装成功，如果未成功查看是否未将 $GOPATH/bin 加入PATH中，go install 默认会安装到GOPATH中 1 goctl --version 在1.3.3版本后，goct'>
+<title>go-zero入门</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/go-zero%E5%85%A5%E9%97%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='go-zero入门'>
+<meta property='og:description' content='安装依赖 1 go install github.com/zeromicro/go-zero/tools/goctl@latest 查看是否安装成功，如果未成功查看是否未将 $GOPATH/bin 加入PATH中，go install 默认会安装到GOPATH中 1 goctl --version 在1.3.3版本后，goct'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/go-zero%E5%85%A5%E9%97%A8/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-12-10T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-12-10T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="go-zero入门">
+<meta name="twitter:description" content="安装依赖 1 go install github.com/zeromicro/go-zero/tools/goctl@latest 查看是否安装成功，如果未成功查看是否未将 $GOPATH/bin 加入PATH中，go install 默认会安装到GOPATH中 1 goctl --version 在1.3.3版本后，goct">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#api文件">api文件</a></li>
+    <li><a href="#proto文件">proto文件</a></li>
+    <li><a href="#model文件">model文件</a></li>
+    <li><a href="#dockerfile文件">dockerFile文件</a></li>
+    <li><a href="#k8s的yaml文件">k8s的yaml文件</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#初始化">初始化</a></li>
+    <li><a href="#事务">事务</a></li>
+    <li><a href="#日志">日志</a></li>
+    <li><a href="#携程">携程</a></li>
+    <li><a href="#连接rpc">连接rpc</a></li>
+    <li><a href="#rpc拦截器">rpc拦截器</a></li>
+    <li><a href="#传参校验">传参校验</a></li>
+    <li><a href="#生成模板">生成模板</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/go-zero%E5%85%A5%E9%97%A8/">go-zero入门</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 10, 2023</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="安装依赖">安装依赖</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">go</span> <span class="n">install</span> <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">zeromicro</span><span class="o">/</span><span class="n">go</span><span class="o">-</span><span class="n">zero</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">goctl</span><span class="err">@</span><span class="n">latest</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看是否安装成功，如果未成功查看是否未将 <code>$GOPATH/bin</code> 加入PATH中，<code>go install</code> 默认会安装到GOPATH中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">goctl --version
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在1.3.3版本后，goctl可以执行命令自动安装protobuf依赖，但是默认安装在GOPATH中，因此一定要将 <code>$GOPATH/bin</code> 加入PATH中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">goctl env check -i -f
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>安装vscode插件 <code>goctl</code>，有写api 文件语法高亮等功能</p>
+<p>官方文档：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">https://go-zero.dev/docs/tutorials
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="生成">生成</h1>
+<h2 id="api文件">api文件</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">syntax = &#34;v1&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">info (
+</span></span><span class="line"><span class="cl">	title:   &#34;标题&#34;
+</span></span><span class="line"><span class="cl">	desc:    &#34;描述&#34;
+</span></span><span class="line"><span class="cl">	author:  &#34;作者&#34;
+</span></span><span class="line"><span class="cl">	date:    &#34;2023-12-08&#34;
+</span></span><span class="line"><span class="cl">	version: &#34;v1&#34;
+</span></span><span class="line"><span class="cl">)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type UserInfoReq {
+</span></span><span class="line"><span class="cl">	// optional 可选参数，允许为零值
+</span></span><span class="line"><span class="cl">	Username string `json:&#34;username,optional&#34;`
+</span></span><span class="line"><span class="cl">	Password string `json:&#34;password,optional&#34;`
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type UserInfoResp {
+</span></span><span class="line"><span class="cl">	Name string `json:&#34;name&#34;`
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@server(
+</span></span><span class="line"><span class="cl">	// 文件分组
+</span></span><span class="line"><span class="cl">	group: user
+</span></span><span class="line"><span class="cl">	// 路由分组
+</span></span><span class="line"><span class="cl">	prefix: v1/user
+</span></span><span class="line"><span class="cl">	// 中间件
+</span></span><span class="line"><span class="cl">	middleware: UserAgentMiddleware
+</span></span><span class="line"><span class="cl">)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">service user-api {
+</span></span><span class="line"><span class="cl">	@doc &#34;获取用户信息&#34;
+</span></span><span class="line"><span class="cl">	@handler userInfo
+</span></span><span class="line"><span class="cl">	post /user/info (UserInfoReq) returns (UserInfoResp)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type AdminInfoReq {
+</span></span><span class="line"><span class="cl">	Username string `json:&#34;username,optional&#34;`
+</span></span><span class="line"><span class="cl">	Password string `json:&#34;password,optional&#34;`
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type AdminInfoResp {
+</span></span><span class="line"><span class="cl">	Name string `json:&#34;name&#34;`
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@server(
+</span></span><span class="line"><span class="cl">	group: admin
+</span></span><span class="line"><span class="cl">)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// service 的名称必须相同
+</span></span><span class="line"><span class="cl">service user-api {
+</span></span><span class="line"><span class="cl">	@doc &#34;获取Admin用户信息&#34;
+</span></span><span class="line"><span class="cl">	@handler adminInfo
+</span></span><span class="line"><span class="cl">	post /admin/info (AdminInfoReq) returns (AdminInfoResp)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>直接生成：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">goctl api go -api *.api -dir ../ --style=goZero
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>含义是生成go的api，api文件地址是当前的 *.api，生成地址是上一级，命令风格是驼峰goZero，如果是 <code>gozero</code>，z小写则意味着生成的结构体都是纯小写命名</p>
+<p>在 .api 文件中设置的中间件是局部中间件，如果要设置全局中间件则需要在main函数中通过 <code>server.Use(middleware.NewMiddleware().Handle)</code> 来设置，执行流程是先执行全局中间件然后再是局部中间件</p>
+<h2 id="proto文件">proto文件</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">syntax</span> <span class="p">=</span> <span class="s">&#34;proto3&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">option</span> <span class="nx">go_package</span> <span class="p">=</span> <span class="s">&#34;./pb&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">pb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//model
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">message</span> <span class="nx">UserInfoReq</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int64</span>  <span class="nx">id</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">string</span>  <span class="nx">Username</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">string</span> <span class="nx">Password</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">message</span> <span class="nx">UserInfoResp</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">string</span>  <span class="nx">Name</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//service
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">service</span> <span class="nx">usercenter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span> <span class="nf">getUserInfo</span><span class="p">(</span><span class="nx">UserInfoReq</span><span class="p">)</span> <span class="nf">returns</span><span class="p">(</span><span class="nx">UserInfoResp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>生成代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">goctl rpc protoc *.proto --go_out=../ --go-grpc_out=../ --zrpc_out=../ --style=goZero
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以通过grpcui 来独立调试grpc程序，vscode的postman不太好用且没有历史记录</p>
+<p>proto文件设计原则：</p>
+<ul>
+<li>尽量使用时间戳格式，int64好传，而时间格式需要引用新包</li>
+<li>不用interface any类型，可读性不好</li>
+<li>复用之前的结构体，不要明明之前定义了一个结构体，新的结构体有很多字段都存在却复制之前的所有字段然后加，这样会导致proto文件很长，可读性差</li>
+<li>可以通过拆分文件缩小proto文件的大小，比如将一些大型的结构体放到另一个文件中，通过protoc来生成，然后再goctl生成包含service的proto文件，通过 <code>import &quot;test1.proto&quot;;</code> 的方式引用，然后在需要的地方写 <code>pb.Inforeq=1;</code> 来定义，pb是引用的protobuf文件中的 <code>package</code>定义的包名</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">protoc -I ./ --go_out=paths=source_relative:. --go-grpc_out=paths=source_relative:. test1.proto
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="model文件">model文件</h2>
+<p>直接输入命令:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">goctl model mysql datasource -url=&#34;root:123456@tcp(127.0.0.1:3306)/dbname&#34; -table=&#34;user&#34;  -dir=&#34;./&#34; --style=goZero
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>生成之前要保证此数据库可以连接且库中存在此表，goctl会连接此数据库并根据表字段生成代码，这段命令中有部分参数其实是可以写死的，因此可以写一个脚本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用方法：</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ./model.sh 库名 表名</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 再将生成的文件剪切到对应服务的model目录里面，记得改package</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#生成的表名</span>
+</span></span><span class="line"><span class="cl"><span class="nv">tables</span><span class="o">=</span><span class="nv">$2</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#表生成的genmodel目录</span>
+</span></span><span class="line"><span class="cl"><span class="nv">modeldir</span><span class="o">=</span>./genModel
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 数据库配置</span>
+</span></span><span class="line"><span class="cl"><span class="nv">host</span><span class="o">=</span>127.0.0.1
+</span></span><span class="line"><span class="cl"><span class="nv">port</span><span class="o">=</span><span class="m">3306</span>
+</span></span><span class="line"><span class="cl"><span class="nv">dbname</span><span class="o">=</span>looklook_<span class="nv">$1</span>
+</span></span><span class="line"><span class="cl"><span class="nv">username</span><span class="o">=</span>root
+</span></span><span class="line"><span class="cl"><span class="nv">passwd</span><span class="o">=</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;开始创建库：</span><span class="nv">$dbname</span><span class="s2"> 的表：</span><span class="nv">$2</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">goctl model mysql datasource -url<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">username</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">passwd</span><span class="si">}</span><span class="s2">@tcp(</span><span class="si">${</span><span class="nv">host</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">port</span><span class="si">}</span><span class="s2">)/</span><span class="si">${</span><span class="nv">dbname</span><span class="si">}</span><span class="s2">&#34;</span> -table<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">tables</span><span class="si">}</span><span class="s2">&#34;</span>  -dir<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">modeldir</span><span class="si">}</span><span class="s2">&#34;</span> --style<span class="o">=</span>goZero
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="dockerfile文件">dockerFile文件</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">goctl docker -go user.go
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>基于user.go 生成dockerFile文件，user.go中有main函数</p>
+<h2 id="k8s的yaml文件">k8s的yaml文件</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">goctl kube deploy -name user-api -namespace zerodemo -image user-api:v1.0 -o user-api.yaml -port 1001
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="操作集">操作集</h1>
+<h2 id="初始化">初始化</h2>
+<p>如果要操作DB或者要调用远端grpc函数或者增加中间件首先在 yaml文件中配置好，并需要在conf和svc中进行初始化</p>
+<p>config文件夹 config.go:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Config struct {
+</span></span><span class="line"><span class="cl">	rest.RestConf
+</span></span><span class="line"><span class="cl">	UserRpcConf zrpc.RpcClientConf
+</span></span><span class="line"><span class="cl">	DB          struct {
+</span></span><span class="line"><span class="cl">		DataSource string
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个go文件和配置文件中的配置是一一对应的，程序启动时会将配置文件隐射到此对象中</p>
+<p>svc文件夹serviceContext.go:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">ServiceContext</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Config</span>              <span class="n">config</span><span class="o">.</span><span class="n">Config</span>
+</span></span><span class="line"><span class="cl">	<span class="n">UserAgentMiddleware</span> <span class="n">rest</span><span class="o">.</span><span class="n">Middleware</span>
+</span></span><span class="line"><span class="cl">	<span class="n">UserModel</span>           <span class="n">model</span><span class="o">.</span><span class="n">UserModel</span>
+</span></span><span class="line"><span class="cl">	<span class="n">UserRpcClient</span>       <span class="n">usercenter</span><span class="o">.</span><span class="n">Usercenter</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">NewServiceContext</span><span class="p">(</span><span class="n">c</span> <span class="n">config</span><span class="o">.</span><span class="n">Config</span><span class="p">)</span> <span class="o">*</span><span class="n">ServiceContext</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="n">ServiceContext</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">Config</span><span class="p">:</span>              <span class="n">c</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserAgentMiddleware</span><span class="p">:</span> <span class="n">middleware</span><span class="o">.</span><span class="n">NewUserAgentMiddleware</span><span class="p">()</span><span class="o">.</span><span class="n">Handle</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserModel</span><span class="p">:</span>           <span class="n">model</span><span class="o">.</span><span class="n">NewUserModel</span><span class="p">(</span><span class="n">sqlx</span><span class="o">.</span><span class="n">NewMysql</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">DB</span><span class="o">.</span><span class="n">DataSource</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserRpcClient</span><span class="p">:</span>       <span class="n">usercenter</span><span class="o">.</span><span class="n">NewUsercenter</span><span class="p">(</span><span class="n">zrpc</span><span class="o">.</span><span class="n">MustNewClient</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">UserRpcConf</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>main函数会调用new来初始化这些对象，随后在会话中通过接受者的svcCtx来调用这些对象方法</p>
+<h2 id="事务">事务</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	m.TransactCtx(ctx,func(ctx context.Context, s sqlx.Session) error {
+</span></span><span class="line"><span class="cl">		return nil
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>开启事务，在func中写事务代码，go-zero会根据返回的错误是否为空来进行判断是否需要回滚，不需要自己回滚，只需要在需要回滚的时候返回err即可</p>
+<p>不过很多时候是在logic中操作事务，此时就可以将这个方法暴露给logic</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span><span class="n">defaultUserModel</span><span class="p">)</span> <span class="n">TransCtx</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">fn</span> <span class="k">func</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">sqlx</span><span class="o">.</span><span class="n">Session</span><span class="p">)</span> <span class="n">error</span><span class="p">)</span> <span class="n">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">TransactCtx</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="k">func</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">s</span> <span class="n">sqlx</span><span class="o">.</span><span class="n">Session</span><span class="p">)</span> <span class="n">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果要操作事务，一定要用一个会话来进行操作，即连接是 <code>sqlx.Session</code> 而不是 <code>sqlx.SqlConn</code></p>
+<h2 id="日志">日志</h2>
+<p>在开发环境中，日志使用go-zero的logx包打印信息，如果使用Path来保存日志，需要关注的就是slow.log和error.log，slow关注慢查询，error是灾难型错误</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Log对象通常是不用自己定义的，在框架内部有设置默认值，直接logx.Info或Error打印就行，如果线上需要不打印info等级就需要配置这个日志等级
+</span></span><span class="line"><span class="cl">Log:
+</span></span><span class="line"><span class="cl">  # 服务名称
+</span></span><span class="line"><span class="cl">  ServiceName: user-api
+</span></span><span class="line"><span class="cl">  # 输入位置
+</span></span><span class="line"><span class="cl">  Model: console
+</span></span><span class="line"><span class="cl">  # 日志等级
+</span></span><span class="line"><span class="cl">  Level: error
+</span></span><span class="line"><span class="cl">  # 编码格式，通常线上为json,而开发环境建议使用plain，因为plain打印更好阅读，比如打印堆栈信息时,json没有换行，而plain会进行换行，更适合阅读，但是线上需要使用json来节省内容空间和统一格式
+</span></span><span class="line"><span class="cl">  Encoding: plain
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="携程">携程</h2>
+<p>如果使用 <code>go func(){}</code> 来起一个携程，有时会忘记对它进行recover操作，因此可以使用 <code>threading.GoSafe</code> 的方式来安全的启动一个携程，它底层本身也只是对携程进行一个封装，附带了一个当前函数区间的recover，避免panic没有被捕获，也可以自己对goroutinue进行封装</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">GoSafe</span><span class="p">(</span><span class="n">fn</span> <span class="k">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="n">RunSafe</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">RunSafe</span><span class="p">(</span><span class="n">fn</span> <span class="k">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">Recovers</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">fn</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Recovers</span><span class="p">(</span><span class="n">cleanups</span> <span class="o">...</span><span class="k">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">资源回收函数</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">cleanup</span> <span class="p">:</span><span class="o">=</span> <span class="nb">range</span> <span class="n">cleanups</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">cleanup</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">p</span> <span class="p">:</span><span class="o">=</span> <span class="n">recover</span><span class="p">();</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="连接rpc">连接rpc</h2>
+<p>通常上层连接底层需要先在配置文件中配置，并在config对象中定义和后续初始化</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">UserRpcConf:
+</span></span><span class="line"><span class="cl">  # 用于直连方式，与其他方式冲突，当和target同时存在时，会导致k8s负载不均衡
+</span></span><span class="line"><span class="cl">  # 三种连接方式负载均衡协议都走的是p2c
+</span></span><span class="line"><span class="cl">  Endpoints: 
+</span></span><span class="line"><span class="cl">    - 127.0.0.1:8080
+</span></span><span class="line"><span class="cl">  # etcd 方式
+</span></span><span class="line"><span class="cl">  Etcd:
+</span></span><span class="line"><span class="cl">    Hosts:
+</span></span><span class="line"><span class="cl">    - 127.0.0.1:2379
+</span></span><span class="line"><span class="cl">    Key: user.rpc
+</span></span><span class="line"><span class="cl">  # k8s方式
+</span></span><span class="line"><span class="cl">  Target: k8s://godemo/svc:9090 # svc一定要是k8s rpc服务器 yaml文件的serviceName
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Config struct {
+</span></span><span class="line"><span class="cl">	rest.RestConf
+</span></span><span class="line"><span class="cl">	UserRpcConf zrpc.RpcClientConf
+</span></span><span class="line"><span class="cl">	DB          struct {
+</span></span><span class="line"><span class="cl">		DataSource string
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	Cache cache.CacheConf
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">NewServiceContext</span><span class="p">(</span><span class="n">c</span> <span class="n">config</span><span class="o">.</span><span class="n">Config</span><span class="p">)</span> <span class="o">*</span><span class="n">ServiceContext</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="n">ServiceContext</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">Config</span><span class="p">:</span>              <span class="n">c</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserAgentMiddleware</span><span class="p">:</span> <span class="n">middleware</span><span class="o">.</span><span class="n">NewUserAgentMiddleware</span><span class="p">()</span><span class="o">.</span><span class="n">Handle</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserModel</span><span class="p">:</span>           <span class="n">model</span><span class="o">.</span><span class="n">NewUserModel</span><span class="p">(</span><span class="n">sqlx</span><span class="o">.</span><span class="n">NewMysql</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">DB</span><span class="o">.</span><span class="n">DataSource</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserRpcClient</span><span class="p">:</span>       <span class="n">usercenter</span><span class="o">.</span><span class="n">NewUsercenter</span><span class="p">(</span><span class="n">zrpc</span><span class="o">.</span><span class="n">MustNewClient</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">UserRpcConf</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="rpc拦截器">rpc拦截器</h2>
+<p>它的作用和中间件比较类似，所有的请求在进入内部方法之前都会先经过拦截器，不过没有next之类的方法</p>
+<p>rpc通过在main函数中使用 <code>s.AddUnaryInterceptors()</code> 来进行拦截</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	s.AddUnaryInterceptors(func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
+</span></span><span class="line"><span class="cl">		// 请求前
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;start inter&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		// 处理请求
+</span></span><span class="line"><span class="cl">		resp, err = handler(ctx, req)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		// 请求后
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;end inter&#34;)
+</span></span><span class="line"><span class="cl">		return resp, err
+</span></span><span class="line"><span class="cl">	})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果想在rpc客户端(api端)进行拦截则需要在 <code>NewServiceContext()</code> 函数中初始化它</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">NewServiceContext</span><span class="p">(</span><span class="n">c</span> <span class="n">config</span><span class="o">.</span><span class="n">Config</span><span class="p">)</span> <span class="o">*</span><span class="n">ServiceContext</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="n">ServiceContext</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">Config</span><span class="p">:</span>              <span class="n">c</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserAgentMiddleware</span><span class="p">:</span> <span class="n">middleware</span><span class="o">.</span><span class="n">NewUserAgentMiddleware</span><span class="p">()</span><span class="o">.</span><span class="n">Handle</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserModel</span><span class="p">:</span>           <span class="n">model</span><span class="o">.</span><span class="n">NewUserModel</span><span class="p">(</span><span class="n">sqlx</span><span class="o">.</span><span class="n">NewMysql</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">DB</span><span class="o">.</span><span class="n">DataSource</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">		<span class="n">UserRpcClient</span><span class="p">:</span> <span class="n">usercenter</span><span class="o">.</span><span class="n">NewUsercenter</span><span class="p">(</span><span class="n">zrpc</span><span class="o">.</span><span class="n">MustNewClient</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">UserRpcConf</span><span class="p">,</span> <span class="n">zrpc</span><span class="o">.</span><span class="n">WithUnaryClientInterceptor</span><span class="p">(</span><span class="k">func</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">method</span> <span class="n">string</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">reply</span> <span class="n">any</span><span class="p">,</span> <span class="n">cc</span> <span class="o">*</span><span class="n">grpc</span><span class="o">.</span><span class="n">ClientConn</span><span class="p">,</span> <span class="n">invoker</span> <span class="n">grpc</span><span class="o">.</span><span class="n">UnaryInvoker</span><span class="p">,</span> <span class="n">opts</span> <span class="o">...</span><span class="n">grpc</span><span class="o">.</span><span class="n">CallOption</span><span class="p">)</span> <span class="n">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span> <span class="err">拦截函数</span> <span class="p">(</span><span class="err">要注意的是这个拦截是在调用</span><span class="n">rpc服务时触发的</span><span class="err">，与当前层的业务代码是没关联的，所以它不一定会触发在本层业务代码之前，那个属于中间件的范畴</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			<span class="n">md</span> <span class="p">:</span><span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="n">map</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="n">string</span><span class="p">{</span><span class="s2">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;value&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span> <span class="err">创建一个附加了传出</span> <span class="n">md</span> <span class="err">的新上下文，可供外部的</span> <span class="n">gRPC</span> <span class="err">客户端、服务端使用；</span><span class="n">NewIncomingContext仅供自身的</span> <span class="n">gRPC</span> <span class="err">服务端内部使用</span>
+</span></span><span class="line"><span class="cl">			<span class="n">ctx</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">NewOutgoingContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">md</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			<span class="o">//</span> <span class="err">请求</span><span class="n">rpc</span>
+</span></span><span class="line"><span class="cl">			<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">invoker</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">reply</span><span class="p">,</span> <span class="n">cc</span><span class="p">,</span> <span class="n">opts</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			<span class="o">//</span> <span class="err">请求后函数</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">err</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}))),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以通过metadata来存储有md的上下文，然后在底层获取使用(类似于http的header)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	if md, ok := metadata.FromOutgoingContext(l.ctx); ok {
+</span></span><span class="line"><span class="cl">	// tmp是一个字符串切片，主要是考虑到兼容性，在使用Pairs的方式来创建md时可能其值是一个切片字符串
+</span></span><span class="line"><span class="cl">		tmp := md.Get(&#34;key&#34;)
+</span></span><span class="line"><span class="cl">		if len(tmp) &gt; 0 {
+</span></span><span class="line"><span class="cl">			fmt.Println(tmp)
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="传参校验">传参校验</h2>
+<p>go-zero自带的校验能力较弱，推荐使用第三方校验库，如 <code>https://github.com/go-playground/validator</code></p>
+<p>如果使用第三方库校验，就需要在 .api 文件中添加它的tag校验语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type UserInfoReq {
+</span></span><span class="line"><span class="cl">	Username string `json:&#34;username,optional&#34; validate:&#34;gte=0,lte=130&#34;`
+</span></span><span class="line"><span class="cl">	Password string `json:&#34;password,optional&#34;`
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样在生成代码时，type文件夹下的req和resp结构体也会附带validate tag，千万不要直接修改type文件夹下的内容，第一行就提示了 <code>// Code generated by goctl. DO NOT EDIT.</code> ，即修改了Type下一次生成又会覆盖它</p>
+<p>除此之外，还需要在handler中增加它的校验函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	user := &amp;User{
+</span></span><span class="line"><span class="cl">		FirstName:      &#34;Badger&#34;,
+</span></span><span class="line"><span class="cl">		LastName:       &#34;Smith&#34;,
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	err := validate.Struct(user)
+</span></span><span class="line"><span class="cl">	if err != nil {
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="生成模板">生成模板</h2>
+<p>如果go-zero默认的模板不适合自己的项目，可以修改模板文件，让其匹配自身的项目</p>
+<p>通过 <code>goctl template init</code> 会在家目录下的 <code>.goctl</code> 下生成对应版本的模板文件，之后使用goctl 生成代码时就会使用此目录的模板，就可以通过修改家目录下的模板文件修改生成的代码内容，如果不init则是使用默认模板</p>
+<p>不过这种方法只适合个人开发，如果是团队开发还是建议提交到git，让所有人都能通过这个模板生成一样的架构文件，避免混乱。成员可以clone下模板项目，然后在生成代码时通过 <code>--home=模板文件夹地址</code> 来指定使用哪个模板生成go-zero代码</p>
+<p>修改模板文件时要注意的是，每个文件可以使用的变量都是不同的，我们只能修改模板文件，源码文件传递哪些变量是设置好了的。因此加方法一定要选择有对应变量的模板文件。</p>
+<p>需要注意版本兼容问题，即goctl版本号要与模板对应的版本号一致</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>

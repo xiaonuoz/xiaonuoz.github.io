@@ -400,14 +400,14 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// To build strings more efficiently, see the strings.Builder type.
-</span></span><span class="line"><span class="cl">func (b *Buffer) String() string {
-</span></span><span class="line"><span class="cl">	if b == nil {
-</span></span><span class="line"><span class="cl">		// Special case, useful in debugging.
-</span></span><span class="line"><span class="cl">		return &#34;&lt;nil&gt;&#34;
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return string(b.buf[b.off:])
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">To</span> <span class="n">build</span> <span class="n">strings</span> <span class="n">more</span> <span class="n">efficiently</span><span class="p">,</span> <span class="n">see</span> <span class="n">the</span> <span class="n">strings</span><span class="o">.</span><span class="n">Builder</span> <span class="n">type</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span><span class="n">Buffer</span><span class="p">)</span> <span class="ne">String</span><span class="p">()</span> <span class="n">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="n">Special</span> <span class="k">case</span><span class="p">,</span> <span class="n">useful</span> <span class="ow">in</span> <span class="n">debugging</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s2">&#34;&lt;nil&gt;&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">string</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">buf</span><span class="p">[</span><span class="n">b</span><span class="o">.</span><span class="n">off</span><span class="p">:])</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
@@ -421,10 +421,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// String returns the accumulated string.
-</span></span><span class="line"><span class="cl">func (b *Builder) String() string {
-</span></span><span class="line"><span class="cl">	return *(*string)(unsafe.Pointer(&amp;b.buf))
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="ne">String</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">accumulated</span> <span class="n">string</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span><span class="n">Builder</span><span class="p">)</span> <span class="ne">String</span><span class="p">()</span> <span class="n">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">string</span><span class="p">)(</span><span class="n">unsafe</span><span class="o">.</span><span class="n">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="o">.</span><span class="n">buf</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>bytes.Buffer 的注释中还特意提到了：</p>
@@ -439,9 +439,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func lastNumsBySlice(origin []int) []int {
-</span></span><span class="line"><span class="cl">	return origin[len(origin)-2:]
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">lastNumsBySlice</span><span class="p">(</span><span class="n">origin</span> <span class="p">[]</span><span class="ne">int</span><span class="p">)</span> <span class="p">[]</span><span class="ne">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">origin</span><span class="p">[</span><span class="n">len</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="for-和-range-的性能比较">for 和 range 的性能比较</h2>
@@ -620,22 +620,22 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type demo1 struct {
-</span></span><span class="line"><span class="cl">	a int8
-</span></span><span class="line"><span class="cl">	b int16
-</span></span><span class="line"><span class="cl">	c int32
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">demo1</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span> <span class="n">int8</span>
+</span></span><span class="line"><span class="cl">	<span class="n">b</span> <span class="n">int16</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span> <span class="n">int32</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">type demo2 struct {
-</span></span><span class="line"><span class="cl">	a int8
-</span></span><span class="line"><span class="cl">	c int32
-</span></span><span class="line"><span class="cl">	b int16
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">demo2</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span> <span class="n">int8</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span> <span class="n">int32</span>
+</span></span><span class="line"><span class="cl">	<span class="n">b</span> <span class="n">int16</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	fmt.Println(unsafe.Sizeof(demo1{})) // 8
-</span></span><span class="line"><span class="cl">	fmt.Println(unsafe.Sizeof(demo2{})) // 12
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">unsafe</span><span class="o">.</span><span class="n">Sizeof</span><span class="p">(</span><span class="n">demo1</span><span class="p">{}))</span> <span class="o">//</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">unsafe</span><span class="o">.</span><span class="n">Sizeof</span><span class="p">(</span><span class="n">demo2</span><span class="p">{}))</span> <span class="o">//</span> <span class="mi">12</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>unsafe.Alignof(x)只会返回最终的对齐系数，。每个字段会按照自身的对齐系数来确定在内存中的偏移量，字段排列顺序不同，上一个字段因为偏移而浪费的大小也不同。</p>
@@ -697,20 +697,20 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type demo3 struct {
-</span></span><span class="line"><span class="cl">	c int32
-</span></span><span class="line"><span class="cl">	a struct{}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">demo3</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span> <span class="n">int32</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span> <span class="n">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">type demo4 struct {
-</span></span><span class="line"><span class="cl">	a struct{}
-</span></span><span class="line"><span class="cl">	c int32
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">demo4</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span> <span class="n">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span> <span class="n">int32</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	fmt.Println(unsafe.Sizeof(demo3{})) // 8
-</span></span><span class="line"><span class="cl">	fmt.Println(unsafe.Sizeof(demo4{})) // 4
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">unsafe</span><span class="o">.</span><span class="n">Sizeof</span><span class="p">(</span><span class="n">demo3</span><span class="p">{}))</span> <span class="o">//</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">unsafe</span><span class="o">.</span><span class="n">Sizeof</span><span class="p">(</span><span class="n">demo4</span><span class="p">{}))</span> <span class="o">//</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="互斥锁和读写锁的性能比较">互斥锁和读写锁的性能比较</h2>
@@ -762,24 +762,24 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func doBadthing(done chan bool) {
-</span></span><span class="line"><span class="cl">	time.Sleep(time.Second)
-</span></span><span class="line"><span class="cl">	done &lt;- true
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">doBadthing</span><span class="p">(</span><span class="n">done</span> <span class="n">chan</span> <span class="ne">bool</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">done</span> <span class="o">&lt;-</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func timeout(f func(chan bool)) error {
-</span></span><span class="line"><span class="cl">	done := make(chan bool)
-</span></span><span class="line"><span class="cl">	go f(done)
-</span></span><span class="line"><span class="cl">	select {
-</span></span><span class="line"><span class="cl">	case &lt;-done:
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;done&#34;)
-</span></span><span class="line"><span class="cl">		return nil
-</span></span><span class="line"><span class="cl">	case &lt;-time.After(time.Millisecond):
-</span></span><span class="line"><span class="cl">		return fmt.Errorf(&#34;timeout&#34;)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">timeout</span><span class="p">(</span><span class="n">f</span> <span class="k">func</span><span class="p">(</span><span class="n">chan</span> <span class="ne">bool</span><span class="p">))</span> <span class="n">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">done</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="n">f</span><span class="p">(</span><span class="n">done</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="o">&lt;-</span><span class="n">done</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;done&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="o">&lt;-</span><span class="n">time</span><span class="o">.</span><span class="n">After</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s2">&#34;timeout&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// fmt.Println(timeout(doBadthing))
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">timeout</span><span class="p">(</span><span class="n">doBadthing</span><span class="p">))</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>在这个代码中出现的问题就是，假如执行了1000次timeout(doBadthing),那么就会多1000个子协程永久存在与内存中，直到程序结束。原因就是超时时间为1ms，而doBadthing的执行为1s，那么每次都会走超时逻辑，这就导致1s后向done中发送信息时却找不到接收者(timeout已经结束),那么它会永久阻塞。</p>
@@ -827,30 +827,30 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func do(taskCh chan int) {
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		select {
-</span></span><span class="line"><span class="cl">		case t := &lt;-taskCh:
-</span></span><span class="line"><span class="cl">			time.Sleep(time.Millisecond)
-</span></span><span class="line"><span class="cl">			fmt.Printf(&#34;task %d is done\n&#34;, t)
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="k">do</span><span class="p">(</span><span class="n">taskCh</span> <span class="n">chan</span> <span class="ne">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="n">t</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">taskCh</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;task </span><span class="si">%d</span><span class="s2"> is done</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func sendTasks() {
-</span></span><span class="line"><span class="cl">	taskCh := make(chan int, 10)
-</span></span><span class="line"><span class="cl">	go do(taskCh)
-</span></span><span class="line"><span class="cl">	for i := 0; i &lt; 1000; i++ {
-</span></span><span class="line"><span class="cl">		taskCh &lt;- i
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">sendTasks</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">taskCh</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">do</span><span class="p">(</span><span class="n">taskCh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">taskCh</span> <span class="o">&lt;-</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func TestDo(t *testing.T) {
-</span></span><span class="line"><span class="cl">    t.Log(runtime.NumGoroutine())
-</span></span><span class="line"><span class="cl">    sendTasks()
-</span></span><span class="line"><span class="cl">	time.Sleep(time.Second)
-</span></span><span class="line"><span class="cl">	t.Log(runtime.NumGoroutine())
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">TestDo</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">runtime</span><span class="o">.</span><span class="n">NumGoroutine</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sendTasks</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">t</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">runtime</span><span class="o">.</span><span class="n">NumGoroutine</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>通过测试结果发现，子协程多了一个，也就是说，有一个协程一直没有得到释放。原因就是子协程<code>go do(taskCh)</code> 的select一直处于阻塞状态，等待接收任务，因此直到程序结束协程都没有释放。
@@ -878,20 +878,20 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type MyChannel struct {
-</span></span><span class="line"><span class="cl">	C    chan T
-</span></span><span class="line"><span class="cl">	once sync.Once
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">MyChannel</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">C</span>    <span class="n">chan</span> <span class="n">T</span>
+</span></span><span class="line"><span class="cl">	<span class="n">once</span> <span class="n">sync</span><span class="o">.</span><span class="n">Once</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func NewMyChannel() *MyChannel {
-</span></span><span class="line"><span class="cl">	return &amp;MyChannel{C: make(chan T)}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">NewMyChannel</span><span class="p">()</span> <span class="o">*</span><span class="n">MyChannel</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="n">MyChannel</span><span class="p">{</span><span class="n">C</span><span class="p">:</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="n">T</span><span class="p">)}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (mc *MyChannel) SafeClose() {
-</span></span><span class="line"><span class="cl">	mc.once.Do(func() {
-</span></span><span class="line"><span class="cl">		close(mc.C)
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">mc</span> <span class="o">*</span><span class="n">MyChannel</span><span class="p">)</span> <span class="n">SafeClose</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">mc</span><span class="o">.</span><span class="n">once</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">close</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
@@ -922,30 +922,30 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type MyChannel struct {
-</span></span><span class="line"><span class="cl">    C      chan T
-</span></span><span class="line"><span class="cl">    closed bool
-</span></span><span class="line"><span class="cl">    mutex  sync.Mutex
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">MyChannel</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">C</span>      <span class="n">chan</span> <span class="n">T</span>
+</span></span><span class="line"><span class="cl">    <span class="n">closed</span> <span class="ne">bool</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mutex</span>  <span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func NewMyChannel() *MyChannel {
-</span></span><span class="line"><span class="cl">    return &amp;MyChannel{C: make(chan T)}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">NewMyChannel</span><span class="p">()</span> <span class="o">*</span><span class="n">MyChannel</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="n">MyChannel</span><span class="p">{</span><span class="n">C</span><span class="p">:</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="n">T</span><span class="p">)}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (mc *MyChannel) SafeClose() {
-</span></span><span class="line"><span class="cl">    mc.mutex.Lock()
-</span></span><span class="line"><span class="cl">    defer mc.mutex.Unlock()
-</span></span><span class="line"><span class="cl">    if !mc.closed {
-</span></span><span class="line"><span class="cl">        close(mc.C)
-</span></span><span class="line"><span class="cl">        mc.closed = true
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">mc</span> <span class="o">*</span><span class="n">MyChannel</span><span class="p">)</span> <span class="n">SafeClose</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mc</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">defer</span> <span class="n">mc</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">!</span><span class="n">mc</span><span class="o">.</span><span class="n">closed</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">close</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mc</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (mc *MyChannel) IsClosed() bool {
-</span></span><span class="line"><span class="cl">    mc.mutex.Lock()
-</span></span><span class="line"><span class="cl">    defer mc.mutex.Unlock()
-</span></span><span class="line"><span class="cl">    return mc.closed
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">mc</span> <span class="o">*</span><span class="n">MyChannel</span><span class="p">)</span> <span class="n">IsClosed</span><span class="p">()</span> <span class="ne">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mc</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">defer</span> <span class="n">mc</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">mc</span><span class="o">.</span><span class="n">closed</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="优雅的关闭通道">优雅的关闭通道</h4>
@@ -1168,108 +1168,108 @@
 </span><span class="lnt">102
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">const Max = 100000
-</span></span><span class="line"><span class="cl">	const NumReceivers = 10
-</span></span><span class="line"><span class="cl">	const NumSenders = 1000
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">const</span> <span class="n">Max</span> <span class="o">=</span> <span class="mi">100000</span>
+</span></span><span class="line"><span class="cl">	<span class="k">const</span> <span class="n">NumReceivers</span> <span class="o">=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl">	<span class="k">const</span> <span class="n">NumSenders</span> <span class="o">=</span> <span class="mi">1000</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	wgReceivers := sync.WaitGroup{}
-</span></span><span class="line"><span class="cl">	wgReceivers.Add(NumReceivers)
+</span></span><span class="line"><span class="cl">	<span class="n">wgReceivers</span> <span class="p">:</span><span class="o">=</span> <span class="n">sync</span><span class="o">.</span><span class="n">WaitGroup</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">wgReceivers</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">NumReceivers</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	dataCh := make(chan int)
-</span></span><span class="line"><span class="cl">	stopCh := make(chan struct{})
-</span></span><span class="line"><span class="cl">	// stopCh是一个额外的信号通道。
-</span></span><span class="line"><span class="cl">	// 它的发送者为中间调解者。它的接收者为dataCh数据通道的所有的发送者和接收者。
-</span></span><span class="line"><span class="cl">	// 平常都处于阻塞状态，直到执行close(stopCh)后
-</span></span><span class="line"><span class="cl">	toStop := make(chan string, 1)
-</span></span><span class="line"><span class="cl">	// toStop是一个用来通知中间调解者，让其关闭 通道stopCh 的信号通道。
-</span></span><span class="line"><span class="cl">	// 此第二个信号通道的发送者为 dataCh数据通道的所有的发送者和接收者，
-</span></span><span class="line"><span class="cl">	// 它的接收者为中间调解者。它必须为一个缓冲通道，
-</span></span><span class="line"><span class="cl">	// 不然如果在中间调解者还未准备好的情况下就已经有某个协程向toStop发送信号时，会发送阻塞，走default分支，此信号就会被抛弃。
+</span></span><span class="line"><span class="cl">	<span class="n">dataCh</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">stopCh</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="n">struct</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="n">stopCh是一个额外的信号通道</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">它的发送者为中间调解者。它的接收者为</span><span class="n">dataCh数据通道的所有的发送者和接收者</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">平常都处于阻塞状态，直到执行</span><span class="n">close</span><span class="p">(</span><span class="n">stopCh</span><span class="p">)</span><span class="err">后</span>
+</span></span><span class="line"><span class="cl">	<span class="n">toStop</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="n">string</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="n">toStop是一个用来通知中间调解者</span><span class="err">，让其关闭</span> <span class="err">通道</span><span class="n">stopCh</span> <span class="err">的信号通道。</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">此第二个信号通道的发送者为</span> <span class="n">dataCh数据通道的所有的发送者和接收者</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">它的接收者为中间调解者。它必须为一个缓冲通道，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">不然如果在中间调解者还未准备好的情况下就已经有某个协程向</span><span class="n">toStop发送信号时</span><span class="err">，会发送阻塞，走</span><span class="n">default分支</span><span class="err">，此信号就会被抛弃。</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// 中间调解者
-</span></span><span class="line"><span class="cl">	go func() {
-</span></span><span class="line"><span class="cl">		&lt;-toStop
-</span></span><span class="line"><span class="cl">		close(stopCh)
-</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">中间调解者</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">&lt;-</span><span class="n">toStop</span>
+</span></span><span class="line"><span class="cl">		<span class="n">close</span><span class="p">(</span><span class="n">stopCh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// 发送者
-</span></span><span class="line"><span class="cl">	for i := 0; i &lt; NumSenders; i++ {
-</span></span><span class="line"><span class="cl">		go func(id string) {
-</span></span><span class="line"><span class="cl">			for {
-</span></span><span class="line"><span class="cl">				value := rand.Intn(Max)
-</span></span><span class="line"><span class="cl">				if value == 0 {
-</span></span><span class="line"><span class="cl">					// 为了防止阻塞，这里使用了一个尝试
-</span></span><span class="line"><span class="cl">					// 发送操作来向中间调解者发送信号。
-</span></span><span class="line"><span class="cl">					select {
-</span></span><span class="line"><span class="cl">					case toStop &lt;- &#34;发送者#&#34; + id:
-</span></span><span class="line"><span class="cl">					default:
-</span></span><span class="line"><span class="cl">					}
-</span></span><span class="line"><span class="cl">					return
-</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">发送者</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">NumSenders</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">go</span> <span class="k">func</span><span class="p">(</span><span class="n">id</span> <span class="n">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">value</span> <span class="p">:</span><span class="o">=</span> <span class="n">rand</span><span class="o">.</span><span class="n">Intn</span><span class="p">(</span><span class="n">Max</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="o">//</span> <span class="err">为了防止阻塞，这里使用了一个尝试</span>
+</span></span><span class="line"><span class="cl">					<span class="o">//</span> <span class="err">发送操作来向中间调解者发送信号。</span>
+</span></span><span class="line"><span class="cl">					<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="k">case</span> <span class="n">toStop</span> <span class="o">&lt;-</span> <span class="s2">&#34;发送者#&#34;</span> <span class="o">+</span> <span class="n">id</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">					<span class="n">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">					<span class="p">}</span>
+</span></span><span class="line"><span class="cl">					<span class="k">return</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">				// 此处的尝试接收操作是为了让此发送协程尽早
-</span></span><span class="line"><span class="cl">				// 退出。标准编译器对尝试接收和尝试发送做了
-</span></span><span class="line"><span class="cl">				// 特殊的优化，因而它们的速度很快。
-</span></span><span class="line"><span class="cl">				select {
-</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
-</span></span><span class="line"><span class="cl">					return
-</span></span><span class="line"><span class="cl">				default:
-</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">此处的尝试接收操作是为了让此发送协程尽早</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">退出。标准编译器对尝试接收和尝试发送做了</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">特殊的优化，因而它们的速度很快。</span>
+</span></span><span class="line"><span class="cl">				<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">case</span> <span class="o">&lt;-</span><span class="n">stopCh</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">					<span class="k">return</span>
+</span></span><span class="line"><span class="cl">				<span class="n">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">				// 即使stopCh已关闭，如果这个select代码块
-</span></span><span class="line"><span class="cl">				// 中第二个分支的发送操作是非阻塞的，则第一个
-</span></span><span class="line"><span class="cl">				// 分支仍很有可能在若干个循环步内依然不会被选
-</span></span><span class="line"><span class="cl">				// 中。如果这是不可接受的，则上面的第一个尝试
-</span></span><span class="line"><span class="cl">				// 接收操作代码块是必需的。
-</span></span><span class="line"><span class="cl">				select {
-</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
-</span></span><span class="line"><span class="cl">					return
-</span></span><span class="line"><span class="cl">				case dataCh &lt;- value:
-</span></span><span class="line"><span class="cl">				}
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">		}(strconv.Itoa(i))
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">即使</span><span class="n">stopCh已关闭</span><span class="err">，如果这个</span><span class="n">select代码块</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">中第二个分支的发送操作是非阻塞的，则第一个</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">分支仍很有可能在若干个循环步内依然不会被选</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">中。如果这是不可接受的，则上面的第一个尝试</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">接收操作代码块是必需的。</span>
+</span></span><span class="line"><span class="cl">				<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">case</span> <span class="o">&lt;-</span><span class="n">stopCh</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">					<span class="k">return</span>
+</span></span><span class="line"><span class="cl">				<span class="k">case</span> <span class="n">dataCh</span> <span class="o">&lt;-</span> <span class="n">value</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}(</span><span class="n">strconv</span><span class="o">.</span><span class="n">Itoa</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// 接收者
-</span></span><span class="line"><span class="cl">	for i := 0; i &lt; NumReceivers; i++ {
-</span></span><span class="line"><span class="cl">		go func(id string) {
-</span></span><span class="line"><span class="cl">			defer wgReceivers.Done()
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">接收者</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">NumReceivers</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">go</span> <span class="k">func</span><span class="p">(</span><span class="n">id</span> <span class="n">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">defer</span> <span class="n">wgReceivers</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">			for {
-</span></span><span class="line"><span class="cl">				// 和发送者协程一样，此处的尝试接收操作是为了
-</span></span><span class="line"><span class="cl">				// 让此接收协程尽早退出。
-</span></span><span class="line"><span class="cl">				select {
-</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
-</span></span><span class="line"><span class="cl">					return
-</span></span><span class="line"><span class="cl">				default:
-</span></span><span class="line"><span class="cl">				}
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">和发送者协程一样，此处的尝试接收操作是为了</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">让此接收协程尽早退出。</span>
+</span></span><span class="line"><span class="cl">				<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">case</span> <span class="o">&lt;-</span><span class="n">stopCh</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">					<span class="k">return</span>
+</span></span><span class="line"><span class="cl">				<span class="n">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">				// 即使stopCh已关闭，如果这个select代码块
-</span></span><span class="line"><span class="cl">				// 中第二个分支的接收操作是非阻塞的，则第一个
-</span></span><span class="line"><span class="cl">				// 分支仍很有可能在若干个循环步内依然不会被选
-</span></span><span class="line"><span class="cl">				// 中。如果这是不可接受的，则上面尝试接收操作
-</span></span><span class="line"><span class="cl">				// 代码块是必需的。
-</span></span><span class="line"><span class="cl">				select {
-</span></span><span class="line"><span class="cl">				case &lt;-stopCh:
-</span></span><span class="line"><span class="cl">					return
-</span></span><span class="line"><span class="cl">				case value := &lt;-dataCh:
-</span></span><span class="line"><span class="cl">					if value == Max-1 {
-</span></span><span class="line"><span class="cl">						// 为了防止阻塞，这里使用了一个尝试
-</span></span><span class="line"><span class="cl">						// 发送操作来向中间调解者发送信号。
-</span></span><span class="line"><span class="cl">						select {
-</span></span><span class="line"><span class="cl">						case toStop &lt;- &#34;接收者#&#34; + id:
-</span></span><span class="line"><span class="cl">						default:
-</span></span><span class="line"><span class="cl">						}
-</span></span><span class="line"><span class="cl">						return
-</span></span><span class="line"><span class="cl">					}
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">即使</span><span class="n">stopCh已关闭</span><span class="err">，如果这个</span><span class="n">select代码块</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">中第二个分支的接收操作是非阻塞的，则第一个</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">分支仍很有可能在若干个循环步内依然不会被选</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">中。如果这是不可接受的，则上面尝试接收操作</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">代码块是必需的。</span>
+</span></span><span class="line"><span class="cl">				<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">case</span> <span class="o">&lt;-</span><span class="n">stopCh</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">					<span class="k">return</span>
+</span></span><span class="line"><span class="cl">				<span class="k">case</span> <span class="n">value</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">dataCh</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">					<span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">Max</span><span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">						<span class="o">//</span> <span class="err">为了防止阻塞，这里使用了一个尝试</span>
+</span></span><span class="line"><span class="cl">						<span class="o">//</span> <span class="err">发送操作来向中间调解者发送信号。</span>
+</span></span><span class="line"><span class="cl">						<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">						<span class="k">case</span> <span class="n">toStop</span> <span class="o">&lt;-</span> <span class="s2">&#34;接收者#&#34;</span> <span class="o">+</span> <span class="n">id</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">						<span class="n">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">						<span class="p">}</span>
+</span></span><span class="line"><span class="cl">						<span class="k">return</span>
+</span></span><span class="line"><span class="cl">					<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">					log.Println(value)
-</span></span><span class="line"><span class="cl">				}
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">		}(strconv.Itoa(i))
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">					<span class="nb">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}(</span><span class="n">strconv</span><span class="o">.</span><span class="n">Itoa</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	wgReceivers.Wait()
+</span></span><span class="line"><span class="cl">	<span class="n">wgReceivers</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>并没有什么情况非得逼得我们违反通道关闭原则。 如果你遇到了此情形，请考虑修改你的代码流程和结构设计</code></p>
@@ -1317,30 +1317,30 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">main</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;log&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;time&#34;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/Jeffail/tunny&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;github.com/Jeffail/tunny&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 创建协程池，第一个参数是协程池的大小，第二个参数是协程运行的函数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">pool</span> <span class="o">:=</span> <span class="nx">tunny</span><span class="p">.</span><span class="nf">NewFunc</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">创建协程池，第一个参数是协程池的大小，第二个参数是协程运行的函数</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pool</span> <span class="p">:</span><span class="o">=</span> <span class="n">tunny</span><span class="o">.</span><span class="n">NewFunc</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">i</span> <span class="n">interface</span><span class="p">{})</span> <span class="n">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">nil</span>
 </span></span><span class="line"><span class="cl">	<span class="p">})</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 关闭协程池
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">defer</span> <span class="nx">pool</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">关闭协程池</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">pool</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// 将参数传递给协程池定义好的worker处理
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nx">pool</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">将参数传递给协程池定义好的</span><span class="n">worker处理</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">go</span> <span class="n">pool</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -1424,11 +1424,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">var studentPool = sync.Pool{
-</span></span><span class="line"><span class="cl">    New: func() interface{} { 
-</span></span><span class="line"><span class="cl">        return new(Student) 
-</span></span><span class="line"><span class="cl">    },
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">var</span> <span class="n">studentPool</span> <span class="o">=</span> <span class="n">sync</span><span class="o">.</span><span class="n">Pool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">New</span><span class="p">:</span> <span class="k">func</span><span class="p">()</span> <span class="n">interface</span><span class="p">{}</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">new</span><span class="p">(</span><span class="n">Student</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>只需要实现 New 函数即可。对象池中没有对象时，将会调用 New 函数创建。</p>
@@ -1478,7 +1478,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (o *Once) Do(f func())
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">o</span> <span class="o">*</span><span class="n">Once</span><span class="p">)</span> <span class="n">Do</span><span class="p">(</span><span class="n">f</span> <span class="k">func</span><span class="p">())</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果不使用sync.One，并发运行初始化时，每次都构造出一个新的对象，既浪费内存，又浪费初始化时间。如果初始化时不加锁，初始化全局变量就可能出现并发冲突。这种情况下，使用 sync.Once 既能够保证全局变量初始化时是线程安全的，又能节省内存和初始化时间。</p>
@@ -1521,35 +1521,35 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">sync</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">sync</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;sync/atomic&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;sync/atomic&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Once</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 标志位，判断是否已经初始化
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">done</span> <span class="kt">uint32</span>
-</span></span><span class="line"><span class="cl">    <span class="nx">m</span>    <span class="nx">Mutex</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Once</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">标志位，判断是否已经初始化</span>
+</span></span><span class="line"><span class="cl">    <span class="n">done</span> <span class="n">uint32</span>
+</span></span><span class="line"><span class="cl">    <span class="n">m</span>    <span class="ne">Mutex</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="o">*</span><span class="nx">Once</span><span class="p">)</span> <span class="nf">Do</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 原子操作判断是否初始化过，标志位设置为uint32就是因为atomic的最小单位就是32，没有uint8
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">o</span><span class="p">.</span><span class="nf">doSlow</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">o</span> <span class="o">*</span><span class="n">Once</span><span class="p">)</span> <span class="n">Do</span><span class="p">(</span><span class="n">f</span> <span class="k">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">原子操作判断是否初始化过，标志位设置为</span><span class="n">uint32就是因为atomic的最小单位就是32</span><span class="err">，没有</span><span class="n">uint8</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">atomic</span><span class="o">.</span><span class="n">LoadUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">o</span><span class="o">.</span><span class="n">done</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">o</span><span class="o">.</span><span class="n">doSlow</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="o">*</span><span class="nx">Once</span><span class="p">)</span> <span class="nf">doSlow</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 加锁避免并发问题，不再Do函数加锁的原因就是加快速度，
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 如果在Do中加锁，那么即使初始化过后，以后执行Do方法依然需要加锁
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">    <span class="k">defer</span> <span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// Once都是同一个，因此在原子操作设置完后，这个done就为1了
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">done</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 设置标志为已初始化
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">defer</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">o</span> <span class="o">*</span><span class="n">Once</span><span class="p">)</span> <span class="n">doSlow</span><span class="p">(</span><span class="n">f</span> <span class="k">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">加锁避免并发问题，不再</span><span class="n">Do函数加锁的原因就是加快速度</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">如果在</span><span class="n">Do中加锁</span><span class="err">，那么即使初始化过后，以后执行</span><span class="n">Do方法依然需要加锁</span>
+</span></span><span class="line"><span class="cl">    <span class="n">o</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">defer</span> <span class="n">o</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="n">Once都是同一个</span><span class="err">，因此在原子操作设置完后，这个</span><span class="n">done就为1了</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">done</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="err">设置标志为已初始化</span>
+</span></span><span class="line"><span class="cl">        <span class="n">defer</span> <span class="n">atomic</span><span class="o">.</span><span class="n">StoreUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">o</span><span class="o">.</span><span class="n">done</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">f</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
@@ -1609,7 +1609,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func NewCond(l Locker) *Cond
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">NewCond</span><span class="p">(</span><span class="n">l</span> <span class="n">Locker</span><span class="p">)</span> <span class="o">*</span><span class="n">Cond</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>NewCond 创建 Cond 实例时，需要通过参数来关联一个锁。</code></p>
@@ -1623,11 +1623,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Broadcast wakes all goroutines waiting on c.
-</span></span><span class="line"><span class="cl">//
-</span></span><span class="line"><span class="cl">// It is allowed but not required for the caller to hold c.L
-</span></span><span class="line"><span class="cl">// during the call.
-</span></span><span class="line"><span class="cl">func (c *Cond) Broadcast()
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">Broadcast</span> <span class="n">wakes</span> <span class="n">all</span> <span class="n">goroutines</span> <span class="n">waiting</span> <span class="n">on</span> <span class="n">c</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">It</span> <span class="n">is</span> <span class="n">allowed</span> <span class="n">but</span> <span class="ow">not</span> <span class="n">required</span> <span class="k">for</span> <span class="n">the</span> <span class="n">caller</span> <span class="n">to</span> <span class="n">hold</span> <span class="n">c</span><span class="o">.</span><span class="n">L</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">during</span> <span class="n">the</span> <span class="n">call</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">Cond</span><span class="p">)</span> <span class="n">Broadcast</span><span class="p">()</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>Broadcast 唤醒所有等待条件变量 c 的 goroutine，无需锁保护。</p>
@@ -1641,11 +1641,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Signal wakes one goroutine waiting on c, if there is any.
-</span></span><span class="line"><span class="cl">//
-</span></span><span class="line"><span class="cl">// It is allowed but not required for the caller to hold c.L
-</span></span><span class="line"><span class="cl">// during the call.
-</span></span><span class="line"><span class="cl">func (c *Cond) Signal()
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">Signal</span> <span class="n">wakes</span> <span class="n">one</span> <span class="n">goroutine</span> <span class="n">waiting</span> <span class="n">on</span> <span class="n">c</span><span class="p">,</span> <span class="k">if</span> <span class="n">there</span> <span class="n">is</span> <span class="n">any</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">It</span> <span class="n">is</span> <span class="n">allowed</span> <span class="n">but</span> <span class="ow">not</span> <span class="n">required</span> <span class="k">for</span> <span class="n">the</span> <span class="n">caller</span> <span class="n">to</span> <span class="n">hold</span> <span class="n">c</span><span class="o">.</span><span class="n">L</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">during</span> <span class="n">the</span> <span class="n">call</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">Cond</span><span class="p">)</span> <span class="n">Signal</span><span class="p">()</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>Signal 只唤醒任意 1 个等待条件变量 c 的 goroutine，无需锁保护。<code>BroadCast和Signal都只是唤醒正在Wait的协程，如果没有，那么就相当于不起作用</code></p>
@@ -1671,23 +1671,23 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Wait atomically unlocks c.L and suspends execution
-</span></span><span class="line"><span class="cl">// of the calling goroutine. After later resuming execution,
-</span></span><span class="line"><span class="cl">// Wait locks c.L before returning. Unlike in other systems,
-</span></span><span class="line"><span class="cl">// Wait cannot return unless awoken by Broadcast or Signal.
-</span></span><span class="line"><span class="cl">//
-</span></span><span class="line"><span class="cl">// Because c.L is not locked when Wait first resumes, the caller
-</span></span><span class="line"><span class="cl">// typically cannot assume that the condition is true when
-</span></span><span class="line"><span class="cl">// Wait returns. Instead, the caller should Wait in a loop:
-</span></span><span class="line"><span class="cl">//
-</span></span><span class="line"><span class="cl">//    c.L.Lock()
-</span></span><span class="line"><span class="cl">//    for !condition() {
-</span></span><span class="line"><span class="cl">//        c.Wait()
-</span></span><span class="line"><span class="cl">//    }
-</span></span><span class="line"><span class="cl">//    ... make use of condition ...
-</span></span><span class="line"><span class="cl">//    c.L.Unlock()
-</span></span><span class="line"><span class="cl">//
-</span></span><span class="line"><span class="cl">func (c *Cond) Wait()
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">Wait</span> <span class="n">atomically</span> <span class="n">unlocks</span> <span class="n">c</span><span class="o">.</span><span class="n">L</span> <span class="ow">and</span> <span class="n">suspends</span> <span class="n">execution</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">of</span> <span class="n">the</span> <span class="n">calling</span> <span class="n">goroutine</span><span class="o">.</span> <span class="n">After</span> <span class="n">later</span> <span class="n">resuming</span> <span class="n">execution</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">Wait</span> <span class="n">locks</span> <span class="n">c</span><span class="o">.</span><span class="n">L</span> <span class="n">before</span> <span class="n">returning</span><span class="o">.</span> <span class="n">Unlike</span> <span class="ow">in</span> <span class="n">other</span> <span class="n">systems</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">Wait</span> <span class="n">cannot</span> <span class="k">return</span> <span class="n">unless</span> <span class="n">awoken</span> <span class="n">by</span> <span class="n">Broadcast</span> <span class="ow">or</span> <span class="n">Signal</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">Because</span> <span class="n">c</span><span class="o">.</span><span class="n">L</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">locked</span> <span class="n">when</span> <span class="n">Wait</span> <span class="n">first</span> <span class="n">resumes</span><span class="p">,</span> <span class="n">the</span> <span class="n">caller</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">typically</span> <span class="n">cannot</span> <span class="n">assume</span> <span class="n">that</span> <span class="n">the</span> <span class="n">condition</span> <span class="n">is</span> <span class="bp">true</span> <span class="n">when</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">Wait</span> <span class="n">returns</span><span class="o">.</span> <span class="n">Instead</span><span class="p">,</span> <span class="n">the</span> <span class="n">caller</span> <span class="n">should</span> <span class="n">Wait</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">loop</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>    <span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>    <span class="k">for</span> <span class="o">!</span><span class="n">condition</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>        <span class="n">c</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>    <span class="o">...</span> <span class="n">make</span> <span class="n">use</span> <span class="n">of</span> <span class="n">condition</span> <span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>    <span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">Cond</span><span class="p">)</span> <span class="n">Wait</span><span class="p">()</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>调用 Wait 会自动释放锁 c.L，并挂起调用者所在的 goroutine，因此当前协程会阻塞在 Wait 方法调用的地方。如果其他协程调用了 Signal 或 Broadcast 唤醒了该协程，那么 Wait 方法在结束阻塞时，会重新给 c.L 加锁，并且继续执行 Wait 后面的代码。</p>
@@ -1746,54 +1746,54 @@
 </span><span class="lnt">48
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// done 即互斥锁需要保护的条件变量
-</span></span><span class="line"><span class="cl">var done = false
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">done</span> <span class="err">即互斥锁需要保护的条件变量</span>
+</span></span><span class="line"><span class="cl"><span class="k">var</span> <span class="n">done</span> <span class="o">=</span> <span class="bp">false</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// 调用 Wait() 等待通知，直到 done 为 true，调用Wait()时必须加锁
-</span></span><span class="line"><span class="cl">func read(name string, c *sync.Cond) {
-</span></span><span class="line"><span class="cl">	// c.L.Lock()是为了Wait函数内部并发安全的将当前协程加入Cond的通知队列，
-</span></span><span class="line"><span class="cl">	// 之后会解锁并挂起等待通知唤醒，唤醒后在Wait()方法结束时会重新给c.L 加锁。
-</span></span><span class="line"><span class="cl">	c.L.Lock()
-</span></span><span class="line"><span class="cl">	// 某个wait协程可能会把资源状态改回不可用，
-</span></span><span class="line"><span class="cl">	// 所以其他wait协程需要在wait结束后for循环重新判断条件变量是否符合，
-</span></span><span class="line"><span class="cl">	// 如果被改回不可用就再次阻塞，
-</span></span><span class="line"><span class="cl">	// 如果确定所有wait协程都是只读不写的话，用if也可以。
-</span></span><span class="line"><span class="cl">	for !done {
-</span></span><span class="line"><span class="cl">		// wait()获得通知后，并不会立即就退出函数了，wait内部会去抢占c.L锁，
-</span></span><span class="line"><span class="cl">		// 以确保对共享资源(条件变量) 的并发安全访问。
-</span></span><span class="line"><span class="cl">		// 只有当前协程抢占到c.L锁后才会从wait()退出。
-</span></span><span class="line"><span class="cl">		// 访问完条件变量后需要显式的c.L.Unlock()去解锁wait()退出前的锁定
-</span></span><span class="line"><span class="cl">		c.Wait()
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	// c.L.Unlock()并不是配对上面的那个c.L.Lock()，而是配对的wait()内部的加锁。
-</span></span><span class="line"><span class="cl">	c.L.Unlock()
-</span></span><span class="line"><span class="cl">	log.Println(name, &#34;starts reading&#34;)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">调用</span> <span class="n">Wait</span><span class="p">()</span> <span class="err">等待通知，直到</span> <span class="n">done</span> <span class="err">为</span> <span class="bp">true</span><span class="err">，调用</span><span class="n">Wait</span><span class="p">()</span><span class="err">时必须加锁</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">read</span><span class="p">(</span><span class="n">name</span> <span class="n">string</span><span class="p">,</span> <span class="n">c</span> <span class="o">*</span><span class="n">sync</span><span class="o">.</span><span class="n">Cond</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span><span class="err">是为了</span><span class="n">Wait函数内部并发安全的将当前协程加入Cond的通知队列</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">之后会解锁并挂起等待通知唤醒，唤醒后在</span><span class="n">Wait</span><span class="p">()</span><span class="err">方法结束时会重新给</span><span class="n">c</span><span class="o">.</span><span class="n">L</span> <span class="err">加锁。</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">某个</span><span class="n">wait协程可能会把资源状态改回不可用</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">所以其他</span><span class="n">wait协程需要在wait结束后for循环重新判断条件变量是否符合</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">如果被改回不可用就再次阻塞，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">如果确定所有</span><span class="n">wait协程都是只读不写的话</span><span class="err">，用</span><span class="n">if也可以</span><span class="err">。</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="o">!</span><span class="n">done</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="n">wait</span><span class="p">()</span><span class="err">获得通知后，并不会立即就退出函数了，</span><span class="n">wait内部会去抢占c</span><span class="o">.</span><span class="n">L锁</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="err">以确保对共享资源</span><span class="p">(</span><span class="err">条件变量</span><span class="p">)</span> <span class="err">的并发安全访问。</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="err">只有当前协程抢占到</span><span class="n">c</span><span class="o">.</span><span class="n">L锁后才会从wait</span><span class="p">()</span><span class="err">退出。</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="err">访问完条件变量后需要显式的</span><span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span><span class="err">去解锁</span><span class="n">wait</span><span class="p">()</span><span class="err">退出前的锁定</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span><span class="err">并不是配对上面的那个</span><span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span><span class="err">，而是配对的</span><span class="n">wait</span><span class="p">()</span><span class="err">内部的加锁。</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&#34;starts reading&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// 接收数据，接收完成后，将 done 置为 true，调用 Broadcast() 通知所有等待的协程
-</span></span><span class="line"><span class="cl">func write(name string, c *sync.Cond) {
-</span></span><span class="line"><span class="cl">	log.Println(name, &#34;starts writing&#34;)
-</span></span><span class="line"><span class="cl">	// 模拟耗时，另一方面是确保前面的 3 个 read 协程都执行到
-</span></span><span class="line"><span class="cl">	time.Sleep(time.Second)
-</span></span><span class="line"><span class="cl">	// 修改条件变量时必须加锁
-</span></span><span class="line"><span class="cl">	c.L.Lock()
-</span></span><span class="line"><span class="cl">	done = true
-</span></span><span class="line"><span class="cl">	c.L.Unlock()
-</span></span><span class="line"><span class="cl">	log.Println(name, &#34;wakes all&#34;)
-</span></span><span class="line"><span class="cl">	// 广播时，如果没有其他协程正在wait这个cond，那么这个广播相当于就被丢弃了
-</span></span><span class="line"><span class="cl">	c.Broadcast()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">接收数据，接收完成后，将</span> <span class="n">done</span> <span class="err">置为</span> <span class="bp">true</span><span class="err">，调用</span> <span class="n">Broadcast</span><span class="p">()</span> <span class="err">通知所有等待的协程</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">write</span><span class="p">(</span><span class="n">name</span> <span class="n">string</span><span class="p">,</span> <span class="n">c</span> <span class="o">*</span><span class="n">sync</span><span class="o">.</span><span class="n">Cond</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&#34;starts writing&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">模拟耗时，另一方面是确保前面的</span> <span class="mi">3</span> <span class="err">个</span> <span class="n">read</span> <span class="err">协程都执行到</span>
+</span></span><span class="line"><span class="cl">	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">修改条件变量时必须加锁</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">done</span> <span class="o">=</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&#34;wakes all&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">广播时，如果没有其他协程正在</span><span class="n">wait这个cond</span><span class="err">，那么这个广播相当于就被丢弃了</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span><span class="o">.</span><span class="n">Broadcast</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	cond := sync.NewCond(&amp;sync.Mutex{})
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cond</span> <span class="p">:</span><span class="o">=</span> <span class="n">sync</span><span class="o">.</span><span class="n">NewCond</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span><span class="p">{})</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	go read(&#34;reader1&#34;, cond)
-</span></span><span class="line"><span class="cl">	go read(&#34;reader2&#34;, cond)
-</span></span><span class="line"><span class="cl">	go read(&#34;reader3&#34;, cond)
-</span></span><span class="line"><span class="cl">	write(&#34;writer&#34;, cond)
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="n">read</span><span class="p">(</span><span class="s2">&#34;reader1&#34;</span><span class="p">,</span> <span class="n">cond</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="n">read</span><span class="p">(</span><span class="s2">&#34;reader2&#34;</span><span class="p">,</span> <span class="n">cond</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="n">read</span><span class="p">(</span><span class="s2">&#34;reader3&#34;</span><span class="p">,</span> <span class="n">cond</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">write</span><span class="p">(</span><span class="s2">&#34;writer&#34;</span><span class="p">,</span> <span class="n">cond</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	time.Sleep(time.Second * 3)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong><code>channel也能作为广播使用,close(ch)关闭时，其他协程都可以获取它的零值，但是close有一个问题是它不能复用，无法对close的channel再次close，而sync.Cond是可以复用的</code></strong></p>
@@ -1962,9 +1962,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;hello world!&#34;)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;hello world!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>因为 fmt.Println() 接收的参数是空接口类型，Go 编译器无法确定入参变量的具体类型，所以此类情况变量也会逃逸到堆上</p>
@@ -2015,32 +2015,32 @@
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func generate8191() {
-</span></span><span class="line"><span class="cl">	nums := make([]int, 8191) // &lt; 64KB
-</span></span><span class="line"><span class="cl">	for i := 0; i &lt; 8191; i++ {
-</span></span><span class="line"><span class="cl">		nums[i] = rand.Int()
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">generate8191</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nums</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="ne">int</span><span class="p">,</span> <span class="mi">8191</span><span class="p">)</span> <span class="o">//</span> <span class="o">&lt;</span> <span class="mi">64</span><span class="n">KB</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8191</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func generate8192() {
-</span></span><span class="line"><span class="cl">	nums := make([]int, 8192) // = 64KB  64 * 1024 / 8
-</span></span><span class="line"><span class="cl">	for i := 0; i &lt; 8192; i++ {
-</span></span><span class="line"><span class="cl">		nums[i] = rand.Int()
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">generate8192</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nums</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="ne">int</span><span class="p">,</span> <span class="mi">8192</span><span class="p">)</span> <span class="o">//</span> <span class="o">=</span> <span class="mi">64</span><span class="n">KB</span>  <span class="mi">64</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">/</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8192</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func generate(n int) {
-</span></span><span class="line"><span class="cl">	nums := make([]int, n) // 不确定大小
-</span></span><span class="line"><span class="cl">	for i := 0; i &lt; n; i++ {
-</span></span><span class="line"><span class="cl">		nums[i] = rand.Int()
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">generate</span><span class="p">(</span><span class="n">n</span> <span class="ne">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nums</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="ne">int</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">//</span> <span class="err">不确定大小</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	generate8191()
-</span></span><span class="line"><span class="cl">    generate8192()
-</span></span><span class="line"><span class="cl">    generate(1)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">generate8191</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">generate8192</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">generate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
@@ -2093,19 +2093,19 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func Increase() func() int {
-</span></span><span class="line"><span class="cl">	n := 0
-</span></span><span class="line"><span class="cl">	return func() int {
-</span></span><span class="line"><span class="cl">		n++
-</span></span><span class="line"><span class="cl">		return n
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Increase</span><span class="p">()</span> <span class="k">func</span><span class="p">()</span> <span class="ne">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">n</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="k">func</span><span class="p">()</span> <span class="ne">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">n</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">n</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	in := Increase()
-</span></span><span class="line"><span class="cl">	fmt.Println(in()) // 1
-</span></span><span class="line"><span class="cl">	fmt.Println(in()) // 2
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="ow">in</span> <span class="p">:</span><span class="o">=</span> <span class="n">Increase</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="ow">in</span><span class="p">())</span> <span class="o">//</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="ow">in</span><span class="p">())</span> <span class="o">//</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>Increase()</code> 返回值就是一个闭包函数，该闭包函数访问了外部变量n，那变量n将一直存在，直到<code>in</code> 被销毁。很显然，变量n 占用的内存不能随着函数Increase() 的退出而回收，因此将会逃逸到堆上。</p>
@@ -2150,20 +2150,20 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func max(num1, num2 int) int {
-</span></span><span class="line"><span class="cl">	if num1 &gt; num2 {
-</span></span><span class="line"><span class="cl">		return num1
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return num2
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="nb">max</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span> <span class="ne">int</span><span class="p">)</span> <span class="ne">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">num1</span> <span class="o">&gt;</span> <span class="n">num2</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">num1</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">num2</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">var a, b = 10, 20
+</span></span><span class="line"><span class="cl"><span class="k">var</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	if max(a, b) == a {
-</span></span><span class="line"><span class="cl">		fmt.Println(a)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="n">a</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>将var改为const后分别编译会发现两者大小有差距：</p>
@@ -2176,11 +2176,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build -o maxvar maxvar.go
-</span></span><span class="line"><span class="cl">go build -o maxconst maxconst.go
-</span></span><span class="line"><span class="cl">ls -l maxvar maxconst
-</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 x x 1895424 Jan 10 00:01 maxconst
-</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 x x 2120368 Jan 10 00:01 maxvar
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">go</span> <span class="n">build</span> <span class="o">-</span><span class="n">o</span> <span class="n">maxvar</span> <span class="n">maxvar</span><span class="o">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="cl"><span class="n">go</span> <span class="n">build</span> <span class="o">-</span><span class="n">o</span> <span class="n">maxconst</span> <span class="n">maxconst</span><span class="o">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="cl"><span class="n">ls</span> <span class="o">-</span><span class="n">l</span> <span class="n">maxvar</span> <span class="n">maxconst</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span>  <span class="mi">1</span> <span class="n">x</span> <span class="n">x</span> <span class="mi">1895424</span> <span class="n">Jan</span> <span class="mi">10</span> <span class="mi">00</span><span class="p">:</span><span class="mi">01</span> <span class="n">maxconst</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span>  <span class="mi">1</span> <span class="n">x</span> <span class="n">x</span> <span class="mi">2120368</span> <span class="n">Jan</span> <span class="mi">10</span> <span class="mi">00</span><span class="p">:</span><span class="mi">01</span> <span class="n">maxvar</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以看到 maxconst 比 maxvar 体积小了约 10% = 0.22 MB。</p>
@@ -2194,10 +2194,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build -gcflags=-m  -o maxvar maxvar.go
-</span></span><span class="line"><span class="cl"># command-line-arguments
-</span></span><span class="line"><span class="cl">./maxconst.go:7:6: can inline max
-</span></span><span class="line"><span class="cl">./maxconst.go:17:8: inlining call to max
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">go</span> <span class="n">build</span> <span class="o">-</span><span class="n">gcflags</span><span class="o">=-</span><span class="n">m</span>  <span class="o">-</span><span class="n">o</span> <span class="n">maxvar</span> <span class="n">maxvar</span><span class="o">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># command-line-arguments</span>
+</span></span><span class="line"><span class="cl"><span class="o">./</span><span class="n">maxconst</span><span class="o">.</span><span class="n">go</span><span class="p">:</span><span class="mi">7</span><span class="p">:</span><span class="mi">6</span><span class="p">:</span> <span class="n">can</span> <span class="n">inline</span> <span class="nb">max</span>
+</span></span><span class="line"><span class="cl"><span class="o">./</span><span class="n">maxconst</span><span class="o">.</span><span class="n">go</span><span class="p">:</span><span class="mi">17</span><span class="p">:</span><span class="mi">8</span><span class="p">:</span> <span class="n">inlining</span> <span class="n">call</span> <span class="n">to</span> <span class="nb">max</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>max 函数被内联了</code>，即被展开了，手动展开后如下：</p>
@@ -2216,17 +2216,17 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	var result int
-</span></span><span class="line"><span class="cl">	if a &gt; b {
-</span></span><span class="line"><span class="cl">		result = a
-</span></span><span class="line"><span class="cl">	} else {
-</span></span><span class="line"><span class="cl">		result = b
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">	if result == a {
-</span></span><span class="line"><span class="cl">		fmt.Println(a)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">result</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">result</span> <span class="o">=</span> <span class="n">a</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">result</span> <span class="o">=</span> <span class="n">b</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">a</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果a和b均为常量的话，那在编译阶段就可以直接进行计算：</p>
@@ -2245,17 +2245,17 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	var result int
-</span></span><span class="line"><span class="cl">	if 10 &gt; 20 {
-</span></span><span class="line"><span class="cl">		result = 10
-</span></span><span class="line"><span class="cl">	} else {
-</span></span><span class="line"><span class="cl">		result = 20
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">	if result == 10 {
-</span></span><span class="line"><span class="cl">		fmt.Println(a)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">result</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="mi">10</span> <span class="o">&gt;</span> <span class="mi">20</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">result</span> <span class="o">=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">result</span> <span class="o">=</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">10</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>计算之后，<code>10 &gt; 20 </code>永远为假，那么分支消除后：</p>
@@ -2268,11 +2268,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	if 20 == 10 {
-</span></span><span class="line"><span class="cl">		fmt.Println(a)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">10</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>进一步，<code>20 == 10 </code>也永远为假，再次分支消除：</p>
@@ -2281,7 +2281,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果全局变量a和b不为常量，编译器并不知道运行过程中ab会不会发生改变，因此不能进行<code>死码消除</code>，这部分代码会被编译到最终的二进制程序中。因此<code>maxvar</code> 比 <code>maxconst</code> 二进制体积大了约 10%。</p>
@@ -2300,13 +2300,13 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// maxvarlocal
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	var a, b = 10, 20
-</span></span><span class="line"><span class="cl">	if max(a, b) == a {
-</span></span><span class="line"><span class="cl">		fmt.Println(a)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">maxvarlocal</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="n">a</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>编译结果如下，大小与 varconst 一致，即 a、b 作为局部变量时，编译器死码消除是生效的。因为ab局部变量只作用在该函数内部，是可以推断出它的值大小的，就可以直接进行死码消除。</p>
@@ -2317,9 +2317,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -o maxvarlocal maxvarlocal.go
-</span></span><span class="line"><span class="cl">$ ls -l maxvarlocal                      
-</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 x x 1895424 Jan 10 00:05 maxvarlocal
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">$</span> <span class="n">go</span> <span class="n">build</span> <span class="o">-</span><span class="n">o</span> <span class="n">maxvarlocal</span> <span class="n">maxvarlocal</span><span class="o">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="cl"><span class="o">$</span> <span class="n">ls</span> <span class="o">-</span><span class="n">l</span> <span class="n">maxvarlocal</span>                      
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span>  <span class="mi">1</span> <span class="n">x</span> <span class="n">x</span> <span class="mi">1895424</span> <span class="n">Jan</span> <span class="mi">10</span> <span class="mi">00</span><span class="p">:</span><span class="mi">05</span> <span class="n">maxvarlocal</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>那如果再修改一下，函数中增加修改 a、b 变量的并发操作。</p>
@@ -2336,15 +2336,15 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	var a, b = 10, 20
-</span></span><span class="line"><span class="cl">	go func() {
-</span></span><span class="line"><span class="cl">		b, a = a, b
-</span></span><span class="line"><span class="cl">	}()
-</span></span><span class="line"><span class="cl">	if max(a, b) == a {
-</span></span><span class="line"><span class="cl">		fmt.Println(a)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="n">a</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>编译结果如下，大小增加了 10%，此时，<code>a、b 的值不能有效推断，死码消除失效。</code></p>
@@ -2355,9 +2355,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go build -o maxvarlocal maxvarlocal.go
-</span></span><span class="line"><span class="cl">$ ls -l maxvarlocal                      
-</span></span><span class="line"><span class="cl">-rwxr-xr-x  1 x x 2120352 Jan 10 00:05 maxvarlocal
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">$</span> <span class="n">go</span> <span class="n">build</span> <span class="o">-</span><span class="n">o</span> <span class="n">maxvarlocal</span> <span class="n">maxvarlocal</span><span class="o">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="cl"><span class="o">$</span> <span class="n">ls</span> <span class="o">-</span><span class="n">l</span> <span class="n">maxvarlocal</span>                      
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span>  <span class="mi">1</span> <span class="n">x</span> <span class="n">x</span> <span class="mi">2120352</span> <span class="n">Jan</span> <span class="mi">10</span> <span class="mi">00</span><span class="p">:</span><span class="mi">05</span> <span class="n">maxvarlocal</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>其实这个结果很好理解，包(package)级别的变量和函数内部的局部变量的推断难度是不一样的。函数内部的局部变量的修改只会发生在该函数中(注意内部这个词，有协程修改它就不属于内部了)。但是如果是包级别的变量，对该变量的修改可能出现在：</p>
@@ -2381,13 +2381,13 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">const debug = false
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">const</span> <span class="n">debug</span> <span class="o">=</span> <span class="bp">false</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	if debug {
-</span></span><span class="line"><span class="cl">		log.Println(&#34;debug mode is enabled&#34;)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">debug</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;debug mode is enabled&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>如果是正常编译，常量debug始终等于false，调试语句在编译过程中就会被当做死码消除，不会影响最终的二进制大小，也不会对运行效率产生任何影响。</code></p>
@@ -2407,11 +2407,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// +build debug
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="o">+</span><span class="n">build</span> <span class="n">debug</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="nx">debug</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="n">package</span> <span class="n">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="n">debug</span> <span class="o">=</span> <span class="bp">true</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
@@ -2426,11 +2426,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// +build !debug
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="o">+</span><span class="n">build</span> <span class="o">!</span><span class="n">debug</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="nx">debug</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="n">package</span> <span class="n">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="n">debug</span> <span class="o">=</span> <span class="bp">false</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
@@ -2492,15 +2492,15 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func foo(a [2]int) {
-</span></span><span class="line"><span class="cl">	a[0] = 200
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">foo</span><span class="p">(</span><span class="n">a</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="ne">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	a := [2]int{1, 2}
-</span></span><span class="line"><span class="cl">	foo(a)
-</span></span><span class="line"><span class="cl">	fmt.Println(a)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span> <span class="p">:</span><span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="ne">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">foo</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面代码的输出为 <code>[1,2]</code>，数组a没有发生改变。</p>
@@ -2524,16 +2524,16 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func foo(a []int) {
-</span></span><span class="line"><span class="cl">	a = append(a, 1, 2, 3, 4, 5, 6, 7, 8)
-</span></span><span class="line"><span class="cl">	a[0] = 200
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">foo</span><span class="p">(</span><span class="n">a</span> <span class="p">[]</span><span class="ne">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	a := []int{1, 2}
-</span></span><span class="line"><span class="cl">	foo(a)
-</span></span><span class="line"><span class="cl">	fmt.Println(a)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span> <span class="p">:</span><span class="o">=</span> <span class="p">[]</span><span class="ne">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">foo</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出仍然是 <code>[1,2]</code>，切片a没有发生改变。

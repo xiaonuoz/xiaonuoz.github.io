@@ -448,41 +448,41 @@
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">		//限制表单上传大小为8MB，gin框架默认限制为32MB
-</span></span><span class="line"><span class="cl">	r.MaxMultipartMemory = 8 &lt;&lt; 20
-</span></span><span class="line"><span class="cl">	// 可以获取客户端传来的表单参数
-</span></span><span class="line"><span class="cl">	r.POST(&#34;/form&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		//表单参数可以设置当参数不存在时的默认值
-</span></span><span class="line"><span class="cl">		c.DefaultPostForm(&#34;type&#34;,&#34;alert&#34;)
-</span></span><span class="line"><span class="cl">		//接受有此变量的参数,若变量不存在则返回空字符串
-</span></span><span class="line"><span class="cl">		name:=c.PostForm(&#34;username&#34;)
-</span></span><span class="line"><span class="cl">		password:=c.PostForm(&#34;password&#34;)
-</span></span><span class="line"><span class="cl">		//多选框用PostFormArray()可以以切片的格式接受数据
-</span></span><span class="line"><span class="cl">		hobbys:=c.PostFormArray(&#34;hobby&#34;)
-</span></span><span class="line"><span class="cl">		c.String(http.StatusOK,fmt.Sprintf(&#34;name is %s,\nusername is %s,\nhobby is %v&#34;,name,password,hobbys))
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">		<span class="o">//</span><span class="err">限制表单上传大小为</span><span class="mi">8</span><span class="n">MB</span><span class="err">，</span><span class="n">gin框架默认限制为32MB</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">MaxMultipartMemory</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">可以获取客户端传来的表单参数</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s2">&#34;/form&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">表单参数可以设置当参数不存在时的默认值</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">DefaultPostForm</span><span class="p">(</span><span class="s2">&#34;type&#34;</span><span class="p">,</span><span class="s2">&#34;alert&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">接受有此变量的参数</span><span class="p">,</span><span class="err">若变量不存在则返回空字符串</span>
+</span></span><span class="line"><span class="cl">		<span class="n">name</span><span class="p">:</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">PostForm</span><span class="p">(</span><span class="s2">&#34;username&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">password</span><span class="p">:</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">PostForm</span><span class="p">(</span><span class="s2">&#34;password&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">多选框用</span><span class="n">PostFormArray</span><span class="p">()</span><span class="err">可以以切片的格式接受数据</span>
+</span></span><span class="line"><span class="cl">		<span class="n">hobbys</span><span class="p">:</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">PostFormArray</span><span class="p">(</span><span class="s2">&#34;hobby&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s2">&#34;name is </span><span class="si">%s</span><span class="s2">,</span><span class="se">\n</span><span class="s2">username is </span><span class="si">%s</span><span class="s2">,</span><span class="se">\n</span><span class="s2">hobby is %v&#34;</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">password</span><span class="p">,</span><span class="n">hobbys</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		//在前端表单中，enctype为multipart/form-data则可以发送文件，同时也能发送文字
-</span></span><span class="line"><span class="cl">		//存单个图片
-</span></span><span class="line"><span class="cl">		//file, _ := c.FormFile(&#34;file&#34;)
-</span></span><span class="line"><span class="cl">		//// 存到项目根目录下，名字不变
-</span></span><span class="line"><span class="cl">		//c.SaveUploadedFile(file,file.Filename)
-</span></span><span class="line"><span class="cl">		//c.String(http.StatusOK,file.Filename+&#34;upload success&#34;)
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">在前端表单中，</span><span class="n">enctype为multipart</span><span class="o">/</span><span class="n">form</span><span class="o">-</span><span class="n">data则可以发送文件</span><span class="err">，同时也能发送文字</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">存单个图片</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">file</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">FormFile</span><span class="p">(</span><span class="s2">&#34;file&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">////</span> <span class="err">存到项目根目录下，名字不变</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">c</span><span class="o">.</span><span class="n">SaveUploadedFile</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">file</span><span class="o">.</span><span class="n">Filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">c</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">file</span><span class="o">.</span><span class="n">Filename</span><span class="o">+</span><span class="s2">&#34;upload success&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		//存多个图片,上传多个文件的话前端的input标签要加 multiple
-</span></span><span class="line"><span class="cl">		form, err := c.MultipartForm()
-</span></span><span class="line"><span class="cl">		if err != nil {
-</span></span><span class="line"><span class="cl">			c.String(http.StatusBadRequest,&#34;upload file faild,err:&#34;+err.Error())
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		files:=form.File[&#34;files&#34;]
-</span></span><span class="line"><span class="cl">		for _,file:=range files{
-</span></span><span class="line"><span class="cl">			err := c.SaveUploadedFile(file, file.Filename)
-</span></span><span class="line"><span class="cl">			if err != nil {
-</span></span><span class="line"><span class="cl">				c.String(http.StatusBadRequest,&#34;upload file faild,err:&#34;+err.Error())
-</span></span><span class="line"><span class="cl">				return
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		c.String(200,fmt.Sprintf(&#34;upload file success,%v file&#34;,len(files)))
-</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">存多个图片</span><span class="p">,</span><span class="err">上传多个文件的话前端的</span><span class="n">input标签要加</span> <span class="n">multiple</span>
+</span></span><span class="line"><span class="cl">		<span class="n">form</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">MultipartForm</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">c</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span><span class="s2">&#34;upload file faild,err:&#34;</span><span class="o">+</span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">files</span><span class="p">:</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">File</span><span class="p">[</span><span class="s2">&#34;files&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">file</span><span class="p">:</span><span class="o">=</span><span class="nb">range</span> <span class="n">files</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">SaveUploadedFile</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">Filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">c</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span><span class="s2">&#34;upload file faild,err:&#34;</span><span class="o">+</span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s2">&#34;upload file success,%v file&#34;</span><span class="p">,</span><span class="n">len</span><span class="p">(</span><span class="n">files</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="routes-group路由组">routes group（路由组）</h3>
@@ -562,31 +562,31 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Login struct {
-</span></span><span class="line"><span class="cl">	//binding:&#34;required&#34;为前端的必选字段，如果接受到的值是空值则会报错
-</span></span><span class="line"><span class="cl">	User string	`json:&#34;user&#34; binding:&#34;required&#34;`
-</span></span><span class="line"><span class="cl">	Password string	`json:&#34;password&#34; binding:&#34;required&#34;`
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	// 1. 创建路由
-</span></span><span class="line"><span class="cl">	r:=gin.Default()
-</span></span><span class="line"><span class="cl">	// 2. JSON绑定
-</span></span><span class="line"><span class="cl">	r.POST(&#34;/loginJson&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		var login Login
-</span></span><span class="line"><span class="cl">		//将request的body中的数据自动按照json格式解析并绑定到结构体,
-</span></span><span class="line"><span class="cl">		//当客户端传输的数据为json格式的内容时，结构体的tag要定义json格式,且绑定的方法为ShouldBindJSON(&amp;login)
-</span></span><span class="line"><span class="cl">		err := c.ShouldBindJSON(&amp;login)
-</span></span><span class="line"><span class="cl">		if err != nil {
-</span></span><span class="line"><span class="cl">			//返回错误信息，且返回的内容是一个json格式
-</span></span><span class="line"><span class="cl">			//gin.H封装了生成json数据的工具
-</span></span><span class="line"><span class="cl">			c.JSON(http.StatusBadRequest,gin.H{&#34;error&#34;:err.Error()})
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,login.User)
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
-</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Login</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">binding</span><span class="p">:</span><span class="s2">&#34;required&#34;</span><span class="err">为前端的必选字段，如果接受到的值是空值则会报错</span>
+</span></span><span class="line"><span class="cl">	<span class="n">User</span> <span class="n">string</span>	<span class="err">`</span><span class="n">json</span><span class="p">:</span><span class="s2">&#34;user&#34;</span> <span class="n">binding</span><span class="p">:</span><span class="s2">&#34;required&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Password</span> <span class="n">string</span>	<span class="err">`</span><span class="n">json</span><span class="p">:</span><span class="s2">&#34;password&#34;</span> <span class="n">binding</span><span class="p">:</span><span class="s2">&#34;required&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">1.</span> <span class="err">创建路由</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="p">:</span><span class="o">=</span><span class="n">gin</span><span class="o">.</span><span class="n">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">2.</span> <span class="n">JSON绑定</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s2">&#34;/loginJson&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">var</span> <span class="n">login</span> <span class="n">Login</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">将</span><span class="n">request的body中的数据自动按照json格式解析并绑定到结构体</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">当客户端传输的数据为</span><span class="n">json格式的内容时</span><span class="err">，结构体的</span><span class="n">tag要定义json格式</span><span class="p">,</span><span class="err">且绑定的方法为</span><span class="n">ShouldBindJSON</span><span class="p">(</span><span class="o">&amp;</span><span class="n">login</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ShouldBindJSON</span><span class="p">(</span><span class="o">&amp;</span><span class="n">login</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">返回错误信息，且返回的内容是一个</span><span class="n">json格式</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="n">gin</span><span class="o">.</span><span class="n">H封装了生成json数据的工具</span>
+</span></span><span class="line"><span class="cl">			<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;error&#34;</span><span class="p">:</span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">login</span><span class="o">.</span><span class="n">User</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">3.</span> <span class="err">监听相应</span><span class="n">ip和端口</span><span class="err">，</span><span class="n">ip为空则为本地</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s2">&#34;:8000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="表单数据解析和绑定">表单数据解析和绑定</h3>
@@ -618,30 +618,30 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Login struct {
-</span></span><span class="line"><span class="cl">	User string	`form:&#34;username&#34;`
-</span></span><span class="line"><span class="cl">	Password string	`form:&#34;password&#34;`
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	// 1. 创建路由
-</span></span><span class="line"><span class="cl">	r:=gin.Default()
-</span></span><span class="line"><span class="cl">	// 2. JSON绑定
-</span></span><span class="line"><span class="cl">	r.POST(&#34;/loginForm&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		var login Login
-</span></span><span class="line"><span class="cl">		//Bind()默认解析并绑定form格式
-</span></span><span class="line"><span class="cl">		//根据请求头中的content-type自动推断
-</span></span><span class="line"><span class="cl">		err := c.Bind(&amp;login)
-</span></span><span class="line"><span class="cl">		if err != nil {
-</span></span><span class="line"><span class="cl">			//返回错误信息，且返回的内容是一个json格式
-</span></span><span class="line"><span class="cl">			//gin.H封装了生成json数据的工具
-</span></span><span class="line"><span class="cl">			c.JSON(http.StatusBadRequest,gin.H{&#34;error&#34;:err.Error(),&#34;status&#34;:&#34;400&#34;})
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,login.User)
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
-</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Login</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">User</span> <span class="n">string</span>	<span class="err">`</span><span class="n">form</span><span class="p">:</span><span class="s2">&#34;username&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Password</span> <span class="n">string</span>	<span class="err">`</span><span class="n">form</span><span class="p">:</span><span class="s2">&#34;password&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">1.</span> <span class="err">创建路由</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="p">:</span><span class="o">=</span><span class="n">gin</span><span class="o">.</span><span class="n">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">2.</span> <span class="n">JSON绑定</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s2">&#34;/loginForm&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">var</span> <span class="n">login</span> <span class="n">Login</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">Bind</span><span class="p">()</span><span class="err">默认解析并绑定</span><span class="n">form格式</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">根据请求头中的</span><span class="n">content</span><span class="o">-</span><span class="n">type自动推断</span>
+</span></span><span class="line"><span class="cl">		<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">login</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">返回错误信息，且返回的内容是一个</span><span class="n">json格式</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="n">gin</span><span class="o">.</span><span class="n">H封装了生成json数据的工具</span>
+</span></span><span class="line"><span class="cl">			<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;error&#34;</span><span class="p">:</span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">(),</span><span class="s2">&#34;status&#34;</span><span class="p">:</span><span class="s2">&#34;400&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">login</span><span class="o">.</span><span class="n">User</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">3.</span> <span class="err">监听相应</span><span class="n">ip和端口</span><span class="err">，</span><span class="n">ip为空则为本地</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s2">&#34;:8000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
@@ -688,29 +688,29 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Login struct {
-</span></span><span class="line"><span class="cl">	User string	`uri:&#34;username&#34;`
-</span></span><span class="line"><span class="cl">	Password string	`uri:&#34;password&#34;`
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Login</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">User</span> <span class="n">string</span>	<span class="err">`</span><span class="n">uri</span><span class="p">:</span><span class="s2">&#34;username&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Password</span> <span class="n">string</span>	<span class="err">`</span><span class="n">uri</span><span class="p">:</span><span class="s2">&#34;password&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	// 1. 创建路由
-</span></span><span class="line"><span class="cl">	r:=gin.Default()
-</span></span><span class="line"><span class="cl">	// 2. JSON绑定
-</span></span><span class="line"><span class="cl">	r.GET(&#34;/loginUri/:username/:password&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		var login Login
-</span></span><span class="line"><span class="cl">		err := c.ShouldBindUri(&amp;login)
-</span></span><span class="line"><span class="cl">		if err != nil {
-</span></span><span class="line"><span class="cl">			//返回错误信息，且返回的内容是一个json格式
-</span></span><span class="line"><span class="cl">			//gin.H封装了生成json数据的工具
-</span></span><span class="line"><span class="cl">			c.JSON(http.StatusBadRequest,gin.H{&#34;error&#34;:err.Error(),&#34;status&#34;:&#34;400&#34;})
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,login.User+&#34;----&#34;+login.Password)
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
-</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">1.</span> <span class="err">创建路由</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="p">:</span><span class="o">=</span><span class="n">gin</span><span class="o">.</span><span class="n">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">2.</span> <span class="n">JSON绑定</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/loginUri/:username/:password&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">var</span> <span class="n">login</span> <span class="n">Login</span>
+</span></span><span class="line"><span class="cl">		<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ShouldBindUri</span><span class="p">(</span><span class="o">&amp;</span><span class="n">login</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">返回错误信息，且返回的内容是一个</span><span class="n">json格式</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="n">gin</span><span class="o">.</span><span class="n">H封装了生成json数据的工具</span>
+</span></span><span class="line"><span class="cl">			<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;error&#34;</span><span class="p">:</span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">(),</span><span class="s2">&#34;status&#34;</span><span class="p">:</span><span class="s2">&#34;400&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">login</span><span class="o">.</span><span class="n">User</span><span class="o">+</span><span class="s2">&#34;----&#34;</span><span class="o">+</span><span class="n">login</span><span class="o">.</span><span class="n">Password</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">3.</span> <span class="err">监听相应</span><span class="n">ip和端口</span><span class="err">，</span><span class="n">ip为空则为本地</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s2">&#34;:8000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用 <code>curl http://127.0.0.1:8000/loginUri/root/admin</code> 可以测试是否成功，root就是用户名，admin是密码</p>
@@ -753,39 +753,39 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        //1. json
-</span></span><span class="line"><span class="cl">	r.GET(&#34;/someJSON&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,gin.H{&#34;message&#34;:&#34;someJSON&#34;,&#34;status&#34;:200})
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	//2. 结构体
-</span></span><span class="line"><span class="cl">	r.GET(&#34;/someStruct&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		var msg =struct{
-</span></span><span class="line"><span class="cl">			Name string
-</span></span><span class="line"><span class="cl">			Message string
-</span></span><span class="line"><span class="cl">			Number int
-</span></span><span class="line"><span class="cl">		}{&#34;root&#34;,&#34;message&#34;,123}
-</span></span><span class="line"><span class="cl">		c.JSON(http.StatusOK,msg)
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	//3. XML
-</span></span><span class="line"><span class="cl">	r.GET(&#34;/someXML&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		c.XML(200,gin.H{&#34;message&#34;:&#34;abc&#34;})
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	//4. YAML响应
-</span></span><span class="line"><span class="cl">	r.GET(&#34;/someYAML&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		c.YAML(http.StatusOK,gin.H{&#34;name&#34;:&#34;zhangsan&#34;})
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	//5. protobuf格式,谷歌开发的高效存储读取的工具
-</span></span><span class="line"><span class="cl">	r.GET(&#34;/someProtoBuf&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		resp:=[]int64{int64(1),int64(9)}
-</span></span><span class="line"><span class="cl">		//定义数据
-</span></span><span class="line"><span class="cl">		label:=&#34;lable&#34;
-</span></span><span class="line"><span class="cl">		//构建protobuf格式数据
-</span></span><span class="line"><span class="cl">		data:=&amp;protoexample.Test{
-</span></span><span class="line"><span class="cl">			Label: &amp;label,
-</span></span><span class="line"><span class="cl">			Reps: resp,
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		c.ProtoBuf(http.StatusOK,data)
-</span></span><span class="line"><span class="cl">	})
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">        <span class="o">//</span><span class="mf">1.</span> <span class="n">json</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/someJSON&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;message&#34;</span><span class="p">:</span><span class="s2">&#34;someJSON&#34;</span><span class="p">,</span><span class="s2">&#34;status&#34;</span><span class="p">:</span><span class="mi">200</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">2.</span> <span class="err">结构体</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/someStruct&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">var</span> <span class="n">msg</span> <span class="o">=</span><span class="n">struct</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Message</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Number</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}{</span><span class="s2">&#34;root&#34;</span><span class="p">,</span><span class="s2">&#34;message&#34;</span><span class="p">,</span><span class="mi">123</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">3.</span> <span class="n">XML</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/someXML&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">XML</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;message&#34;</span><span class="p">:</span><span class="s2">&#34;abc&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">4.</span> <span class="n">YAML响应</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/someYAML&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">YAML</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;zhangsan&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">5.</span> <span class="n">protobuf格式</span><span class="p">,</span><span class="err">谷歌开发的高效存储读取的工具</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/someProtoBuf&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">resp</span><span class="p">:</span><span class="o">=</span><span class="p">[]</span><span class="n">int64</span><span class="p">{</span><span class="n">int64</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">int64</span><span class="p">(</span><span class="mi">9</span><span class="p">)}</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">定义数据</span>
+</span></span><span class="line"><span class="cl">		<span class="n">label</span><span class="p">:</span><span class="o">=</span><span class="s2">&#34;lable&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">构建</span><span class="n">protobuf格式数据</span>
+</span></span><span class="line"><span class="cl">		<span class="n">data</span><span class="p">:</span><span class="o">=&amp;</span><span class="n">protoexample</span><span class="o">.</span><span class="n">Test</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="ne">Label</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">label</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Reps</span><span class="p">:</span> <span class="n">resp</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">ProtoBuf</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="html模板渲染">HTML模板渲染</h3>
@@ -959,41 +959,41 @@
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func MiddleWare() gin.HandlerFunc{
-</span></span><span class="line"><span class="cl">	return func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		t:=time.Now()
-</span></span><span class="line"><span class="cl">		//在GET之前执行
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;中间件执行了&#34;)
-</span></span><span class="line"><span class="cl">		//设置变量到context（本质上是把一个值设置到request里面去），通过get()取
-</span></span><span class="line"><span class="cl">		c.Set(&#34;name&#34;,&#34;zhangsan&#34;)
-</span></span><span class="line"><span class="cl">		//执行函数（发送数据到request），Next()就是遍历一遍c.handlers，然后把所有的c.handlers（GET/POST的第二个函数参数）都执行
-</span></span><span class="line"><span class="cl">		c.Next()
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">MiddleWare</span><span class="p">()</span> <span class="n">gin</span><span class="o">.</span><span class="n">HandlerFunc</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">t</span><span class="p">:</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">在</span><span class="n">GET之前执行</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;中间件执行了&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">设置变量到</span><span class="n">context</span><span class="err">（本质上是把一个值设置到</span><span class="n">request里面去</span><span class="err">），通过</span><span class="n">get</span><span class="p">()</span><span class="err">取</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s2">&#34;name&#34;</span><span class="p">,</span><span class="s2">&#34;zhangsan&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">执行函数（发送数据到</span><span class="n">request</span><span class="err">），</span><span class="n">Next</span><span class="p">()</span><span class="err">就是遍历一遍</span><span class="n">c</span><span class="o">.</span><span class="n">handlers</span><span class="err">，然后把所有的</span><span class="n">c</span><span class="o">.</span><span class="n">handlers</span><span class="err">（</span><span class="n">GET</span><span class="o">/</span><span class="n">POST的第二个函数参数</span><span class="err">）都执行</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		//下面是在response响应之前GET执行之后进行的操作
-</span></span><span class="line"><span class="cl">		//当执行完c.Next()后，request之后GET之前的中间件代码就已经结束了，下面的就都是response之前要执行的代码
-</span></span><span class="line"><span class="cl">		status:=c.Writer.Status()
-</span></span><span class="line"><span class="cl">		fmt.Println(status)
-</span></span><span class="line"><span class="cl">		//统计从请求过来到发送response之间的耗时
-</span></span><span class="line"><span class="cl">		t1:=time.Since(t)
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;耗时：&#34;,t1)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	// 1. 创建路由，默认用了Logger(), Recovery()两个中间件
-</span></span><span class="line"><span class="cl">	r:=gin.Default()
-</span></span><span class="line"><span class="cl">	//注册中间件
-</span></span><span class="line"><span class="cl">	r.Use(MiddleWare())
-</span></span><span class="line"><span class="cl">	//{}是为了代码规范
-</span></span><span class="line"><span class="cl">	{
-</span></span><span class="line"><span class="cl">		r.GET(&#34;/middleware&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">			//取值,GET返回值有两个，一个获取到的值和一个是否值存在的布尔值
-</span></span><span class="line"><span class="cl">			value,_:=c.Get(&#34;name&#34;)
-</span></span><span class="line"><span class="cl">			c.JSON(200,gin.H{&#34;name&#34;:value})
-</span></span><span class="line"><span class="cl">		})
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">下面是在</span><span class="n">response响应之前GET执行之后进行的操作</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">当执行完</span><span class="n">c</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span><span class="err">后，</span><span class="n">request之后GET之前的中间件代码就已经结束了</span><span class="err">，下面的就都是</span><span class="n">response之前要执行的代码</span>
+</span></span><span class="line"><span class="cl">		<span class="n">status</span><span class="p">:</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">Writer</span><span class="o">.</span><span class="n">Status</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">统计从请求过来到发送</span><span class="n">response之间的耗时</span>
+</span></span><span class="line"><span class="cl">		<span class="n">t1</span><span class="p">:</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">Since</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;耗时：&#34;</span><span class="p">,</span><span class="n">t1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">1.</span> <span class="err">创建路由，默认用了</span><span class="n">Logger</span><span class="p">(),</span> <span class="n">Recovery</span><span class="p">()</span><span class="err">两个中间件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="p">:</span><span class="o">=</span><span class="n">gin</span><span class="o">.</span><span class="n">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">注册中间件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">Use</span><span class="p">(</span><span class="n">MiddleWare</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="p">{}</span><span class="err">是为了代码规范</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/middleware&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">取值</span><span class="p">,</span><span class="n">GET返回值有两个</span><span class="err">，一个获取到的值和一个是否值存在的布尔值</span>
+</span></span><span class="line"><span class="cl">			<span class="n">value</span><span class="p">,</span><span class="n">_</span><span class="p">:</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s2">&#34;name&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;name&#34;</span><span class="p">:</span><span class="n">value</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// 3. 监听相应ip和端口，ip为空则为本地
-</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">3.</span> <span class="err">监听相应</span><span class="n">ip和端口</span><span class="err">，</span><span class="n">ip为空则为本地</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s2">&#34;:8000&#34;</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>当执行完c.Next()后，request之后GET之前的中间件代码就已经结束了，下面的就都是response之前要执行的代码</strong></p>
@@ -1163,36 +1163,36 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func cookieGin() gin.HandlerFunc{
-</span></span><span class="line"><span class="cl">	return func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		cookie, err := c.Cookie(&#34;name&#34;)
-</span></span><span class="line"><span class="cl">		if err == nil {
-</span></span><span class="line"><span class="cl">			if cookie == &#34;zhangsan&#34;{
-</span></span><span class="line"><span class="cl">				c.Next()
-</span></span><span class="line"><span class="cl">				return
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		//返回错误
-</span></span><span class="line"><span class="cl">		c.JSON(http.StatusBadRequest,gin.H{&#34;error&#34;:&#34;StatusUnauthorized&#34;})
-</span></span><span class="line"><span class="cl">		//c.Abort()的作用是不再调用后续的函数处理,直接response
-</span></span><span class="line"><span class="cl">		c.Abort()
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	r:=gin.Default()
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">cookieGin</span><span class="p">()</span> <span class="n">gin</span><span class="o">.</span><span class="n">HandlerFunc</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">cookie</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">Cookie</span><span class="p">(</span><span class="s2">&#34;name&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="o">==</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">cookie</span> <span class="o">==</span> <span class="s2">&#34;zhangsan&#34;</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">c</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">返回错误</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;error&#34;</span><span class="p">:</span><span class="s2">&#34;StatusUnauthorized&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">c</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span><span class="err">的作用是不再调用后续的函数处理</span><span class="p">,</span><span class="err">直接</span><span class="n">response</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="p">:</span><span class="o">=</span><span class="n">gin</span><span class="o">.</span><span class="n">Default</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	r.GET(&#34;/login&#34;, func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		c.SetCookie(&#34;name&#34;,&#34;zhangsan&#34;,60,&#34;/&#34;,&#34;localhost&#34;,false,true)
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	//不进行login直接home就会被中间件拦截
-</span></span><span class="line"><span class="cl">	r.GET(&#34;/home&#34;, cookieGin(), func(c *gin.Context) {
-</span></span><span class="line"><span class="cl">		cookie, _ := c.Cookie(&#34;name&#34;)
-</span></span><span class="line"><span class="cl">		c.JSON(200,gin.H{&#34;name&#34;:cookie})
-</span></span><span class="line"><span class="cl">	})
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/login&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">SetCookie</span><span class="p">(</span><span class="s2">&#34;name&#34;</span><span class="p">,</span><span class="s2">&#34;zhangsan&#34;</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="s2">&#34;/&#34;</span><span class="p">,</span><span class="s2">&#34;localhost&#34;</span><span class="p">,</span><span class="bp">false</span><span class="p">,</span><span class="bp">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">不进行</span><span class="n">login直接home就会被中间件拦截</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/home&#34;</span><span class="p">,</span> <span class="n">cookieGin</span><span class="p">(),</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">cookie</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">Cookie</span><span class="p">(</span><span class="s2">&#34;name&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;name&#34;</span><span class="p">:</span><span class="n">cookie</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	r.Run(&#34;:8000&#34;)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">r</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s2">&#34;:8000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="cookie的缺点">Cookie的缺点</h3>
@@ -1259,35 +1259,35 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">main</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/gin-contrib/sessions&#34;</span>
-</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/gin-contrib/sessions/redis&#34;</span>
-</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;github.com/gin-contrib/sessions&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;github.com/gin-contrib/sessions/redis&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;github.com/gin-gonic/gin&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="nx">r</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">  <span class="nx">store</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">redis</span><span class="p">.</span><span class="nf">NewStore</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:6379&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;secret&#34;</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">  <span class="c1">// &#34;mysession&#34;是cookie的名称，即key,在setCookie中的name等于的内容
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">r</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">sessions</span><span class="p">.</span><span class="nf">Sessions</span><span class="p">(</span><span class="s">&#34;mysession&#34;</span><span class="p">,</span> <span class="nx">store</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">r</span> <span class="p">:</span><span class="o">=</span> <span class="n">gin</span><span class="o">.</span><span class="n">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="n">store</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">NewStore</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&#34;tcp&#34;</span><span class="p">,</span> <span class="s2">&#34;localhost:6379&#34;</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="n">byte</span><span class="p">(</span><span class="s2">&#34;secret&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">//</span> <span class="s2">&#34;mysession&#34;</span><span class="err">是</span><span class="n">cookie的名称</span><span class="err">，即</span><span class="n">key</span><span class="p">,</span><span class="err">在</span><span class="n">setCookie中的name等于的内容</span>
+</span></span><span class="line"><span class="cl">  <span class="n">r</span><span class="o">.</span><span class="n">Use</span><span class="p">(</span><span class="n">sessions</span><span class="o">.</span><span class="n">Sessions</span><span class="p">(</span><span class="s2">&#34;mysession&#34;</span><span class="p">,</span> <span class="n">store</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/incr&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="nx">session</span> <span class="o">:=</span> <span class="nx">sessions</span><span class="p">.</span><span class="nf">Default</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">count</span> <span class="kt">int</span>
-</span></span><span class="line"><span class="cl">    <span class="nx">v</span> <span class="o">:=</span> <span class="nx">session</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;count&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">v</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="nx">count</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/incr&#34;</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">session</span> <span class="p">:</span><span class="o">=</span> <span class="n">sessions</span><span class="o">.</span><span class="n">Default</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">count</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span> <span class="p">:</span><span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s2">&#34;count&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="nx">count</span> <span class="p">=</span> <span class="nx">v</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">      <span class="nx">count</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">      <span class="n">count</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="p">(</span><span class="ne">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">count</span><span class="o">++</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="nx">session</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;count&#34;</span><span class="p">,</span> <span class="nx">count</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="nx">session</span><span class="p">.</span><span class="nf">Save</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&#34;count&#34;</span><span class="p">:</span> <span class="nx">count</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="n">session</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s2">&#34;count&#34;</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">session</span><span class="o">.</span><span class="n">Save</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s2">&#34;count&#34;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
 </span></span><span class="line"><span class="cl">  <span class="p">})</span>
-</span></span><span class="line"><span class="cl">  <span class="nx">r</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;:8000&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">r</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s2">&#34;:8000&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -1410,30 +1410,30 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func sayHello(w http.ResponseWriter,r *http.Request){
-</span></span><span class="line"><span class="cl">	//解析模板
-</span></span><span class="line"><span class="cl">	t,_:=template.ParseFiles(&#34;./hello.html&#34;)
-</span></span><span class="line"><span class="cl">	//也可以使用t,_:=template.New(&#34;hello.html&#34;).ParseFiles(&#34;./hello.html&#34;)
-</span></span><span class="line"><span class="cl">	//一定要注意的就是New中的参数一定要和模板文件名字对应上，不然解析会失败
-</span></span><span class="line"><span class="cl">	//如果ParseFiles传了很多个文件，那么至少要和其中一个对应上
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">sayHello</span><span class="p">(</span><span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span><span class="n">r</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">解析模板</span>
+</span></span><span class="line"><span class="cl">	<span class="n">t</span><span class="p">,</span><span class="n">_</span><span class="p">:</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">ParseFiles</span><span class="p">(</span><span class="s2">&#34;./hello.html&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">也可以使用</span><span class="n">t</span><span class="p">,</span><span class="n">_</span><span class="p">:</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s2">&#34;hello.html&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">ParseFiles</span><span class="p">(</span><span class="s2">&#34;./hello.html&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">一定要注意的就是</span><span class="n">New中的参数一定要和模板文件名字对应上</span><span class="err">，不然解析会失败</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">如果</span><span class="n">ParseFiles传了很多个文件</span><span class="err">，那么至少要和其中一个对应上</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//需要注意的是，结构体首字母必须大写才能在html中接收到，但是map不在乎大小写
-</span></span><span class="line"><span class="cl">	u1:=User{
-</span></span><span class="line"><span class="cl">		Name: &#34;笑傩&#34;,
-</span></span><span class="line"><span class="cl">		Age: 18,
-</span></span><span class="line"><span class="cl">		Address: &#34;四川&#34;,
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	m1:=map[string]interface{}{
-</span></span><span class="line"><span class="cl">		&#34;Name&#34;: &#34;笑傩&#34;,
-</span></span><span class="line"><span class="cl">		&#34;Age&#34;: 18,
-</span></span><span class="line"><span class="cl">		&#34;Address&#34;: &#34;四川&#34;,
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	//渲染模板，通过嵌套的方法可以传过去多个数据
-</span></span><span class="line"><span class="cl">	t.Execute(w,map[string]interface{}{
-</span></span><span class="line"><span class="cl">		&#34;u1&#34;:u1,
-</span></span><span class="line"><span class="cl">		&#34;m1&#34;:m1,
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">需要注意的是，结构体首字母必须大写才能在</span><span class="n">html中接收到</span><span class="err">，但是</span><span class="n">map不在乎大小写</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u1</span><span class="p">:</span><span class="o">=</span><span class="n">User</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">Name</span><span class="p">:</span> <span class="s2">&#34;笑傩&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">Age</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">Address</span><span class="p">:</span> <span class="s2">&#34;四川&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">m1</span><span class="p">:</span><span class="o">=</span><span class="n">map</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="n">interface</span><span class="p">{}{</span>
+</span></span><span class="line"><span class="cl">		<span class="s2">&#34;Name&#34;</span><span class="p">:</span> <span class="s2">&#34;笑傩&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="s2">&#34;Age&#34;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="s2">&#34;Address&#34;</span><span class="p">:</span> <span class="s2">&#34;四川&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">渲染模板，通过嵌套的方法可以传过去多个数据</span>
+</span></span><span class="line"><span class="cl">	<span class="n">t</span><span class="o">.</span><span class="n">Execute</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">map</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="n">interface</span><span class="p">{}{</span>
+</span></span><span class="line"><span class="cl">		<span class="s2">&#34;u1&#34;</span><span class="p">:</span><span class="n">u1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="s2">&#34;m1&#34;</span><span class="p">:</span><span class="n">m1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
@@ -1716,7 +1716,7 @@
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">).</span><span class="nf">Delims</span><span class="p">(</span><span class="s">&#34;{[&#34;</span><span class="p">,</span> <span class="s">&#34;]}&#34;</span><span class="p">).</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;./t.tmpl&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="err">然后在模板中就可以通过</span>   <span class="p">{[</span> <span class="p">.</span><span class="nx">name</span> <span class="p">]}</span> <span class="err">来引用数据</span>
+</span></span><span class="line"><span class="cl"><span class="nx">然后在模板中就可以通过</span>   <span class="p">{[</span> <span class="p">.</span><span class="nx">name</span> <span class="p">]}</span> <span class="nx">来引用数据</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="texttemplate与htmltemplate的区别">text/template与html/template的区别</h3>

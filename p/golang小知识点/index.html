@@ -569,21 +569,21 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func f1(x int){
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;我是f1&#34;)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">f1</span><span class="p">(</span><span class="n">x</span> <span class="ne">int</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;我是f1&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func f2(x,y int) int{
-</span></span><span class="line"><span class="cl">	return x+y
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func f3(x func(int)) func(int,int)int{
-</span></span><span class="line"><span class="cl">	return f2
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">f2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ne">int</span><span class="p">)</span> <span class="ne">int</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">f3</span><span class="p">(</span><span class="n">x</span> <span class="k">func</span><span class="p">(</span><span class="ne">int</span><span class="p">))</span> <span class="k">func</span><span class="p">(</span><span class="ne">int</span><span class="p">,</span><span class="ne">int</span><span class="p">)</span><span class="ne">int</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">f2</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main(){
-</span></span><span class="line"><span class="cl">	f4:=f3(f1)
-</span></span><span class="line"><span class="cl">	fmt.Println(f4(5,10))
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f4</span><span class="p">:</span><span class="o">=</span><span class="n">f3</span><span class="p">(</span><span class="n">f1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">f4</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>defer延迟加载在注册时就会将变量的状态代入进去</strong>，<strong>会先进入代入延迟加载中的变量的值</strong>，即a会先代入1这个值，后面a改变也不会影响到defer的值，如果defer函数中嵌套了函数calc(20,add())，它也会<strong>先将里面的函数(add)计算出值然后再搁置</strong>在最后结束时运行defer,defer只会保存最外层的函数至最后执行</p>
@@ -621,22 +621,22 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type person struct {
-</span></span><span class="line"><span class="cl">	name string
-</span></span><span class="line"><span class="cl">	age int
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">person</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">age</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func newPerson(name string,age int) *person{
-</span></span><span class="line"><span class="cl">	return &amp;person{
-</span></span><span class="line"><span class="cl">		name:name,
-</span></span><span class="line"><span class="cl">		age:age,
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">newPerson</span><span class="p">(</span><span class="n">name</span> <span class="n">string</span><span class="p">,</span><span class="n">age</span> <span class="ne">int</span><span class="p">)</span> <span class="o">*</span><span class="n">person</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="n">person</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">name</span><span class="p">:</span><span class="n">name</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">age</span><span class="p">:</span><span class="n">age</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	p1:=newPerson(&#34;张三&#34;,12)
-</span></span><span class="line"><span class="cl">	fmt.Println(p1)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">p1</span><span class="p">:</span><span class="o">=</span><span class="n">newPerson</span><span class="p">(</span><span class="s2">&#34;张三&#34;</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>结构体可以使用声明的方式产生新的变量，也可以通过函数来产生，通过函数产生时最好返回值为结构体的指针，减少程序的内存开销，因为结构体属于值传递，如果不使用指针就是将函数返回值拷贝一份给变量，当结构体的元素更多或者使用函数的次数更多，会给内存造成压力，而且复制指针比复制结构体内容要更快，内存压力更小</p>
@@ -714,16 +714,16 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func f1(a ...interface{}){
-</span></span><span class="line"><span class="cl">	fmt.Println(a)
-</span></span><span class="line"><span class="cl">	fmt.Println(a...)
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main(){
-</span></span><span class="line"><span class="cl">	f1(1,2,3)
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">输出结果：
-</span></span><span class="line"><span class="cl">[1 2 3]		//这个为一个变量的输出
-</span></span><span class="line"><span class="cl">1 2 3		//这是三个变量
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">f1</span><span class="p">(</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f1</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">输出结果：</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span>		<span class="o">//</span><span class="err">这个为一个变量的输出</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>		<span class="o">//</span><span class="err">这是三个变量</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>在使用函数的可变参数时（<strong>只有空接口类型才能使用三个&hellip;进行拆解</strong>），在参数后面加三个点表示拆开可变参数生成的切片，分成多个变量，如果不加三个点就表示将a作为一个空接口切片类型传入</p>
@@ -750,23 +750,23 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">var i map[string]*Age=make(map[string]*Age)
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">var</span> <span class="n">i</span> <span class="n">map</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="o">*</span><span class="n">Age</span><span class="o">=</span><span class="n">make</span><span class="p">(</span><span class="n">map</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="o">*</span><span class="n">Age</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	i[&#34;张文&#34;]=&amp;Age{Id: 23}
-</span></span><span class="line"><span class="cl">	i[&#34;利尔&#34;]=&amp;Age{Id: 38}
-</span></span><span class="line"><span class="cl">	//此处map的value如果不是地址而是结构体本身的话，v的地址一直都是一个地址，遍历只是将新的值覆盖到旧地址上。并且它是无法寻址的，即无法找到对应结构体的成员进行改变
-</span></span><span class="line"><span class="cl">	for _,v:=range i{
-</span></span><span class="line"><span class="cl">		v.Id=v.Id+3
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="p">[</span><span class="s2">&#34;张文&#34;</span><span class="p">]</span><span class="o">=&amp;</span><span class="n">Age</span><span class="p">{</span><span class="n">Id</span><span class="p">:</span> <span class="mi">23</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="p">[</span><span class="s2">&#34;利尔&#34;</span><span class="p">]</span><span class="o">=&amp;</span><span class="n">Age</span><span class="p">{</span><span class="n">Id</span><span class="p">:</span> <span class="mi">38</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">此处</span><span class="n">map的value如果不是地址而是结构体本身的话</span><span class="err">，</span><span class="n">v的地址一直都是一个地址</span><span class="err">，遍历只是将新的值覆盖到旧地址上。并且它是无法寻址的，即无法找到对应结构体的成员进行改变</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">v</span><span class="p">:</span><span class="o">=</span><span class="nb">range</span> <span class="n">i</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">v</span><span class="o">.</span><span class="n">Id</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">Id</span><span class="o">+</span><span class="mi">3</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//将结构体赋值给map则需要这样
-</span></span><span class="line"><span class="cl">	for i:=0;i&lt;len(ages);i++{
-</span></span><span class="line"><span class="cl">		x[ages[i].Name]=&amp;ages[i]
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">将结构体赋值给</span><span class="n">map则需要这样</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span><span class="p">:</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">len</span><span class="p">(</span><span class="n">ages</span><span class="p">);</span><span class="n">i</span><span class="o">++</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">x</span><span class="p">[</span><span class="n">ages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Name</span><span class="p">]</span><span class="o">=&amp;</span><span class="n">ages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	for _,v:=range i{
-</span></span><span class="line"><span class="cl">		fmt.Println(v.Id)
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">v</span><span class="p">:</span><span class="o">=</span><span class="nb">range</span> <span class="n">i</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">Id</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="重写sort方法实现结构体的排序">重写sort方法实现结构体的排序</h2>
@@ -785,17 +785,17 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// SortByReadBook 按照阅读量排序，定义一个结构体是原结构体的切片
-</span></span><span class="line"><span class="cl">type SortByReadBook []ReadLeaderboardResp
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">SortByReadBook</span> <span class="err">按照阅读量排序，定义一个结构体是原结构体的切片</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">SortByReadBook</span> <span class="p">[]</span><span class="n">ReadLeaderboardResp</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (s SortByReadBook) Len() int      { return len(s) }   //重写len方法
-</span></span><span class="line"><span class="cl">func (s SortByReadBook) Swap(i, j int) { s[i], s[j] = s[j], s[i] }   //重写swap方法
-</span></span><span class="line"><span class="cl">func (s SortByReadBook) Less(i, j int) bool {		//重写less方法
-</span></span><span class="line"><span class="cl">	//uint用大于小于，Decimal使用自身的lessThan方法
-</span></span><span class="line"><span class="cl">	return s[i].ReadBookCount &gt; (s[j].ReadBookCount)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="n">SortByReadBook</span><span class="p">)</span> <span class="n">Len</span><span class="p">()</span> <span class="ne">int</span>      <span class="p">{</span> <span class="k">return</span> <span class="n">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="p">}</span>   <span class="o">//</span><span class="err">重写</span><span class="n">len方法</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="n">SortByReadBook</span><span class="p">)</span> <span class="n">Swap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ne">int</span><span class="p">)</span> <span class="p">{</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">}</span>   <span class="o">//</span><span class="err">重写</span><span class="n">swap方法</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="n">SortByReadBook</span><span class="p">)</span> <span class="n">Less</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ne">int</span><span class="p">)</span> <span class="ne">bool</span> <span class="p">{</span>		<span class="o">//</span><span class="err">重写</span><span class="n">less方法</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">uint用大于小于</span><span class="err">，</span><span class="n">Decimal使用自身的lessThan方法</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ReadBookCount</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">ReadBookCount</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">调用时则使用sort方法，强转原结构体  sort.Sort(SortByReadBook(readLeader))
+</span></span><span class="line"><span class="cl"><span class="err">调用时则使用</span><span class="n">sort方法</span><span class="err">，强转原结构体</span>  <span class="n">sort</span><span class="o">.</span><span class="n">Sort</span><span class="p">(</span><span class="n">SortByReadBook</span><span class="p">(</span><span class="n">readLeader</span><span class="p">))</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="vscode-调试配置">vscode 调试配置</h2>
@@ -852,18 +852,18 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Test struct {
-</span></span><span class="line"><span class="cl">	name string
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Test</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (t Test) String() string {
-</span></span><span class="line"><span class="cl">	return t.name + &#34;======111&#34;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="n">Test</span><span class="p">)</span> <span class="ne">String</span><span class="p">()</span> <span class="n">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&#34;======111&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	t := Test{&#34;张三&#34;}
-</span></span><span class="line"><span class="cl">	fmt.Println(t)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">t</span> <span class="p">:</span><span class="o">=</span> <span class="n">Test</span><span class="p">{</span><span class="s2">&#34;张三&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果给结构体绑定一个String的方法，那么在打印时只打印此结构体会隐式的调用此结构体的String方法</p>
@@ -899,33 +899,33 @@
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type test struct {
-</span></span><span class="line"><span class="cl">	Name string
-</span></span><span class="line"><span class="cl">	Age  int
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">test</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Age</span>  <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	t := reflect.ValueOf(&amp;test{&#34;张三&#34;, 18}) // a reflect.Type
-</span></span><span class="line"><span class="cl">	switch t.Kind() {
-</span></span><span class="line"><span class="cl">	case reflect.Ptr:
-</span></span><span class="line"><span class="cl">		if t.IsNil() {
-</span></span><span class="line"><span class="cl">			log.Println(&#34;this is nil&#34;)
-</span></span><span class="line"><span class="cl">		} else {
-</span></span><span class="line"><span class="cl">			va := t.Elem()
-</span></span><span class="line"><span class="cl">			for i := 0; i &lt; va.NumField(); i++ {
-</span></span><span class="line"><span class="cl">				// 1. 针对结构体成员是小写不公开的情况需要这种
-</span></span><span class="line"><span class="cl">				// temp := va.Addr().Interface().(*test)
-</span></span><span class="line"><span class="cl">				// temp.name = &#34;李四&#34;
-</span></span><span class="line"><span class="cl">				// 2. 公开的可以直接通过set方法来设置
-</span></span><span class="line"><span class="cl">				if va.Type().Field(i).Name == &#34;Name&#34; {
-</span></span><span class="line"><span class="cl">					fmt.Println(&#34;true&#34;)
-</span></span><span class="line"><span class="cl">					va.Field(i).SetString(&#34;历史&#34;)
-</span></span><span class="line"><span class="cl">				}
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	fmt.Println(t)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">t</span> <span class="p">:</span><span class="o">=</span> <span class="n">reflect</span><span class="o">.</span><span class="n">ValueOf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">test</span><span class="p">{</span><span class="s2">&#34;张三&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">})</span> <span class="o">//</span> <span class="n">a</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Type</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="n">t</span><span class="o">.</span><span class="n">Kind</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Ptr</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">IsNil</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nb">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;this is nil&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">va</span> <span class="p">:</span><span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Elem</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">va</span><span class="o">.</span><span class="n">NumField</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="mf">1.</span> <span class="err">针对结构体成员是小写不公开的情况需要这种</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="n">temp</span> <span class="p">:</span><span class="o">=</span> <span class="n">va</span><span class="o">.</span><span class="n">Addr</span><span class="p">()</span><span class="o">.</span><span class="n">Interface</span><span class="p">()</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">test</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="n">temp</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&#34;李四&#34;</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="mf">2.</span> <span class="err">公开的可以直接通过</span><span class="n">set方法来设置</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="n">va</span><span class="o">.</span><span class="n">Type</span><span class="p">()</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">Name</span> <span class="o">==</span> <span class="s2">&#34;Name&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;true&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">					<span class="n">va</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">SetString</span><span class="p">(</span><span class="s2">&#34;历史&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>golang是没有野指针的，因为只要有一个指针指向函数返回的变量，它就不会被回收。Go语言的内存回收机制规定，只要有一个指针指向一个变量，那么这个变量就不会被释放（内存逃逸），因此在 Go 语言中返回函数参数或临时变量是安全的。</p>

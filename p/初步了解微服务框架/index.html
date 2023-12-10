@@ -355,42 +355,42 @@
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//服务端，求矩形周长
-</span></span><span class="line"><span class="cl">//声明矩形对象
-</span></span><span class="line"><span class="cl">type Rect struct {
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span><span class="err">服务端，求矩形周长</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">声明矩形对象</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Rect</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//声明从客户接受的参数结构体
-</span></span><span class="line"><span class="cl">type Params struct {
-</span></span><span class="line"><span class="cl">	Width,Height int
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">声明从客户接受的参数结构体</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Params</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Width</span><span class="p">,</span><span class="n">Height</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//声明返回给客户端的参数结构体
-</span></span><span class="line"><span class="cl">type Ret struct {
-</span></span><span class="line"><span class="cl">	Area int
-</span></span><span class="line"><span class="cl">	Perimeter int
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">声明返回给客户端的参数结构体</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Ret</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">Area</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Perimeter</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//定义求矩形面积和周长的方法,第二个参数必须是指针，因为是其他服务调用此服务
-</span></span><span class="line"><span class="cl">//第二个参数也可以定义一个普通类型进行返回
-</span></span><span class="line"><span class="cl">//返回值error如果不为空，那么无论接受参数是否已经有值，服务端都不会返回数据，error和传出参数只会有一个是非空
-</span></span><span class="line"><span class="cl">func (r *Rect)Area(p Params,ret *Ret) error{
-</span></span><span class="line"><span class="cl">	ret.Area=p.Width*p.Height
-</span></span><span class="line"><span class="cl">	ret.Perimeter=(p.Width+p.Height)*2
-</span></span><span class="line"><span class="cl">	return nil
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义求矩形面积和周长的方法</span><span class="p">,</span><span class="err">第二个参数必须是指针，因为是其他服务调用此服务</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">第二个参数也可以定义一个普通类型进行返回</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">返回值</span><span class="n">error如果不为空</span><span class="err">，那么无论接受参数是否已经有值，服务端都不会返回数据，</span><span class="n">error和传出参数只会有一个是非空</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Rect</span><span class="p">)</span><span class="ne">Area</span><span class="p">(</span><span class="n">p</span> <span class="n">Params</span><span class="p">,</span><span class="n">ret</span> <span class="o">*</span><span class="n">Ret</span><span class="p">)</span> <span class="n">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ret</span><span class="o">.</span><span class="n">Area</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">Width</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">Height</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ret</span><span class="o">.</span><span class="n">Perimeter</span><span class="o">=</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">Width</span><span class="o">+</span><span class="n">p</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main(){
-</span></span><span class="line"><span class="cl">	//1.注册服务
-</span></span><span class="line"><span class="cl">	rpc.Register(new(Rect))
-</span></span><span class="line"><span class="cl">	//2.把服务绑定到http协议上
-</span></span><span class="line"><span class="cl">	rpc.HandleHTTP()
-</span></span><span class="line"><span class="cl">	//3.监听服务，等待客户端调用方法
-</span></span><span class="line"><span class="cl">	err:=http.ListenAndServe(&#34;:8989&#34;,nil)
-</span></span><span class="line"><span class="cl">	if err != nil {
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">1.</span><span class="err">注册服务</span>
+</span></span><span class="line"><span class="cl">	<span class="n">rpc</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">new</span><span class="p">(</span><span class="n">Rect</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">2.</span><span class="err">把服务绑定到</span><span class="n">http协议上</span>
+</span></span><span class="line"><span class="cl">	<span class="n">rpc</span><span class="o">.</span><span class="n">HandleHTTP</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">3.</span><span class="err">监听服务，等待客户端调用方法</span>
+</span></span><span class="line"><span class="cl">	<span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="s2">&#34;:8989&#34;</span><span class="p">,</span><span class="n">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
@@ -422,31 +422,31 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//客户端，请求服务端，获取结果
-</span></span><span class="line"><span class="cl">//声明参数结构体
-</span></span><span class="line"><span class="cl">type Params struct {
-</span></span><span class="line"><span class="cl">	Width,Height int
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span><span class="err">客户端，请求服务端，获取结果</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">声明参数结构体</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Params</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Width</span><span class="p">,</span><span class="n">Height</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">type Ret struct {
-</span></span><span class="line"><span class="cl">	Area int
-</span></span><span class="line"><span class="cl">	Perimeter int
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	//1. 连接远程的RPC服务
-</span></span><span class="line"><span class="cl">	rp, err := rpc.DialHTTP(&#34;tcp&#34;, &#34;127.0.0.1:8989&#34;)
-</span></span><span class="line"><span class="cl">	if err != nil {
-</span></span><span class="line"><span class="cl">		log.Fatal(err)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	//2. 调用远程方法
-</span></span><span class="line"><span class="cl">	var ret Ret
-</span></span><span class="line"><span class="cl">	//第一个参数为方法名，为服务器对应的结构体名.方法名，第二个参数为传过去的参数，第三个参数为接受到的参数，与服务器对应的参数类型要一致
-</span></span><span class="line"><span class="cl">	err = rp.Call(&#34;Rect.Area&#34;, Params{10, 20}, &amp;ret)
-</span></span><span class="line"><span class="cl">	if err != nil {
-</span></span><span class="line"><span class="cl">		log.Fatal(err)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;面积：%v\n周长：%v\n&#34;,ret.Area,ret.Perimeter)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Ret</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">Area</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Perimeter</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">1.</span> <span class="err">连接远程的</span><span class="n">RPC服务</span>
+</span></span><span class="line"><span class="cl">	<span class="n">rp</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">rpc</span><span class="o">.</span><span class="n">DialHTTP</span><span class="p">(</span><span class="s2">&#34;tcp&#34;</span><span class="p">,</span> <span class="s2">&#34;127.0.0.1:8989&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">2.</span> <span class="err">调用远程方法</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">ret</span> <span class="n">Ret</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">第一个参数为方法名，为服务器对应的结构体名</span><span class="o">.</span><span class="err">方法名，第二个参数为传过去的参数，第三个参数为接受到的参数，与服务器对应的参数类型要一致</span>
+</span></span><span class="line"><span class="cl">	<span class="n">err</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">Call</span><span class="p">(</span><span class="s2">&#34;Rect.Area&#34;</span><span class="p">,</span> <span class="n">Params</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">},</span> <span class="o">&amp;</span><span class="n">ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;面积：%v</span><span class="se">\n</span><span class="s2">周长：%v</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">ret</span><span class="o">.</span><span class="n">Area</span><span class="p">,</span><span class="n">ret</span><span class="o">.</span><span class="n">Perimeter</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>假如结构体定义的方法参数和返回值不符合rpc的规范，我们是无法在编译期发现的，只有在运行期远程调用时才能发现这个方法的问题。如果希望在编译期就发现其对象是否合法，那就需要在此结构体之上定义一个rpc规范的接口，让这个结构体实现这个接口，这样子如果没有全部实现就无法通过编译</p>
@@ -603,10 +603,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">enum Foo {
-</span></span><span class="line"><span class="cl">FIRST_VALUE = 0;	// 枚举值必须从0开始
-</span></span><span class="line"><span class="cl">SECOND_VALUE = 1;
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">enum</span> <span class="n">Foo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">FIRST_VALUE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>	<span class="o">//</span> <span class="err">枚举值必须从</span><span class="mi">0</span><span class="err">开始</span>
+</span></span><span class="line"><span class="cl"><span class="n">SECOND_VALUE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>Service与rpc方法名统一采用驼峰式命名</p>
@@ -625,7 +625,7 @@
 <ul>
 <li>Protobuf定义了一套基本数据类型。几乎都可以映射到C++\Java等语言的基础数据类型</li>
 </ul>
-<p><img src="/file:/C:/Users/admin/AppData/Local/Temp/msohtmlclip1/01/clip_image002.jpg"
+<p><img src="file:///C:/Users/admin/AppData/Local/Temp/msohtmlclip1/01/clip_image002.jpg"
 	
 	
 	
@@ -861,48 +861,48 @@
 </span><span class="lnt">43
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">main</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;context&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;google.golang.org/grpc&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">pb</span> <span class="s">&#34;main/gRPC/proto&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;net&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;context&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;google.golang.org/grpc&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pb</span> <span class="s2">&#34;main/gRPC/proto&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;net&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="c1">//定义一个结构体用于实现protobuf生成出来的接口的方法,这样子就可以将这个结构体通过传参的方式进行注册
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">UserInfoService</span> <span class="kd">struct</span> <span class="p">{}</span>
-</span></span><span class="line"><span class="cl"><span class="c1">//实现接口中的函数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">UserInfoService</span><span class="p">)</span><span class="nf">GetUserInfo</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserRequest</span><span class="p">)</span> <span class="p">(</span><span class="nx">resp</span> <span class="o">*</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserResponse</span><span class="p">,</span><span class="nx">err</span> <span class="kt">error</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">name</span><span class="o">:=</span><span class="nx">req</span><span class="p">.</span><span class="nx">Name</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">name</span><span class="o">==</span><span class="s">&#34;zs&#34;</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">resp</span><span class="p">=</span><span class="o">&amp;</span><span class="nx">pb</span><span class="p">.</span><span class="nx">UserResponse</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">Id</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">Age</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">Hobby</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;run&#34;</span><span class="p">,</span><span class="s">&#34;game&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义一个结构体用于实现</span><span class="n">protobuf生成出来的接口的方法</span><span class="p">,</span><span class="err">这样子就可以将这个结构体通过传参的方式进行注册</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">UserInfoService</span> <span class="n">struct</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">实现接口中的函数</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">u</span> <span class="o">*</span><span class="n">UserInfoService</span><span class="p">)</span><span class="n">GetUserInfo</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">UserRequest</span><span class="p">)</span> <span class="p">(</span><span class="n">resp</span> <span class="o">*</span><span class="n">pb</span><span class="o">.</span><span class="n">UserResponse</span><span class="p">,</span><span class="n">err</span> <span class="n">error</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span><span class="p">:</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">Name</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">name</span><span class="o">==</span><span class="s2">&#34;zs&#34;</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">resp</span><span class="o">=&amp;</span><span class="n">pb</span><span class="o">.</span><span class="n">UserResponse</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Id</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Name</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Age</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Hobby</span><span class="p">:</span> <span class="p">[]</span><span class="n">string</span><span class="p">{</span><span class="s2">&#34;run&#34;</span><span class="p">,</span><span class="s2">&#34;game&#34;</span><span class="p">},</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">	<span class="k">return</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">UserInfo</span> <span class="p">=</span> <span class="nx">UserInfoService</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">var</span> <span class="n">UserInfo</span> <span class="o">=</span> <span class="n">UserInfoService</span><span class="p">{}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">(){</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">addr</span><span class="o">:=</span><span class="s">&#34;127.0.0.1:8999&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 1.监听端口
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">listen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">addr</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;监听失败,&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">addr</span><span class="p">:</span><span class="o">=</span><span class="s2">&#34;127.0.0.1:8999&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">1.</span><span class="err">监听端口</span>
+</span></span><span class="line"><span class="cl">	<span class="n">listen</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s2">&#34;tcp&#34;</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;监听失败,&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">		<span class="k">return</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">listen</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 2.实例化gRPC
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">s</span> <span class="o">:=</span> <span class="nx">grpc</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 3.在gRPC上注册微服务
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">pb</span><span class="p">.</span><span class="nf">RegisterUserInfoServiceServer</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="o">&amp;</span><span class="nx">UserInfo</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 4.启动服务端
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="nx">listen</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">listen</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">2.</span><span class="err">实例化</span><span class="n">gRPC</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s</span> <span class="p">:</span><span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">NewServer</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">3.</span><span class="err">在</span><span class="n">gRPC上注册微服务</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pb</span><span class="o">.</span><span class="n">RegisterUserInfoServiceServer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="o">&amp;</span><span class="n">UserInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="mf">4.</span><span class="err">启动服务端</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s</span><span class="o">.</span><span class="n">Serve</span><span class="p">(</span><span class="n">listen</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -1547,37 +1547,37 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	route := gin.Default()
-</span></span><span class="line"><span class="cl">	route.GET(&#34;/&#34;, handlerFuncsTest)
-</span></span><span class="line"><span class="cl">	route.Run(&#34;:8080&#34;)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">route</span> <span class="p">:</span><span class="o">=</span> <span class="n">gin</span><span class="o">.</span><span class="n">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">route</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/&#34;</span><span class="p">,</span> <span class="n">handlerFuncsTest</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">route</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s2">&#34;:8080&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func handlerFuncsTest(c *gin.Context) {
-</span></span><span class="line"><span class="cl">// 初始化服务发现consul，可以加参数指定consul的地址，不加默认为本机的8500端口
-</span></span><span class="line"><span class="cl">	consulReg := consul.NewRegistry(
-</span></span><span class="line"><span class="cl">		func(o *registry.Options) {
-</span></span><span class="line"><span class="cl">			o.Addrs = []string{
-</span></span><span class="line"><span class="cl">				// 配置consul服务地址
-</span></span><span class="line"><span class="cl">				&#34;127.0.0.1:8500&#34;,
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">		},
-</span></span><span class="line"><span class="cl">	)
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">handlerFuncsTest</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">初始化服务发现</span><span class="n">consul</span><span class="err">，可以加参数指定</span><span class="n">consul的地址</span><span class="err">，不加默认为本机的</span><span class="mi">8500</span><span class="err">端口</span>
+</span></span><span class="line"><span class="cl">	<span class="n">consulReg</span> <span class="p">:</span><span class="o">=</span> <span class="n">consul</span><span class="o">.</span><span class="n">NewRegistry</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">		<span class="k">func</span><span class="p">(</span><span class="n">o</span> <span class="o">*</span><span class="n">registry</span><span class="o">.</span><span class="n">Options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">o</span><span class="o">.</span><span class="n">Addrs</span> <span class="o">=</span> <span class="p">[]</span><span class="n">string</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span> <span class="err">配置</span><span class="n">consul服务地址</span>
+</span></span><span class="line"><span class="cl">				<span class="s2">&#34;127.0.0.1:8500&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="cl">	<span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	// 初始化micro对象，指定consul为服务发现
-</span></span><span class="line"><span class="cl">	service := micro.NewService(
-</span></span><span class="line"><span class="cl">		micro.Registry(consulReg),
-</span></span><span class="line"><span class="cl">	)
-</span></span><span class="line"><span class="cl">	// 初始化客户端，client.DefaultClient是go-micro.dev/v4/client包的
-</span></span><span class="line"><span class="cl">	// 如果使用默认的mdns，则是client.DefaultClient
-</span></span><span class="line"><span class="cl">	// microClient := pb.NewTestMicroService(&#34;test-micro&#34;, client.DefaultClient) 
-</span></span><span class="line"><span class="cl">	microClient := pb.NewTestMicroService(&#34;test-micro&#34;, service.Client())
-</span></span><span class="line"><span class="cl">	// 可以将服务端的pb复制过来，也可以通过mod直接调用服务端的pb,在服务端中，handler后缀的是给服务端使用的注册，service是给客户端使用的调用
-</span></span><span class="line"><span class="cl">	resp, _ := microClient.Call(context.TODO(), &amp;pb.Request{Name: &#34;zs&#34;})
-</span></span><span class="line"><span class="cl">	c.JSON(http.StatusOK, gin.H{
-</span></span><span class="line"><span class="cl">		&#34;resp&#34;: resp,
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">初始化</span><span class="n">micro对象</span><span class="err">，指定</span><span class="n">consul为服务发现</span>
+</span></span><span class="line"><span class="cl">	<span class="n">service</span> <span class="p">:</span><span class="o">=</span> <span class="n">micro</span><span class="o">.</span><span class="n">NewService</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">		<span class="n">micro</span><span class="o">.</span><span class="n">Registry</span><span class="p">(</span><span class="n">consulReg</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">初始化客户端，</span><span class="n">client</span><span class="o">.</span><span class="n">DefaultClient是go</span><span class="o">-</span><span class="n">micro</span><span class="o">.</span><span class="n">dev</span><span class="o">/</span><span class="n">v4</span><span class="o">/</span><span class="n">client包的</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">如果使用默认的</span><span class="n">mdns</span><span class="err">，则是</span><span class="n">client</span><span class="o">.</span><span class="n">DefaultClient</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="n">microClient</span> <span class="p">:</span><span class="o">=</span> <span class="n">pb</span><span class="o">.</span><span class="n">NewTestMicroService</span><span class="p">(</span><span class="s2">&#34;test-micro&#34;</span><span class="p">,</span> <span class="n">client</span><span class="o">.</span><span class="n">DefaultClient</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">	<span class="n">microClient</span> <span class="p">:</span><span class="o">=</span> <span class="n">pb</span><span class="o">.</span><span class="n">NewTestMicroService</span><span class="p">(</span><span class="s2">&#34;test-micro&#34;</span><span class="p">,</span> <span class="n">service</span><span class="o">.</span><span class="n">Client</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">可以将服务端的</span><span class="n">pb复制过来</span><span class="err">，也可以通过</span><span class="n">mod直接调用服务端的pb</span><span class="p">,</span><span class="err">在服务端中，</span><span class="n">handler后缀的是给服务端使用的注册</span><span class="err">，</span><span class="n">service是给客户端使用的调用</span>
+</span></span><span class="line"><span class="cl">	<span class="n">resp</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">microClient</span><span class="o">.</span><span class="n">Call</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">TODO</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">pb</span><span class="o">.</span><span class="n">Request</span><span class="p">{</span><span class="n">Name</span><span class="p">:</span> <span class="s2">&#34;zs&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="s2">&#34;resp&#34;</span><span class="p">:</span> <span class="n">resp</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div>

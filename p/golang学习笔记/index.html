@@ -1139,48 +1139,48 @@ slice := array[1:3:5]
 </span><span class="lnt">42
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//定义接口类型
-</span></span><span class="line"><span class="cl">type Hunmaner interface {
-</span></span><span class="line"><span class="cl">	sayhi()
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">//定义学生结构体类型
-</span></span><span class="line"><span class="cl">type student struct {
-</span></span><span class="line"><span class="cl">	name string
-</span></span><span class="line"><span class="cl">	id   int
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">//定义学生方法
-</span></span><span class="line"><span class="cl">func (student) sayhi() {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;student say hi&#34;)
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">//定义老师结构体类型
-</span></span><span class="line"><span class="cl">type teacher struct {
-</span></span><span class="line"><span class="cl">	name  string
-</span></span><span class="line"><span class="cl">	addre string
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">//定义老师方法
-</span></span><span class="line"><span class="cl">func (teacher) sayhi() {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;teacher say hi&#34;)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义接口类型</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Hunmaner</span> <span class="n">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">sayhi</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义学生结构体类型</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">student</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">id</span>   <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义学生方法</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">student</span><span class="p">)</span> <span class="n">sayhi</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;student say hi&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义老师结构体类型</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">teacher</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span>  <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">addre</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义老师方法</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">teacher</span><span class="p">)</span> <span class="n">sayhi</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;teacher say hi&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//实现多态，定义一个接口的方法，方法参数为接口类型，将其他接收者类型的实参传进去就可以实现调用不同方法
-</span></span><span class="line"><span class="cl">func whoSayhi(i Hunmaner){
-</span></span><span class="line"><span class="cl">	i.sayhi()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">实现多态，定义一个接口的方法，方法参数为接口类型，将其他接收者类型的实参传进去就可以实现调用不同方法</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">whoSayhi</span><span class="p">(</span><span class="n">i</span> <span class="n">Hunmaner</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="o">.</span><span class="n">sayhi</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	//i等于学生结构体，i就可以调用学生的方法
-</span></span><span class="line"><span class="cl">	var i Hunmaner
-</span></span><span class="line"><span class="cl">	i = student{name: &#34;mike&#34;}
-</span></span><span class="line"><span class="cl">	i.sayhi()
-</span></span><span class="line"><span class="cl">	//输出学生方法中的语句
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">i等于学生结构体</span><span class="err">，</span><span class="n">i就可以调用学生的方法</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">i</span> <span class="n">Hunmaner</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span> <span class="o">=</span> <span class="n">student</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="s2">&#34;mike&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="o">.</span><span class="n">sayhi</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">输出学生方法中的语句</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//通过接口实现不同的方法
-</span></span><span class="line"><span class="cl">	whoSayhi(student{name: &#34;mike&#34;})
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">通过接口实现不同的方法</span>
+</span></span><span class="line"><span class="cl">	<span class="n">whoSayhi</span><span class="p">(</span><span class="n">student</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="s2">&#34;mike&#34;</span><span class="p">})</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	i = teacher{name: &#34;laoshi&#34;}
-</span></span><span class="line"><span class="cl">	i.sayhi()
-</span></span><span class="line"><span class="cl">	//输出老师方法中的语句
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">i</span> <span class="o">=</span> <span class="n">teacher</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="s2">&#34;laoshi&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="o">.</span><span class="n">sayhi</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">输出老师方法中的语句</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>也可以通过切片同时实现多种接收者的同名的方法</strong></p>
@@ -1319,21 +1319,21 @@ slice := array[1:3:5]
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//要先导入包errors，import &#34;errors&#34;
-</span></span><span class="line"><span class="cl">func Mydiv(a, b int) (result int, err error) {
-</span></span><span class="line"><span class="cl">	if b == 0 {
-</span></span><span class="line"><span class="cl">		err = errors.New(&#34;分母不能为0&#34;)
-</span></span><span class="line"><span class="cl">	} else {
-</span></span><span class="line"><span class="cl">		result = a / b
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span><span class="err">要先导入包</span><span class="n">errors</span><span class="err">，</span><span class="n">import</span> <span class="s2">&#34;errors&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Mydiv</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ne">int</span><span class="p">)</span> <span class="p">(</span><span class="n">result</span> <span class="ne">int</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">err</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s2">&#34;分母不能为0&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	result, err := Mydiv(10, 0)
-</span></span><span class="line"><span class="cl">	fmt.Println(result)  //值为默认值0
-</span></span><span class="line"><span class="cl">	fmt.Println(err)     //值为自己定义的错误值
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">result</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">Mydiv</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="o">//</span><span class="err">值为默认值</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>     <span class="o">//</span><span class="err">值为自己定义的错误值</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="panic错误接口的调用致命错误">panic错误接口的调用（致命错误）</h3>
@@ -1396,31 +1396,31 @@ slice := array[1:3:5]
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func test01(x int) {
-</span></span><span class="line"><span class="cl">	//使用数组下标越界生成panic异常
-</span></span><span class="line"><span class="cl">	//recover必须和defer一起存在，recover()会拦截panic异常并返回panic的异常信息
-</span></span><span class="line"><span class="cl">	//如果未发生panic异常，recover()会返回一个nil
-</span></span><span class="line"><span class="cl">	//程序会继续运行,但是出错的函数会跳过
-</span></span><span class="line"><span class="cl">	defer func() {
-</span></span><span class="line"><span class="cl">		if err := recover(); err != nil {
-</span></span><span class="line"><span class="cl">			fmt.Println(err)
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}()
-</span></span><span class="line"><span class="cl">	var a [10]int
-</span></span><span class="line"><span class="cl">	a[x] = 111
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func test02() {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;正常输出的一个方法&#34;)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">test01</span><span class="p">(</span><span class="n">x</span> <span class="ne">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">使用数组下标越界生成</span><span class="n">panic异常</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">recover必须和defer一起存在</span><span class="err">，</span><span class="n">recover</span><span class="p">()</span><span class="err">会拦截</span><span class="n">panic异常并返回panic的异常信息</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">如果未发生</span><span class="n">panic异常</span><span class="err">，</span><span class="n">recover</span><span class="p">()</span><span class="err">会返回一个</span><span class="n">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">程序会继续运行</span><span class="p">,</span><span class="err">但是出错的函数会跳过</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">recover</span><span class="p">();</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">a</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="ne">int</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="mi">111</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">test02</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;正常输出的一个方法&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	test01(11)
-</span></span><span class="line"><span class="cl">	test02()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">test01</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">test02</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">运行结果：
-</span></span><span class="line"><span class="cl">runtime error: index out of range [11] with length 10
-</span></span><span class="line"><span class="cl">正常输出的一个方法
+</span></span><span class="line"><span class="cl"><span class="err">运行结果：</span>
+</span></span><span class="line"><span class="cl"><span class="n">runtime</span> <span class="n">error</span><span class="p">:</span> <span class="n">index</span> <span class="n">out</span> <span class="n">of</span> <span class="nb">range</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="n">with</span> <span class="n">length</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl"><span class="err">正常输出的一个方法</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="文本和文件处理">文本和文件处理</h2>
@@ -1594,19 +1594,19 @@ slice := array[1:3:5]
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type person struct {
-</span></span><span class="line"><span class="cl">	Name string
-</span></span><span class="line"><span class="cl">	Age  int
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	p1 := person{&#34;张三&#34;,19}
-</span></span><span class="line"><span class="cl">	b, _ := json.Marshal(p1)
-</span></span><span class="line"><span class="cl">	fmt.Println(string(b))
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">person</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Age</span>  <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">p1</span> <span class="p">:</span><span class="o">=</span> <span class="n">person</span><span class="p">{</span><span class="s2">&#34;张三&#34;</span><span class="p">,</span><span class="mi">19</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">b</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">Marshal</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	var p2 person
-</span></span><span class="line"><span class="cl">	json.Unmarshal(b, &amp;p2)	//结构体是值传递，如果不使用指针就只会修改副本，不会修改p2原有的内容
-</span></span><span class="line"><span class="cl">	fmt.Println(p2)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">p2</span> <span class="n">person</span>
+</span></span><span class="line"><span class="cl">	<span class="n">json</span><span class="o">.</span><span class="n">Unmarshal</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p2</span><span class="p">)</span>	<span class="o">//</span><span class="err">结构体是值传递，如果不使用指针就只会修改副本，不会修改</span><span class="n">p2原有的内容</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>Marshal()会返回两个值，一个json内容一个错误值，可以用If语句接受错误，然后用return让main函数中断，<strong>return在函数中的意义：如果函数返回值有定义，则return表示返回数据，如果没有定义返回值，return就表示退出此函数，在main函数中有return就表示中断程序但是不会报错</strong></p>
@@ -2337,35 +2337,35 @@ slice := array[1:3:5]
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func fibonacci(ch chan&lt;- int, quit &lt;-chan bool) {
-</span></span><span class="line"><span class="cl">	x, y := 1, 1
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		select {
-</span></span><span class="line"><span class="cl">		case ch &lt;- x:
-</span></span><span class="line"><span class="cl">			x, y = y, x+y
-</span></span><span class="line"><span class="cl">		case flag := &lt;-quit:
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">fibonacci</span><span class="p">(</span><span class="n">ch</span> <span class="n">chan</span><span class="o">&lt;-</span> <span class="ne">int</span><span class="p">,</span> <span class="n">quit</span> <span class="o">&lt;-</span><span class="n">chan</span> <span class="ne">bool</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">:</span><span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="n">ch</span> <span class="o">&lt;-</span> <span class="n">x</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="n">flag</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">quit</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	ch := make(chan int)
-</span></span><span class="line"><span class="cl">	quit := make(chan bool)
-</span></span><span class="line"><span class="cl">	//输出数字
-</span></span><span class="line"><span class="cl">	go func() {
-</span></span><span class="line"><span class="cl">		for i := 0; i &lt; 8; i++ {
-</span></span><span class="line"><span class="cl">			num := &lt;-ch
-</span></span><span class="line"><span class="cl">			fmt.Println(num)
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		quit &lt;- true
-</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">quit</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">输出数字</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">num</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">ch</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">quit</span> <span class="o">&lt;-</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//产生数字，写入管道
-</span></span><span class="line"><span class="cl">	fibonacci(ch, quit)
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">输出结果为：1	1	2	3	5	8	13	21
-</span></span><span class="line"><span class="cl">除去第二个数，其他数为前两个数相加
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">产生数字，写入管道</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fibonacci</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">quit</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">输出结果为：</span><span class="mi">1</span>	<span class="mi">1</span>	<span class="mi">2</span>	<span class="mi">3</span>	<span class="mi">5</span>	<span class="mi">8</span>	<span class="mi">13</span>	<span class="mi">21</span>
+</span></span><span class="line"><span class="cl"><span class="err">除去第二个数，其他数为前两个数相加</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果select语句不加for循环，那么它只会判定一次并只将数据写入一次管道，而fibonacci函数处于主协程，当判定成功后就会直接完成主协程，那么子协程也会退出，后面的数据都无法继续输出</p>
@@ -2562,56 +2562,56 @@ slice := array[1:3:5]
 </span><span class="lnt">50
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//conn的类型为net包里的Conn接口
-</span></span><span class="line"><span class="cl">func HandleConn(conn net.Conn) {
-</span></span><span class="line"><span class="cl">	//每个用户使用完毕后关闭协程
-</span></span><span class="line"><span class="cl">	defer conn.Close()
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="n">conn的类型为net包里的Conn接口</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">HandleConn</span><span class="p">(</span><span class="n">conn</span> <span class="n">net</span><span class="o">.</span><span class="n">Conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">每个用户使用完毕后关闭协程</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//获取客户端的网络信息,并以ip 端口的形式输出
-</span></span><span class="line"><span class="cl">	addr := conn.RemoteAddr().String()
-</span></span><span class="line"><span class="cl">	fmt.Println(addr, &#34;---连接成功&#34;)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">获取客户端的网络信息</span><span class="p">,</span><span class="err">并以</span><span class="n">ip</span> <span class="err">端口的形式输出</span>
+</span></span><span class="line"><span class="cl">	<span class="n">addr</span> <span class="p">:</span><span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">RemoteAddr</span><span class="p">()</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="s2">&#34;---连接成功&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 2048)
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">2048</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//用for循环套住Read()，用户发送一次数据，接收一次并赋值给buf，
-</span></span><span class="line"><span class="cl">	//运行下面的打印和回传，再次循环并阻塞在Read()处等待用户再次发送请求
-</span></span><span class="line"><span class="cl">	//但是这样会让子进程一直存在，除非设置了err不为空时退出实现强制退出
-</span></span><span class="line"><span class="cl">	//因此加一个用户输入exit退出的逻辑
-</span></span><span class="line"><span class="cl">	for{
-</span></span><span class="line"><span class="cl">		n, _ := conn.Read(buf)
-</span></span><span class="line"><span class="cl">		//打印用户发送过来的内容
-</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;%s输入了: %s\n&#34;, addr, string(buf[:n]))
-</span></span><span class="line"><span class="cl">		//把用户信息转为大写发回给用户(先将小写的字节切片转为string，然后变成大写再强转为字节切片)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">用</span><span class="n">for循环套住Read</span><span class="p">()</span><span class="err">，用户发送一次数据，接收一次并赋值给</span><span class="n">buf</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">运行下面的打印和回传，再次循环并阻塞在</span><span class="n">Read</span><span class="p">()</span><span class="err">处等待用户再次发送请求</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">但是这样会让子进程一直存在，除非设置了</span><span class="n">err不为空时退出实现强制退出</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">因此加一个用户输入</span><span class="n">exit退出的逻辑</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">打印用户发送过来的内容</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;</span><span class="si">%s</span><span class="s2">输入了: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">addr</span><span class="p">,</span> <span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">把用户信息转为大写发回给用户</span><span class="p">(</span><span class="err">先将小写的字节切片转为</span><span class="n">string</span><span class="err">，然后变成大写再强转为字节切片</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		//n-是因为在windows中输入的语句有一个\r\n换行符，需要-2去除它
-</span></span><span class="line"><span class="cl">		//各个平台都不一样，因此可以在前面通过len(string(buf[:n]))来判断到底多了几个字符
-</span></span><span class="line"><span class="cl">		if string(buf[:n-2]) == &#34;exit&#34; {
-</span></span><span class="line"><span class="cl">			fmt.Println(addr, &#34; exit&#34;)
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">n</span><span class="o">-</span><span class="err">是因为在</span><span class="n">windows中输入的语句有一个</span>\<span class="n">r</span>\<span class="n">n换行符</span><span class="err">，需要</span><span class="o">-</span><span class="mi">2</span><span class="err">去除它</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">各个平台都不一样，因此可以在前面通过</span><span class="n">len</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">]))</span><span class="err">来判断到底多了几个字符</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&#34;exit&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="s2">&#34; exit&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		conn.Write([]byte(strings.ToUpper(string(buf[:n]))))
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">		<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="n">strings</span><span class="o">.</span><span class="n">ToUpper</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">]))))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	//设置监听，此处及下面都会返回err，为了缩短代码量丢弃了err，工作中不要丢弃
-</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">设置监听，此处及下面都会返回</span><span class="n">err</span><span class="err">，为了缩短代码量丢弃了</span><span class="n">err</span><span class="err">，工作中不要丢弃</span>
+</span></span><span class="line"><span class="cl">	<span class="n">listener</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s2">&#34;tcp&#34;</span><span class="p">,</span> <span class="s2">&#34;127.0.0.1:8888&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//利用for循环实现多个客户端连接同一个服务器
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		//循环阻塞等待用户请求，一个用户请求然后往下走，然后循环继续等下一个用户
-</span></span><span class="line"><span class="cl">		conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">利用</span><span class="n">for循环实现多个客户端连接同一个服务器</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">循环阻塞等待用户请求，一个用户请求然后往下走，然后循环继续等下一个用户</span>
+</span></span><span class="line"><span class="cl">		<span class="n">conn</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">listener</span><span class="o">.</span><span class="n">Accept</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		//开子协程处理多个用户请求，如果没有用户进入就会阻塞到第一步直到第一个用户请求，
-</span></span><span class="line"><span class="cl">		//然后往下开一个新协程给此用户，继续for循环等待下一个用户请求
-</span></span><span class="line"><span class="cl">		go HandleConn(conn)
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">开子协程处理多个用户请求，如果没有用户进入就会阻塞到第一步直到第一个用户请求，</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">然后往下开一个新协程给此用户，继续</span><span class="n">for循环等待下一个用户请求</span>
+</span></span><span class="line"><span class="cl">		<span class="n">go</span> <span class="n">HandleConn</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	defer listener.Close()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">listener</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>客户端：</p>
@@ -2653,40 +2653,40 @@ slice := array[1:3:5]
 </span><span class="lnt">34
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	//主动连接服务端
-</span></span><span class="line"><span class="cl">	conn, _ := net.Dial(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">主动连接服务端</span>
+</span></span><span class="line"><span class="cl">	<span class="n">conn</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">Dial</span><span class="p">(</span><span class="s2">&#34;tcp&#34;</span><span class="p">,</span> <span class="s2">&#34;127.0.0.1:8888&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	defer conn.Close()
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//从键盘获取输入并发往服务器端
-</span></span><span class="line"><span class="cl">	go func() {
-</span></span><span class="line"><span class="cl">		str := make([]byte, 2048)
-</span></span><span class="line"><span class="cl">		//用for循环可以实现当os.Stdin.Read()中没有数据时（即没有进行输入），
-</span></span><span class="line"><span class="cl">		//阻塞在这一步，直到用户输入内容才继续向下进行
-</span></span><span class="line"><span class="cl">		for {
-</span></span><span class="line"><span class="cl">	//os.Stdin.Read可以提示键盘输入并且将输入的内容转换为字节切片，并赋值到str中，返回切片的长度
-</span></span><span class="line"><span class="cl">			n, _ := os.Stdin.Read(str)
-</span></span><span class="line"><span class="cl">			//发送给服务器端
-</span></span><span class="line"><span class="cl">			conn.Write(str[:n])
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">从键盘获取输入并发往服务器端</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">str</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">2048</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">用</span><span class="n">for循环可以实现当os</span><span class="o">.</span><span class="n">Stdin</span><span class="o">.</span><span class="n">Read</span><span class="p">()</span><span class="err">中没有数据时（即没有进行输入），</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">阻塞在这一步，直到用户输入内容才继续向下进行</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">os</span><span class="o">.</span><span class="n">Stdin</span><span class="o">.</span><span class="n">Read可以提示键盘输入并且将输入的内容转换为字节切片</span><span class="err">，并赋值到</span><span class="n">str中</span><span class="err">，返回切片的长度</span>
+</span></span><span class="line"><span class="cl">			<span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">Stdin</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">发送给服务器端</span>
+</span></span><span class="line"><span class="cl">			<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="nb">str</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//从服务器端获取数据
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 2048)
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		//for循环实现当服务器未往客户端发送数据时，conn.Read(buf)为空，阻塞在这一步，
-</span></span><span class="line"><span class="cl">		//有数据循环一遍，然后等待下次服务器的数据
-</span></span><span class="line"><span class="cl">		//当服务器端输入exit后，服务器端所对应的子协程结束，conn.Read()返回err，
-</span></span><span class="line"><span class="cl">		//通过return结束主协程，子协程同时结束，退出程序
-</span></span><span class="line"><span class="cl">		n, err := conn.Read(buf)
-</span></span><span class="line"><span class="cl">		if err != nil {
-</span></span><span class="line"><span class="cl">			fmt.Println(err)
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		fmt.Println(string(buf[:n]))
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">从服务器端获取数据</span>
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">2048</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">for循环实现当服务器未往客户端发送数据时</span><span class="err">，</span><span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span><span class="err">为空，阻塞在这一步，</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">有数据循环一遍，然后等待下次服务器的数据</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">当服务器端输入</span><span class="n">exit后</span><span class="err">，服务器端所对应的子协程结束，</span><span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">()</span><span class="err">返回</span><span class="n">err</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">通过</span><span class="n">return结束主协程</span><span class="err">，子协程同时结束，退出程序</span>
+</span></span><span class="line"><span class="cl">		<span class="n">n</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="远程发送文件">远程发送文件：</h4>
@@ -2736,47 +2736,47 @@ slice := array[1:3:5]
 </span><span class="lnt">41
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func RecvFile(path string, conn net.Conn) {
-</span></span><span class="line"><span class="cl">	//创建文件
-</span></span><span class="line"><span class="cl">	f, _ := os.Create(path)
-</span></span><span class="line"><span class="cl">	//循环接收文件的内容
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		n, err := conn.Read(buf)
-</span></span><span class="line"><span class="cl">		if err != nil {
-</span></span><span class="line"><span class="cl">			if err == io.EOF {
-</span></span><span class="line"><span class="cl">				fmt.Println(&#34;文件接收完毕&#34;)
-</span></span><span class="line"><span class="cl">			} else {
-</span></span><span class="line"><span class="cl">				fmt.Println(err)
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		//往文件写入内容
-</span></span><span class="line"><span class="cl">		f.Write(buf[:n])
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">RecvFile</span><span class="p">(</span><span class="n">path</span> <span class="n">string</span><span class="p">,</span> <span class="n">conn</span> <span class="n">net</span><span class="o">.</span><span class="n">Conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">创建文件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">循环接收文件的内容</span>
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">1024</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">n</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">err</span> <span class="o">==</span> <span class="n">io</span><span class="o">.</span><span class="n">EOF</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;文件接收完毕&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">往文件写入内容</span>
+</span></span><span class="line"><span class="cl">		<span class="n">f</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	//建立监听
-</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">建立监听</span>
+</span></span><span class="line"><span class="cl">	<span class="n">listener</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s2">&#34;tcp&#34;</span><span class="p">,</span> <span class="s2">&#34;127.0.0.1:8888&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//阻塞等待用户请求
-</span></span><span class="line"><span class="cl">	conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">阻塞等待用户请求</span>
+</span></span><span class="line"><span class="cl">	<span class="n">conn</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">listener</span><span class="o">.</span><span class="n">Accept</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//接收用户文件名
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024)
-</span></span><span class="line"><span class="cl">	n, _ := conn.Read(buf)
-</span></span><span class="line"><span class="cl">	path := string(buf[:n])
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">接收用户文件名</span>
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">path</span> <span class="p">:</span><span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//返回消息
-</span></span><span class="line"><span class="cl">	conn.Write([]byte(&#34;开始发送&#34;))
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">返回消息</span>
+</span></span><span class="line"><span class="cl">	<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="s2">&#34;开始发送&#34;</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//接收文件内容
-</span></span><span class="line"><span class="cl">	RecvFile(path, conn)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">接收文件内容</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RecvFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	defer listener.Close()
-</span></span><span class="line"><span class="cl">	defer conn.Close()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">listener</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>客户端：</p>
@@ -2833,55 +2833,55 @@ slice := array[1:3:5]
 </span><span class="lnt">49
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func SendFile(path string, conn net.Conn) {
-</span></span><span class="line"><span class="cl">	//打开文件，读取文件
-</span></span><span class="line"><span class="cl">	f, _ := os.Open(path)
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		n, err := f.Read(buf)
-</span></span><span class="line"><span class="cl">		if err != nil {
-</span></span><span class="line"><span class="cl">			if err == io.EOF {
-</span></span><span class="line"><span class="cl">				fmt.Println(&#34;文件传输完成&#34;)
-</span></span><span class="line"><span class="cl">			} else {
-</span></span><span class="line"><span class="cl">				fmt.Println(err)
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		//发送到服务器
-</span></span><span class="line"><span class="cl">		conn.Write(buf[:n])
-</span></span><span class="line"><span class="cl">	}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">SendFile</span><span class="p">(</span><span class="n">path</span> <span class="n">string</span><span class="p">,</span> <span class="n">conn</span> <span class="n">net</span><span class="o">.</span><span class="n">Conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">打开文件，读取文件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">1024</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">n</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">err</span> <span class="o">==</span> <span class="n">io</span><span class="o">.</span><span class="n">EOF</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;文件传输完成&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">发送到服务器</span>
+</span></span><span class="line"><span class="cl">		<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	defer f.Close()
-</span></span><span class="line"><span class="cl">	defer conn.Close()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">f</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入文件名：&#34;)
-</span></span><span class="line"><span class="cl">	var path string
-</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;path)
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;请输入文件名：&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">path</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="n">path</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//os.Stat()返回FileInfo类型变量，可以获取文件信息,info.Name()获取文件名,没有此文件则会报错
-</span></span><span class="line"><span class="cl">	info, err := os.Stat(path)
-</span></span><span class="line"><span class="cl">	if err != nil {
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;没有这个文件&#34;, err)
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">os</span><span class="o">.</span><span class="n">Stat</span><span class="p">()</span><span class="err">返回</span><span class="n">FileInfo类型变量</span><span class="err">，可以获取文件信息</span><span class="p">,</span><span class="n">info</span><span class="o">.</span><span class="n">Name</span><span class="p">()</span><span class="err">获取文件名</span><span class="p">,</span><span class="err">没有此文件则会报错</span>
+</span></span><span class="line"><span class="cl">	<span class="n">info</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">Stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;没有这个文件&#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//连接服务器,工作中err别丢空
-</span></span><span class="line"><span class="cl">	conn, _ := net.Dial(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">连接服务器</span><span class="p">,</span><span class="err">工作中</span><span class="n">err别丢空</span>
+</span></span><span class="line"><span class="cl">	<span class="n">conn</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">Dial</span><span class="p">(</span><span class="s2">&#34;tcp&#34;</span><span class="p">,</span> <span class="s2">&#34;127.0.0.1:8888&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//给服务器先发送文件名,err和n都可以丢空
-</span></span><span class="line"><span class="cl">	conn.Write([]byte(info.Name()))
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">给服务器先发送文件名</span><span class="p">,</span><span class="n">err和n都可以丢空</span>
+</span></span><span class="line"><span class="cl">	<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Name</span><span class="p">()))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//服务器接收到文件名，向客户端发送消息,客户端进行判断开始进行发送
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">服务器接收到文件名，向客户端发送消息</span><span class="p">,</span><span class="err">客户端进行判断开始进行发送</span>
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	n, _ := conn.Read(buf)
+</span></span><span class="line"><span class="cl">	<span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	if string(buf[:n]) == &#34;开始发送&#34; {
-</span></span><span class="line"><span class="cl">		SendFile(path, conn)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&#34;开始发送&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">SendFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="并发聊天服务器">并发聊天服务器</h4>
@@ -3010,127 +3010,127 @@ slice := array[1:3:5]
 </span><span class="lnt">121
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Clinet struct {
-</span></span><span class="line"><span class="cl">	C    chan string //管道string类型，暂存用户发送的数据
-</span></span><span class="line"><span class="cl">	Name string      //用户名
-</span></span><span class="line"><span class="cl">	Addr string      //网络地址
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Clinet</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">C</span>    <span class="n">chan</span> <span class="n">string</span> <span class="o">//</span><span class="err">管道</span><span class="n">string类型</span><span class="err">，暂存用户发送的数据</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Name</span> <span class="n">string</span>      <span class="o">//</span><span class="err">用户名</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Addr</span> <span class="n">string</span>      <span class="o">//</span><span class="err">网络地址</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">var onlineMap = make(map[string]Clinet)
-</span></span><span class="line"><span class="cl">var message = make(chan string)
+</span></span><span class="line"><span class="cl"><span class="k">var</span> <span class="n">onlineMap</span> <span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">map</span><span class="p">[</span><span class="n">string</span><span class="p">]</span><span class="n">Clinet</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">var</span> <span class="n">message</span> <span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="n">string</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func WriteMsgToClient(cli Clinet, conn net.Conn) {
-</span></span><span class="line"><span class="cl">	//这个是为了实现cli.C中有数据时向各自客户端发送数据，没有数据时阻塞在这一步
-</span></span><span class="line"><span class="cl">	//且任意用户都会在登录时都会通过Manager()方法向每个用户的cli.C发送登录信息，
-</span></span><span class="line"><span class="cl">	//只要cli.C一有信息，这个子协程就会检测到cli.C不再阻塞，就能向客户端写入新的他人登录信息
-</span></span><span class="line"><span class="cl">	//只要发送处的管道没有关闭，cli.Close()，这个for就不会检测到false，会一直堵塞在这里
-</span></span><span class="line"><span class="cl">	for msg := range cli.C {
-</span></span><span class="line"><span class="cl">		conn.Write([]byte(msg + &#34;\n&#34;))
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">WriteMsgToClient</span><span class="p">(</span><span class="n">cli</span> <span class="n">Clinet</span><span class="p">,</span> <span class="n">conn</span> <span class="n">net</span><span class="o">.</span><span class="n">Conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">这个是为了实现</span><span class="n">cli</span><span class="o">.</span><span class="n">C中有数据时向各自客户端发送数据</span><span class="err">，没有数据时阻塞在这一步</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">且任意用户都会在登录时都会通过</span><span class="n">Manager</span><span class="p">()</span><span class="err">方法向每个用户的</span><span class="n">cli</span><span class="o">.</span><span class="n">C发送登录信息</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">只要</span><span class="n">cli</span><span class="o">.</span><span class="n">C一有信息</span><span class="err">，这个子协程就会检测到</span><span class="n">cli</span><span class="o">.</span><span class="n">C不再阻塞</span><span class="err">，就能向客户端写入新的他人登录信息</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">只要发送处的管道没有关闭，</span><span class="n">cli</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="err">，这个</span><span class="n">for就不会检测到false</span><span class="err">，会一直堵塞在这里</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">msg</span> <span class="p">:</span><span class="o">=</span> <span class="nb">range</span> <span class="n">cli</span><span class="o">.</span><span class="n">C</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="n">msg</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//将用户存进在线用户变量onlineMap中
-</span></span><span class="line"><span class="cl">func HandleConn(conn net.Conn) {
-</span></span><span class="line"><span class="cl">	defer conn.Close()
-</span></span><span class="line"><span class="cl">	//获取网络地址
-</span></span><span class="line"><span class="cl">	cliAddr := conn.RemoteAddr().String()
-</span></span><span class="line"><span class="cl">	//创建一个结构体,添加到map中
-</span></span><span class="line"><span class="cl">	cli := Clinet{make(chan string), cliAddr, cliAddr}
-</span></span><span class="line"><span class="cl">	onlineMap[cliAddr] = cli
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">将用户存进在线用户变量</span><span class="n">onlineMap中</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">HandleConn</span><span class="p">(</span><span class="n">conn</span> <span class="n">net</span><span class="o">.</span><span class="n">Conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">获取网络地址</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cliAddr</span> <span class="p">:</span><span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">RemoteAddr</span><span class="p">()</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">创建一个结构体</span><span class="p">,</span><span class="err">添加到</span><span class="n">map中</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cli</span> <span class="p">:</span><span class="o">=</span> <span class="n">Clinet</span><span class="p">{</span><span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="n">string</span><span class="p">),</span> <span class="n">cliAddr</span><span class="p">,</span> <span class="n">cliAddr</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">onlineMap</span><span class="p">[</span><span class="n">cliAddr</span><span class="p">]</span> <span class="o">=</span> <span class="n">cli</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//新开一个协程，专门给当前用户发送消息
-</span></span><span class="line"><span class="cl">	go WriteMsgToClient(cli, conn)
-</span></span><span class="line"><span class="cl">	//广播某个人在线
-</span></span><span class="line"><span class="cl">	message &lt;- &#34;[&#34; + cli.Name + &#34;]---login&#34;
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">新开一个协程，专门给当前用户发送消息</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="n">WriteMsgToClient</span><span class="p">(</span><span class="n">cli</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">广播某个人在线</span>
+</span></span><span class="line"><span class="cl">	<span class="n">message</span> <span class="o">&lt;-</span> <span class="s2">&#34;[&#34;</span> <span class="o">+</span> <span class="n">cli</span><span class="o">.</span><span class="n">Name</span> <span class="o">+</span> <span class="s2">&#34;]---login&#34;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//退出进行广播并且关闭子协程
-</span></span><span class="line"><span class="cl">	isQuit := make(chan bool)
-</span></span><span class="line"><span class="cl">	hasData := make(chan bool)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">退出进行广播并且关闭子协程</span>
+</span></span><span class="line"><span class="cl">	<span class="n">isQuit</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">hasData</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">bool</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//新开一个协程，接收用户发送过来的请求
-</span></span><span class="line"><span class="cl">	go func() {
-</span></span><span class="line"><span class="cl">		buf := make([]byte, 2048)
-</span></span><span class="line"><span class="cl">		//for循环可以避免输入一次就不再进行接收信息的问题
-</span></span><span class="line"><span class="cl">		for {
-</span></span><span class="line"><span class="cl">			n, _ := conn.Read(buf)
-</span></span><span class="line"><span class="cl">			if n == 0 { //对方断开或者出问题
-</span></span><span class="line"><span class="cl">				isQuit &lt;- true
-</span></span><span class="line"><span class="cl">				return
-</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">新开一个协程，接收用户发送过来的请求</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">2048</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">for循环可以避免输入一次就不再进行接收信息的问题</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span> <span class="o">//</span><span class="err">对方断开或者出问题</span>
+</span></span><span class="line"><span class="cl">				<span class="n">isQuit</span> <span class="o">&lt;-</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">			msg := string(buf[:n-2]) //过滤window末尾的/r/n符号
+</span></span><span class="line"><span class="cl">			<span class="n">msg</span> <span class="p">:</span><span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">//</span><span class="err">过滤</span><span class="n">window末尾的</span><span class="o">/</span><span class="n">r</span><span class="o">/</span><span class="n">n符号</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">			//查询所有用户
-</span></span><span class="line"><span class="cl">			if len(msg) == 3 &amp;&amp; msg == &#34;who&#34; { //避免whoami和who匹配
-</span></span><span class="line"><span class="cl">				//遍历map，给当前用户发送所有成员
-</span></span><span class="line"><span class="cl">				conn.Write([]byte(&#34;user list:\n&#34;))
-</span></span><span class="line"><span class="cl">				for _, tmp := range onlineMap {
-</span></span><span class="line"><span class="cl">					msg = tmp.Name + &#34;-----is online\n&#34;
-</span></span><span class="line"><span class="cl">					conn.Write([]byte(msg))
-</span></span><span class="line"><span class="cl">				}
-</span></span><span class="line"><span class="cl">				//给用户重命名，输入rename|mike
-</span></span><span class="line"><span class="cl">			} else if len(msg) &gt;= 8 &amp;&amp; msg[:6] == &#34;rename&#34; {
-</span></span><span class="line"><span class="cl">				name := strings.Split(msg, &#34;|&#34;)[1] //将msg以|分割
-</span></span><span class="line"><span class="cl">				cli.Name = name
-</span></span><span class="line"><span class="cl">				conn.Write([]byte(&#34;u name is rename&#34;))
-</span></span><span class="line"><span class="cl">			} else {
-</span></span><span class="line"><span class="cl">				//message复用来给所有用户广播它发送的消息，包括自己也看见
-</span></span><span class="line"><span class="cl">				message &lt;- cli.Name + &#34;:&#34; + msg
-</span></span><span class="line"><span class="cl">			}
-</span></span><span class="line"><span class="cl">			hasData &lt;- true
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">查询所有用户</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">msg</span> <span class="o">==</span> <span class="s2">&#34;who&#34;</span> <span class="p">{</span> <span class="o">//</span><span class="err">避免</span><span class="n">whoami和who匹配</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span><span class="err">遍历</span><span class="n">map</span><span class="err">，给当前用户发送所有成员</span>
+</span></span><span class="line"><span class="cl">				<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="s2">&#34;user list:</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">				<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">tmp</span> <span class="p">:</span><span class="o">=</span> <span class="nb">range</span> <span class="n">onlineMap</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="n">msg</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">Name</span> <span class="o">+</span> <span class="s2">&#34;-----is online</span><span class="se">\n</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">					<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span><span class="err">给用户重命名，输入</span><span class="n">rename</span><span class="o">|</span><span class="n">mike</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">8</span> <span class="o">&amp;&amp;</span> <span class="n">msg</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;rename&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">name</span> <span class="p">:</span><span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">Split</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s2">&#34;|&#34;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span><span class="err">将</span><span class="n">msg以</span><span class="o">|</span><span class="err">分割</span>
+</span></span><span class="line"><span class="cl">				<span class="n">cli</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="n">name</span>
+</span></span><span class="line"><span class="cl">				<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="s2">&#34;u name is rename&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span><span class="n">message复用来给所有用户广播它发送的消息</span><span class="err">，包括自己也看见</span>
+</span></span><span class="line"><span class="cl">				<span class="n">message</span> <span class="o">&lt;-</span> <span class="n">cli</span><span class="o">.</span><span class="n">Name</span> <span class="o">+</span> <span class="s2">&#34;:&#34;</span> <span class="o">+</span> <span class="n">msg</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="n">hasData</span> <span class="o">&lt;-</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//用for循环让此子协程不会结束，避免发送消息后子协程结束，这个用户就通信结束了
-</span></span><span class="line"><span class="cl">	//目的是让用户可以接收到后面登录和发送的信息，所以这个子协程就必须一直存在，除非用户退出
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		//通过select检测管道isQuit的流动
-</span></span><span class="line"><span class="cl">		select {
-</span></span><span class="line"><span class="cl">		case &lt;-isQuit:
-</span></span><span class="line"><span class="cl">			//删除用户并且广播谁下线了
-</span></span><span class="line"><span class="cl">			delete(onlineMap, cliAddr)
-</span></span><span class="line"><span class="cl">			message &lt;- cli.Name + &#34;--is login out&#34;
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		case &lt;-hasData: //有数据不作处理
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">用</span><span class="n">for循环让此子协程不会结束</span><span class="err">，避免发送消息后子协程结束，这个用户就通信结束了</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">目的是让用户可以接收到后面登录和发送的信息，所以这个子协程就必须一直存在，除非用户退出</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">通过</span><span class="n">select检测管道isQuit的流动</span>
+</span></span><span class="line"><span class="cl">		<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="o">&lt;-</span><span class="n">isQuit</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">删除用户并且广播谁下线了</span>
+</span></span><span class="line"><span class="cl">			<span class="n">delete</span><span class="p">(</span><span class="n">onlineMap</span><span class="p">,</span> <span class="n">cliAddr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">message</span> <span class="o">&lt;-</span> <span class="n">cli</span><span class="o">.</span><span class="n">Name</span> <span class="o">+</span> <span class="s2">&#34;--is login out&#34;</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="o">&lt;-</span><span class="n">hasData</span><span class="p">:</span> <span class="o">//</span><span class="err">有数据不作处理</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		case &lt;-time.After(60 * time.Second): //60s后超时执行此case,超时强制退出
-</span></span><span class="line"><span class="cl">			delete(onlineMap, cliAddr)
-</span></span><span class="line"><span class="cl">			message &lt;- cli.Name + &#34;--is time out leave out&#34;
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="o">&lt;-</span><span class="n">time</span><span class="o">.</span><span class="n">After</span><span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">):</span> <span class="o">//</span><span class="mi">60</span><span class="n">s后超时执行此case</span><span class="p">,</span><span class="err">超时强制退出</span>
+</span></span><span class="line"><span class="cl">			<span class="n">delete</span><span class="p">(</span><span class="n">onlineMap</span><span class="p">,</span> <span class="n">cliAddr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">message</span> <span class="o">&lt;-</span> <span class="n">cli</span><span class="o">.</span><span class="n">Name</span> <span class="o">+</span> <span class="s2">&#34;--is time out leave out&#34;</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//新开一个协程，转发消息，只要消息来了就遍历map，给map每个成员都发送此消息
-</span></span><span class="line"><span class="cl">func Manager() {
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		//mes为string类型的变量，自动推导类型
-</span></span><span class="line"><span class="cl">		msg := &lt;-message
-</span></span><span class="line"><span class="cl">		//遍历map，给map每个成员都发送此消息
-</span></span><span class="line"><span class="cl">		for _, cli := range onlineMap {
-</span></span><span class="line"><span class="cl">			cli.C &lt;- msg
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">新开一个协程，转发消息，只要消息来了就遍历</span><span class="n">map</span><span class="err">，给</span><span class="n">map每个成员都发送此消息</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Manager</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="n">mes为string类型的变量</span><span class="err">，自动推导类型</span>
+</span></span><span class="line"><span class="cl">		<span class="n">msg</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">message</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">遍历</span><span class="n">map</span><span class="err">，给</span><span class="n">map每个成员都发送此消息</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">cli</span> <span class="p">:</span><span class="o">=</span> <span class="nb">range</span> <span class="n">onlineMap</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">cli</span><span class="o">.</span><span class="n">C</span> <span class="o">&lt;-</span> <span class="n">msg</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	//监听
-</span></span><span class="line"><span class="cl">	listener, _ := net.Listen(&#34;tcp&#34;, &#34;127.0.0.1:8888&#34;)
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">监听</span>
+</span></span><span class="line"><span class="cl">	<span class="n">listener</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s2">&#34;tcp&#34;</span><span class="p">,</span> <span class="s2">&#34;127.0.0.1:8888&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	defer listener.Close()
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">listener</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	go Manager()
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="n">Manager</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//循环
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		//循环阻塞，形成多个客户端共用一个服务器
-</span></span><span class="line"><span class="cl">		conn, _ := listener.Accept()
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">循环</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">循环阻塞，形成多个客户端共用一个服务器</span>
+</span></span><span class="line"><span class="cl">		<span class="n">conn</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">listener</span><span class="o">.</span><span class="n">Accept</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		//处理用户连接
-</span></span><span class="line"><span class="cl">		go HandleConn(conn)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">处理用户连接</span>
+</span></span><span class="line"><span class="cl">		<span class="n">go</span> <span class="n">HandleConn</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>先是主函数启动子协程HandleConn(conn)，它作用于往map中写入在线成员，并将消息发给管道message,再通过Manager()将message管道发给msg字符串，遍历map，往每个map中的管道写入信息,紧接着通过WriteMsgToClient()中的range向客户端写入消息，且for遍历管道时，没有cli.Close()的存在，它会一直堵塞在此处等待新的信息写进cli.C</p>
@@ -3248,29 +3248,29 @@ slice := array[1:3:5]
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//w为给客户端回复的数据
-</span></span><span class="line"><span class="cl">//req，读取客户端的数据
-</span></span><span class="line"><span class="cl">func HandConn(w http.ResponseWriter, req *http.Request) {
-</span></span><span class="line"><span class="cl">	//给客户端浏览器发送数据
-</span></span><span class="line"><span class="cl">	w.Write([]byte(&#34;hello go&#34;))
-</span></span><span class="line"><span class="cl">	//获取客户端的请求头部参数等
-</span></span><span class="line"><span class="cl">	//在https://studygolang.com/pkgdoc中的net/http中搜type Request可以获取req的所有参数
-</span></span><span class="line"><span class="cl">	fmt.Println(req.URL.Path)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span><span class="n">w为给客户端回复的数据</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="n">req</span><span class="err">，读取客户端的数据</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">HandConn</span><span class="p">(</span><span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">给客户端浏览器发送数据</span>
+</span></span><span class="line"><span class="cl">	<span class="n">w</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="s2">&#34;hello go&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">获取客户端的请求头部参数等</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">在</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">studygolang</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pkgdoc中的net</span><span class="o">/</span><span class="n">http中搜type</span> <span class="n">Request可以获取req的所有参数</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">URL</span><span class="o">.</span><span class="n">Path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	//注册处理函数，用户连接进来自动调用指定的处理函数(即如果域名后面接了/hello则调用后面那个函数)
-</span></span><span class="line"><span class="cl">	//源代码中第二个参数为handler func(ResponseWriter, *Request)
-</span></span><span class="line"><span class="cl">	//即在定义函数时已经定义了这是一个func，且默认已经传了两个参数进去，所以不需要加()来调用，
-</span></span><span class="line"><span class="cl">	//自己写HandConn函数时也不再需要想办法获取ResponseWriter和*http.Request的值了
-</span></span><span class="line"><span class="cl">	http.HandleFunc(&#34;/hello&#34;, HandConn)
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">注册处理函数，用户连接进来自动调用指定的处理函数</span><span class="p">(</span><span class="err">即如果域名后面接了</span><span class="o">/</span><span class="n">hello则调用后面那个函数</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">源代码中第二个参数为</span><span class="n">handler</span> <span class="k">func</span><span class="p">(</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="o">*</span><span class="n">Request</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">即在定义函数时已经定义了这是一个</span><span class="k">func</span><span class="err">，且默认已经传了两个参数进去，所以不需要加</span><span class="p">()</span><span class="err">来调用，</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">自己写</span><span class="n">HandConn函数时也不再需要想办法获取ResponseWriter和</span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request的值了</span>
+</span></span><span class="line"><span class="cl">	<span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s2">&#34;/hello&#34;</span><span class="p">,</span> <span class="n">HandConn</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//该方法用于在指定的网络地址进行监听，然后调用服务端处理程序来处理传入的连接请求
-</span></span><span class="line"><span class="cl">	//该方法有两个参数：第一个为监听地址；第二个参数表示服务器端处理程序，通常为空
-</span></span><span class="line"><span class="cl">	//第二个参数为空意味着服务端调用http.DefaultServerMux进行处理
-</span></span><span class="line"><span class="cl">	http.ListenAndServe(&#34;127.0.0.1:8000&#34;, nil)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">该方法用于在指定的网络地址进行监听，然后调用服务端处理程序来处理传入的连接请求</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">该方法有两个参数：第一个为监听地址；第二个参数表示服务器端处理程序，通常为空</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">第二个参数为空意味着服务端调用</span><span class="n">http</span><span class="o">.</span><span class="n">DefaultServerMux进行处理</span>
+</span></span><span class="line"><span class="cl">	<span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="s2">&#34;127.0.0.1:8000&#34;</span><span class="p">,</span> <span class="n">nil</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="http客户端">http客户端：</h4>
@@ -3300,28 +3300,28 @@ slice := array[1:3:5]
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	//获取从百度回传回来的请求包，http是必须要加的
-</span></span><span class="line"><span class="cl">	resp, _ := http.Get(&#34;http://www.baidu.com&#34;)
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="o">//</span><span class="err">获取从百度回传回来的请求包，</span><span class="n">http是必须要加的</span>
+</span></span><span class="line"><span class="cl">	<span class="n">resp</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s2">&#34;http://www.baidu.com&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//body是从服务器端读取资源(类似于conn.Read())，最后是需要进行关闭的
-</span></span><span class="line"><span class="cl">	defer resp.Body.Close()
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">body是从服务器端读取资源</span><span class="p">(</span><span class="err">类似于</span><span class="n">conn</span><span class="o">.</span><span class="n">Read</span><span class="p">())</span><span class="err">，最后是需要进行关闭的</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">resp</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;Status =&#34;, resp.Status)
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;StatusCode =&#34;, resp.StatusCode)
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;Header =&#34;, resp.Header)
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;Status =&#34;</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">Status</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;StatusCode =&#34;</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">StatusCode</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;Header =&#34;</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">Header</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//获取baidu.com中的数据Read()，然后赋值给buf，最后追加到tmp中
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
-</span></span><span class="line"><span class="cl">	var tmp string
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		n, err := resp.Body.Read(buf)
-</span></span><span class="line"><span class="cl">		if n == 0 {
-</span></span><span class="line"><span class="cl">			fmt.Println(&#34;read err =&#34;, err)
-</span></span><span class="line"><span class="cl">			break
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		tmp += string(buf[:n])
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	fmt.Println(tmp)
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">获取</span><span class="n">baidu</span><span class="o">.</span><span class="n">com中的数据Read</span><span class="p">()</span><span class="err">，然后赋值给</span><span class="n">buf</span><span class="err">，最后追加到</span><span class="n">tmp中</span>
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">1024</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">tmp</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">n</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;read err =&#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">tmp</span> <span class="o">+=</span> <span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="用go写爬虫爬百度贴吧">用go写爬虫爬百度贴吧：</h4>
@@ -3386,63 +3386,63 @@ slice := array[1:3:5]
 </span><span class="lnt">57
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func SpiderPage(i int, page chan int) {
-</span></span><span class="line"><span class="cl">	//寻找网址规律，每页pn加50,用for循环获取每个网址
-</span></span><span class="line"><span class="cl">	url := &#34;http://tieba.baidu.com/f?kw=%E6%8A%97%E5%8E%8B%E8%83%8C%E9%94%85&amp;ie=utf-8&amp;pn=&#34; + strconv.Itoa((i-1)*50)
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;正在爬取第%d页网页%s\n&#34;, i, url)
-</span></span><span class="line"><span class="cl">	result, _ := HttpGet(url)
-</span></span><span class="line"><span class="cl">	//将内容写到文件中
-</span></span><span class="line"><span class="cl">	f, _ := os.Create(strconv.Itoa(i) + &#34;.html&#34;)
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">SpiderPage</span><span class="p">(</span><span class="n">i</span> <span class="ne">int</span><span class="p">,</span> <span class="n">page</span> <span class="n">chan</span> <span class="ne">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">寻找网址规律，每页</span><span class="n">pn加50</span><span class="p">,</span><span class="err">用</span><span class="n">for循环获取每个网址</span>
+</span></span><span class="line"><span class="cl">	<span class="n">url</span> <span class="p">:</span><span class="o">=</span> <span class="s2">&#34;http://tieba.baidu.com/f?kw=</span><span class="si">%E</span><span class="s2">6%8A</span><span class="si">%97%</span><span class="s2">E5</span><span class="si">%8E</span><span class="s2">%8B</span><span class="si">%E</span><span class="s2">8</span><span class="si">%83%</span><span class="s2">8C</span><span class="si">%E</span><span class="s2">9</span><span class="si">%94%</span><span class="s2">85&amp;ie=utf-8&amp;pn=&#34;</span> <span class="o">+</span> <span class="n">strconv</span><span class="o">.</span><span class="n">Itoa</span><span class="p">((</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;正在爬取第</span><span class="si">%d</span><span class="s2">页网页</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">HttpGet</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">将内容写到文件中</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">strconv</span><span class="o">.</span><span class="n">Itoa</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&#34;.html&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	f.Write([]byte(result))
-</span></span><span class="line"><span class="cl">	f.Close()
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="n">byte</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	page &lt;- i
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">page</span> <span class="o">&lt;-</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func HttpGet(url string) (result string, err error) {
-</span></span><span class="line"><span class="cl">	rep, _ := http.Get(url)
-</span></span><span class="line"><span class="cl">	defer rep.Body.Close()
-</span></span><span class="line"><span class="cl">	//爬取
-</span></span><span class="line"><span class="cl">	buf := make([]byte, 1024*4)
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		n, err := rep.Body.Read(buf)
-</span></span><span class="line"><span class="cl">		if n == 0 {
-</span></span><span class="line"><span class="cl">			fmt.Println(err)
-</span></span><span class="line"><span class="cl">			break
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		result += string(buf[:n])
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">HttpGet</span><span class="p">(</span><span class="n">url</span> <span class="n">string</span><span class="p">)</span> <span class="p">(</span><span class="n">result</span> <span class="n">string</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">rep</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span><span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">rep</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">爬取</span>
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">byte</span><span class="p">,</span> <span class="mi">1024</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">n</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">rep</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">result</span> <span class="o">+=</span> <span class="n">string</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func DoWork(start, end int) {
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;正在爬取 %d到%d的页面。。。&#34;, start, end)
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">DoWork</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ne">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;正在爬取 </span><span class="si">%d</span><span class="s2">到</span><span class="si">%d</span><span class="s2">的页面。。。&#34;</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//建立一个管道，避免主进程结束导致子进程结束
-</span></span><span class="line"><span class="cl">	page := make(chan int)
-</span></span><span class="line"><span class="cl">	//获取地址
-</span></span><span class="line"><span class="cl">	for i := start; i &lt;= end; i++ {
-</span></span><span class="line"><span class="cl">		//建立子协程，让多个爬虫同时进行
-</span></span><span class="line"><span class="cl">		go SpiderPage(i, page)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	for i := start; i &lt;= end; i++ {
-</span></span><span class="line"><span class="cl">		//避免协程结束影响子协程
-</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;第%d页已经读取完毕&#34;, &lt;-page)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">建立一个管道，避免主进程结束导致子进程结束</span>
+</span></span><span class="line"><span class="cl">	<span class="n">page</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">获取地址</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="n">start</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">建立子协程，让多个爬虫同时进行</span>
+</span></span><span class="line"><span class="cl">		<span class="n">go</span> <span class="n">SpiderPage</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="n">start</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">避免协程结束影响子协程</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;第</span><span class="si">%d</span><span class="s2">页已经读取完毕&#34;</span><span class="p">,</span> <span class="o">&lt;-</span><span class="n">page</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	var start, end int
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入起始页&#34;)
-</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;start)
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;请输入结束页&#34;)
-</span></span><span class="line"><span class="cl">	fmt.Scan(&amp;end)
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ne">int</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;请输入起始页&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="n">start</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;请输入结束页&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="n">end</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	DoWork(start, end)
+</span></span><span class="line"><span class="cl">	<span class="n">DoWork</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>此方法可以爬取每页内容（包括html内容）存到新建的.html中，如果要爬取需要的内容，可以查看源代码然后通过正则表达式爬出来再存入文件中</p>

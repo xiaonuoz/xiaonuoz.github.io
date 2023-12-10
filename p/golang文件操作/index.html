@@ -557,19 +557,19 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//它的底层用的依然是os.Open()的原理,文件的打开和defer关闭在底层已经设置好了，直接使用就行
-</span></span><span class="line"><span class="cl">func fileByioutil(){
-</span></span><span class="line"><span class="cl">	b,err:=ioutil.ReadFile(&#34;C:\\Users\\admin\\Desktop\\新建文件夹\\gold_control_config.xml&#34;)
-</span></span><span class="line"><span class="cl">	if err ==io.EOF{
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;读取完了&#34;)
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	if err!=nil{
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;file err&#34;,err)
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	fmt.Println(string(b))
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span><span class="err">它的底层用的依然是</span><span class="n">os</span><span class="o">.</span><span class="n">Open</span><span class="p">()</span><span class="err">的原理</span><span class="p">,</span><span class="err">文件的打开和</span><span class="n">defer关闭在底层已经设置好了</span><span class="err">，直接使用就行</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">fileByioutil</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">b</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">ioutil</span><span class="o">.</span><span class="n">ReadFile</span><span class="p">(</span><span class="s2">&#34;C:</span><span class="se">\\</span><span class="s2">Users</span><span class="se">\\</span><span class="s2">admin</span><span class="se">\\</span><span class="s2">Desktop</span><span class="se">\\</span><span class="s2">新建文件夹</span><span class="se">\\</span><span class="s2">gold_control_config.xml&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span> <span class="o">==</span><span class="n">io</span><span class="o">.</span><span class="n">EOF</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;读取完了&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;file err&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="实例拷贝文件">实例：拷贝文件</h2>

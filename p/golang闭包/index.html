@@ -249,29 +249,29 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	ret := f2(f1, 10, 20)
-</span></span><span class="line"><span class="cl">	f3(ret)
-</span></span><span class="line"><span class="cl">	//或者f3(f2(f1, 10, 20))
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ret</span> <span class="p">:</span><span class="o">=</span> <span class="n">f2</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f3</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">或者</span><span class="n">f3</span><span class="p">(</span><span class="n">f2</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func f1(x, y int) int {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;this is f2&#34;)
-</span></span><span class="line"><span class="cl">	return x + y
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">f1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ne">int</span><span class="p">)</span> <span class="ne">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;this is f2&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func f2(x func(int, int) int, m, n int) func() {
-</span></span><span class="line"><span class="cl">	tmp := func() {
-</span></span><span class="line"><span class="cl">		a1 := x(m, n)
-</span></span><span class="line"><span class="cl">		fmt.Println(a1)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return tmp
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">f2</span><span class="p">(</span><span class="n">x</span> <span class="k">func</span><span class="p">(</span><span class="ne">int</span><span class="p">,</span> <span class="ne">int</span><span class="p">)</span> <span class="ne">int</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="ne">int</span><span class="p">)</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">tmp</span> <span class="p">:</span><span class="o">=</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">a1</span> <span class="p">:</span><span class="o">=</span> <span class="n">x</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">a1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">tmp</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func f3(f func()) {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;this is f3&#34;)
-</span></span><span class="line"><span class="cl">	f()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">f3</span><span class="p">(</span><span class="n">f</span> <span class="k">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;this is f3&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>将f2作为两个函数的中转站，f3只能接收无参无返回值，但是我们只有一个f1，是有参的，所以定义一个f2让它返回一个无参函数类型的返回值，将f1和f1的参数传进去，这样通过调用f2就可以同时调用f3，并且在f2中使用匿名函数调用f1，这样就可以通过f3(f2(f1,10,20))来实现f3调用f1</p>
@@ -292,18 +292,18 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func adder(x int) func (int) int{
-</span></span><span class="line"><span class="cl">	return func(y int) int{
-</span></span><span class="line"><span class="cl">		x +=y
-</span></span><span class="line"><span class="cl">		return x
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">adder</span><span class="p">(</span><span class="n">x</span> <span class="ne">int</span><span class="p">)</span> <span class="k">func</span> <span class="p">(</span><span class="ne">int</span><span class="p">)</span> <span class="ne">int</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="k">func</span><span class="p">(</span><span class="n">y</span> <span class="ne">int</span><span class="p">)</span> <span class="ne">int</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">x</span> <span class="o">+=</span><span class="n">y</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main(){
-</span></span><span class="line"><span class="cl">	a1:=adder(100)
-</span></span><span class="line"><span class="cl">	y:=a1(100)
-</span></span><span class="line"><span class="cl">	fmt.Println(y)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">a1</span><span class="p">:</span><span class="o">=</span><span class="n">adder</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">y</span><span class="p">:</span><span class="o">=</span><span class="n">a1</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>平时的函数，你调用它就只需要看它内部有哪些变量，但是闭包通过匿名函数可以实现我在函数中使用x并不需要定义，它直接在匿名函数上一级函数进行定义了，<strong>匿名变量作为返回值就可以对上一级的函数变量进行引用</strong></p>
@@ -331,24 +331,24 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func calc(base int) (func(int)int,func(int)int){
-</span></span><span class="line"><span class="cl">	add:=func(i int)int{
-</span></span><span class="line"><span class="cl">		base+=i
-</span></span><span class="line"><span class="cl">		return base
-</span></span><span class="line"><span class="cl">	}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">calc</span><span class="p">(</span><span class="n">base</span> <span class="ne">int</span><span class="p">)</span> <span class="p">(</span><span class="k">func</span><span class="p">(</span><span class="ne">int</span><span class="p">)</span><span class="ne">int</span><span class="p">,</span><span class="k">func</span><span class="p">(</span><span class="ne">int</span><span class="p">)</span><span class="ne">int</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">add</span><span class="p">:</span><span class="o">=</span><span class="k">func</span><span class="p">(</span><span class="n">i</span> <span class="ne">int</span><span class="p">)</span><span class="ne">int</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">base</span><span class="o">+=</span><span class="n">i</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">base</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	sub:=func (i int)int{
-</span></span><span class="line"><span class="cl">		base-=i
-</span></span><span class="line"><span class="cl">		return base
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return add,sub
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">sub</span><span class="p">:</span><span class="o">=</span><span class="k">func</span> <span class="p">(</span><span class="n">i</span> <span class="ne">int</span><span class="p">)</span><span class="ne">int</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">base</span><span class="o">-=</span><span class="n">i</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">base</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">add</span><span class="p">,</span><span class="n">sub</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	f1,f2:=calc(10)
-</span></span><span class="line"><span class="cl">	fmt.Println(f1(1),f2(2)) //11 9
-</span></span><span class="line"><span class="cl">	fmt.Println(f1(3),f2(4)) //12 8
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">:</span><span class="o">=</span><span class="n">calc</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">f1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">f2</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">//</span><span class="mi">11</span> <span class="mi">9</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">f1</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="n">f2</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span> <span class="o">//</span><span class="mi">12</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>add和sub函数调用了外部的base变量，calc函数只调用了一次，即base只初始化了一次（10），第一次先调用add就是寻找外部的变量，增加后返回，但是此时base值已经改变（变为11），然后进行sub函数,重新寻找base,此时为11（11-2），无论进行多少次都是在上次的基础上进行计算，不会重新初始化为10了</p>

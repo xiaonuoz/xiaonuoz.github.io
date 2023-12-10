@@ -575,35 +575,35 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func fibonacci(ch chan&lt;- int, quit &lt;-chan bool) {
-</span></span><span class="line"><span class="cl">	x, y := 1, 1
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		select {
-</span></span><span class="line"><span class="cl">		case ch &lt;- x:
-</span></span><span class="line"><span class="cl">			x, y = y, x+y
-</span></span><span class="line"><span class="cl">		case flag := &lt;-quit:
-</span></span><span class="line"><span class="cl">			return
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">fibonacci</span><span class="p">(</span><span class="n">ch</span> <span class="n">chan</span><span class="o">&lt;-</span> <span class="ne">int</span><span class="p">,</span> <span class="n">quit</span> <span class="o">&lt;-</span><span class="n">chan</span> <span class="ne">bool</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">:</span><span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="n">ch</span> <span class="o">&lt;-</span> <span class="n">x</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="n">flag</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">quit</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	ch := make(chan int)
-</span></span><span class="line"><span class="cl">	quit := make(chan bool)
-</span></span><span class="line"><span class="cl">	//输出数字
-</span></span><span class="line"><span class="cl">	go func() {
-</span></span><span class="line"><span class="cl">		for i := 0; i &lt; 8; i++ {
-</span></span><span class="line"><span class="cl">			num := &lt;-ch
-</span></span><span class="line"><span class="cl">			fmt.Println(num)
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		quit &lt;- true
-</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">quit</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">输出数字</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">num</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">ch</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">quit</span> <span class="o">&lt;-</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//产生数字，写入管道
-</span></span><span class="line"><span class="cl">	fibonacci(ch, quit)
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">输出结果为：1	1	2	3	5	8	13	21
-</span></span><span class="line"><span class="cl">除去第二个数，其他数为前两个数相加
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">产生数字，写入管道</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fibonacci</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">quit</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">输出结果为：</span><span class="mi">1</span>	<span class="mi">1</span>	<span class="mi">2</span>	<span class="mi">3</span>	<span class="mi">5</span>	<span class="mi">8</span>	<span class="mi">13</span>	<span class="mi">21</span>
+</span></span><span class="line"><span class="cl"><span class="err">除去第二个数，其他数为前两个数相加</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果select语句不加for循环，那么它只会判定一次并只将数据写入一次管道，而fibonacci函数处于主协程，当判定成功后就会直接完成主协程，那么子协程也会退出，后面的数据都无法继续输出</p>

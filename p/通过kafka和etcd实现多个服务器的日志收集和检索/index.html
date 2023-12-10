@@ -689,59 +689,59 @@
 </span><span class="lnt">53
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import (
-</span></span><span class="line"><span class="cl">	&#34;context&#34;
-</span></span><span class="line"><span class="cl">	&#34;fmt&#34;
-</span></span><span class="line"><span class="cl">	&#34;go.etcd.io/etcd/clientv3&#34;
-</span></span><span class="line"><span class="cl">	&#34;time&#34;
-</span></span><span class="line"><span class="cl">)
-</span></span><span class="line"><span class="cl">func main(){
-</span></span><span class="line"><span class="cl">	//etcd连接
-</span></span><span class="line"><span class="cl">	cli,err:=clientv3.New(clientv3.Config{
-</span></span><span class="line"><span class="cl">		Endpoints: []string{&#34;127.0.0.1:2379&#34;},	//连接对象
-</span></span><span class="line"><span class="cl">		DialTimeout: 5*time.Second,		//5秒没连接上就超时返回err
-</span></span><span class="line"><span class="cl">	})
-</span></span><span class="line"><span class="cl">	if err!=nil{
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;connect to etcd faild,err:&#34;,err)
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	defer cli.Close()
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;context&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;go.etcd.io/etcd/clientv3&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">etcd连接</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cli</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">clientv3</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="n">clientv3</span><span class="o">.</span><span class="n">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">Endpoints</span><span class="p">:</span> <span class="p">[]</span><span class="n">string</span><span class="p">{</span><span class="s2">&#34;127.0.0.1:2379&#34;</span><span class="p">},</span>	<span class="o">//</span><span class="err">连接对象</span>
+</span></span><span class="line"><span class="cl">		<span class="n">DialTimeout</span><span class="p">:</span> <span class="mi">5</span><span class="o">*</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">,</span>		<span class="o">//</span><span class="mi">5</span><span class="err">秒没连接上就超时返回</span><span class="n">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;connect to etcd faild,err:&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">defer</span> <span class="n">cli</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//etcd Put
-</span></span><span class="line"><span class="cl">	ctx,cancel:=context.WithTimeout(context.Background(),time.Second)
-</span></span><span class="line"><span class="cl">	_,err=cli.Put(ctx,&#34;xiaonuo&#34;,&#34;23&#34;)
-</span></span><span class="line"><span class="cl">	//这里没开携程，因此会put执行完才执行cancel()，put如果一秒后还没有成功就会自动结束上下文，cancel()是避免等待直到垃圾回收结束它。
-</span></span><span class="line"><span class="cl">	cancel()
-</span></span><span class="line"><span class="cl">	if err!=nil{
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;put to etcd faild,err:&#34;,err)
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">etcd</span> <span class="n">Put</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ctx</span><span class="p">,</span><span class="n">cancel</span><span class="p">:</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">WithTimeout</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">_</span><span class="p">,</span><span class="n">err</span><span class="o">=</span><span class="n">cli</span><span class="o">.</span><span class="n">Put</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="s2">&#34;xiaonuo&#34;</span><span class="p">,</span><span class="s2">&#34;23&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">这里没开携程，因此会</span><span class="n">put执行完才执行cancel</span><span class="p">()</span><span class="err">，</span><span class="n">put如果一秒后还没有成功就会自动结束上下文</span><span class="err">，</span><span class="n">cancel</span><span class="p">()</span><span class="err">是避免等待直到垃圾回收结束它。</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cancel</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;put to etcd faild,err:&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//etcd Get
-</span></span><span class="line"><span class="cl">	ctx,cancel=context.WithTimeout(context.Background(),time.Second)
-</span></span><span class="line"><span class="cl">	//Get(ctx context.Context, key string, opts ...OpOption)中的第三个选项是clientv3.WithPrefix()，它可以给key定义一个前缀，方便整理
-</span></span><span class="line"><span class="cl">	resp,err:=cli.Get(ctx,&#34;xiaonuo&#34;)
-</span></span><span class="line"><span class="cl">	cancel()
-</span></span><span class="line"><span class="cl">	if err!=nil{
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;get to etcd faild,err:&#34;,err)
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	for _,ev:=range resp.Kvs{
-</span></span><span class="line"><span class="cl">		fmt.Println(&#34;key:&#34;,string(ev.Key),&#34;----value:&#34;,string(ev.Value))
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">etcd</span> <span class="n">Get</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ctx</span><span class="p">,</span><span class="n">cancel</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">WithTimeout</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">Get</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">key</span> <span class="n">string</span><span class="p">,</span> <span class="n">opts</span> <span class="o">...</span><span class="n">OpOption</span><span class="p">)</span><span class="err">中的第三个选项是</span><span class="n">clientv3</span><span class="o">.</span><span class="n">WithPrefix</span><span class="p">()</span><span class="err">，它可以给</span><span class="n">key定义一个前缀</span><span class="err">，方便整理</span>
+</span></span><span class="line"><span class="cl">	<span class="n">resp</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">cli</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="s2">&#34;xiaonuo&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cancel</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;get to etcd faild,err:&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">ev</span><span class="p">:</span><span class="o">=</span><span class="nb">range</span> <span class="n">resp</span><span class="o">.</span><span class="n">Kvs</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;key:&#34;</span><span class="p">,</span><span class="n">string</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">Key</span><span class="p">),</span><span class="s2">&#34;----value:&#34;</span><span class="p">,</span><span class="n">string</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">Value</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//etcd Watch，watch会派一个哨兵一直监听着key的value的变化(新增、修改、删除)
-</span></span><span class="line"><span class="cl">	//watch返回的是一个channel,&lt;-chan WatchResponse
-</span></span><span class="line"><span class="cl">	//也可以设置WithTimeout()来让它监视一个固定时间或设置条件让其取消监视（不过还是建议让其一直监视着）
-</span></span><span class="line"><span class="cl">	rch:=cli.Watch(context.Background(),&#34;xiaonuo&#34;)
-</span></span><span class="line"><span class="cl">	//从通道尝试取值，range会在没值的时候阻塞，有值后执行内部代码，然后循环回来继续阻塞等待下一个值
-</span></span><span class="line"><span class="cl">	for wresp:=range rch{
-</span></span><span class="line"><span class="cl">		for _,ev:=range wresp.Events{
-</span></span><span class="line"><span class="cl">			//type可以取到类型，是删除修改还是新增
-</span></span><span class="line"><span class="cl">			fmt.Println(&#34;type:&#34;,string(ev.Type),&#34;----key:&#34;,string(ev.Kv.Key),&#34;----value:&#34;,string(ev.Kv.Value))
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">etcd</span> <span class="n">Watch</span><span class="err">，</span><span class="n">watch会派一个哨兵一直监听着key的value的变化</span><span class="p">(</span><span class="err">新增、修改、删除</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">watch返回的是一个channel</span><span class="p">,</span><span class="o">&lt;-</span><span class="n">chan</span> <span class="n">WatchResponse</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">也可以设置</span><span class="n">WithTimeout</span><span class="p">()</span><span class="err">来让它监视一个固定时间或设置条件让其取消监视（不过还是建议让其一直监视着）</span>
+</span></span><span class="line"><span class="cl">	<span class="n">rch</span><span class="p">:</span><span class="o">=</span><span class="n">cli</span><span class="o">.</span><span class="n">Watch</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span><span class="s2">&#34;xiaonuo&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">从通道尝试取值，</span><span class="n">range会在没值的时候阻塞</span><span class="err">，有值后执行内部代码，然后循环回来继续阻塞等待下一个值</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">wresp</span><span class="p">:</span><span class="o">=</span><span class="nb">range</span> <span class="n">rch</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">ev</span><span class="p">:</span><span class="o">=</span><span class="nb">range</span> <span class="n">wresp</span><span class="o">.</span><span class="n">Events</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="n">type可以取到类型</span><span class="err">，是删除修改还是新增</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;type:&#34;</span><span class="p">,</span><span class="n">string</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">Type</span><span class="p">),</span><span class="s2">&#34;----key:&#34;</span><span class="p">,</span><span class="n">string</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">Kv</span><span class="o">.</span><span class="n">Key</span><span class="p">),</span><span class="s2">&#34;----value:&#34;</span><span class="p">,</span><span class="n">string</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">Kv</span><span class="o">.</span><span class="n">Value</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="etcd的续期">etcd的续期</h3>

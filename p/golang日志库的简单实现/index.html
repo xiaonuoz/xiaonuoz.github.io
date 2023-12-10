@@ -367,51 +367,51 @@
 </span><span class="lnt">47
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">mylogger</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">mylogger</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;strings&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;strings&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="c1">//定义一个接口处理两种不同日志
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Logger</span> <span class="kd">interface</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nf">Debug</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
-</span></span><span class="line"><span class="cl">	<span class="nf">Info</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义一个接口处理两种不同日志</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Logger</span> <span class="n">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Debug</span><span class="p">(</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Info</span><span class="p">(</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{})</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//定义日志级别为非0的整数，使用type可以在以后打印类型时知道它的作用，而uint则无法理解用于什么地方
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">LogLevel</span> <span class="kt">uint16</span>
-</span></span><span class="line"><span class="cl"><span class="c1">//设置每个级别对应的uint16值，unknow为0，表示输入的格式不正确
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">UNKNOW</span> <span class="nx">LogLevel</span> <span class="p">=</span><span class="kc">iota</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">DEBUG</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">INFO</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义日志级别为非</span><span class="mi">0</span><span class="err">的整数，使用</span><span class="n">type可以在以后打印类型时知道它的作用</span><span class="err">，而</span><span class="n">uint则无法理解用于什么地方</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">LogLevel</span> <span class="n">uint16</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">设置每个级别对应的</span><span class="n">uint16值</span><span class="err">，</span><span class="n">unknow为0</span><span class="err">，表示输入的格式不正确</span>
+</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="n">UNKNOW</span> <span class="n">LogLevel</span> <span class="o">=</span><span class="n">iota</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DEBUG</span>
+</span></span><span class="line"><span class="cl">	<span class="n">INFO</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//通过传入的字符串来判断级别，返回的是uint常量
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">parseLogLevel</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">LogLevel</span><span class="p">,</span><span class="kt">error</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//将传入的字符串全部转为大写
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">s</span><span class="p">=</span><span class="nx">strings</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="nx">s</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="s">&#34;DEBUG&#34;</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">DEBUG</span><span class="p">,</span><span class="kc">nil</span>
-</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="s">&#34;INFO&#34;</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">INFO</span><span class="p">,</span><span class="kc">nil</span>
-</span></span><span class="line"><span class="cl">	<span class="k">default</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//创建一个err，如果err不为空则是输入有误
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">err</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;无效的日志级别，请检查&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">UNKNOW</span><span class="p">,</span><span class="nx">err</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">通过传入的字符串来判断级别，返回的是</span><span class="n">uint常量</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">parseLogLevel</span><span class="p">(</span><span class="n">s</span> <span class="n">string</span><span class="p">)</span> <span class="p">(</span><span class="n">LogLevel</span><span class="p">,</span><span class="n">error</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">将传入的字符串全部转为大写</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s</span><span class="o">=</span><span class="n">strings</span><span class="o">.</span><span class="n">ToUpper</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="n">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="s2">&#34;DEBUG&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">DEBUG</span><span class="p">,</span><span class="n">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="s2">&#34;INFO&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">INFO</span><span class="p">,</span><span class="n">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="n">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">创建一个</span><span class="n">err</span><span class="err">，如果</span><span class="n">err不为空则是输入有误</span>
+</span></span><span class="line"><span class="cl">		<span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s2">&#34;无效的日志级别，请检查&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">UNKNOW</span><span class="p">,</span><span class="n">err</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">getLogString</span><span class="p">(</span><span class="nx">lv</span> <span class="nx">LogLevel</span><span class="p">)</span> <span class="kt">string</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="nx">lv</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">DEBUG</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;DEBUG&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">INFO</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;INFO&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="k">default</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;UNKNOW&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">getLogString</span><span class="p">(</span><span class="n">lv</span> <span class="n">LogLevel</span><span class="p">)</span> <span class="n">string</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="n">lv</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="n">DEBUG</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s2">&#34;DEBUG&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="n">INFO</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s2">&#34;INFO&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s2">&#34;UNKNOW&#34;</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
@@ -468,52 +468,52 @@
 </span><span class="lnt">47
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">mylogger</span>
-</span></span><span class="line"><span class="cl"><span class="c1">//往终端中写日志
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;os&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">mylogger</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">往终端中写日志</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;time&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//自定义一个日志库结构体
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">ConsoleLogger</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Level</span> <span class="nx">LogLevel</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">自定义一个日志库结构体</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">ConsoleLogger</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Level</span> <span class="n">LogLevel</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//初始化一个Logger结构体
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewConsoleLogger</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">level</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nf">parseLogLevel</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//如果err不为空，则level为零值=0,0对应着UNKNOW
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">初始化一个</span><span class="n">Logger结构体</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">NewConsoleLogger</span><span class="p">(</span><span class="n">s</span> <span class="n">string</span><span class="p">)</span> <span class="o">*</span><span class="n">ConsoleLogger</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">level</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">parseLogLevel</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">如果</span><span class="n">err不为空</span><span class="err">，则</span><span class="n">level为零值</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="err">对应着</span><span class="n">UNKNOW</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">os</span><span class="o">.</span><span class="n">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">ConsoleLogger</span><span class="p">{</span><span class="nx">Level</span><span class="p">:</span> <span class="nx">level</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="n">ConsoleLogger</span><span class="p">{</span><span class="n">Level</span><span class="p">:</span> <span class="n">level</span><span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="c1">//实现开关级别,通过对象和参数的比较来执行比设置的级别高的日志消息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">)</span><span class="nf">enable</span><span class="p">(</span><span class="nx">loglevel</span> <span class="nx">LogLevel</span><span class="p">)</span><span class="kt">bool</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">loglevel</span><span class="o">&gt;=</span><span class="nx">c</span><span class="p">.</span><span class="nx">Level</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">实现开关级别</span><span class="p">,</span><span class="err">通过对象和参数的比较来执行比设置的级别高的日志消息</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">ConsoleLogger</span><span class="p">)</span><span class="n">enable</span><span class="p">(</span><span class="n">loglevel</span> <span class="n">LogLevel</span><span class="p">)</span><span class="ne">bool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">loglevel</span><span class="o">&gt;=</span><span class="n">c</span><span class="o">.</span><span class="n">Level</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//可以通过可变参数（参照fmt.Printf函数）实现格式化输出,实现传变量进字符串
-</span></span></span><span class="line"><span class="cl"><span class="c1">//Sprintf返回一个格式化好的字符串
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">)</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">lv</span> <span class="nx">LogLevel</span><span class="p">,</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//设置日志时间格式
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">timeInit</span> <span class="p">=</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nf">enable</span><span class="p">(</span><span class="nx">lv</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">msg</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span><span class="s">&#34;[%s] [%s] %s\n&#34;</span><span class="p">,</span><span class="nx">timeInit</span><span class="p">,</span><span class="nf">getLogString</span><span class="p">(</span><span class="nx">lv</span><span class="p">),</span><span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">可以通过可变参数（参照</span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf函数</span><span class="err">）实现格式化输出</span><span class="p">,</span><span class="err">实现传变量进字符串</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="n">Sprintf返回一个格式化好的字符串</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">ConsoleLogger</span><span class="p">)</span><span class="n">logFmt</span><span class="p">(</span><span class="n">lv</span> <span class="n">LogLevel</span><span class="p">,</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">设置日志时间格式</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">timeInit</span> <span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">Format</span><span class="p">(</span><span class="s2">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">lv</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="n">msg</span><span class="p">:</span><span class="o">=</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="n">format</span><span class="p">,</span><span class="n">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Fprintf</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Stdout</span><span class="p">,</span><span class="s2">&#34;[</span><span class="si">%s</span><span class="s2">] [</span><span class="si">%s</span><span class="s2">] </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">timeInit</span><span class="p">,</span><span class="n">getLogString</span><span class="p">(</span><span class="n">lv</span><span class="p">),</span><span class="n">msg</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">)</span><span class="nf">Debug</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">c</span><span class="p">.</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">DEBUG</span><span class="p">,</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">ConsoleLogger</span><span class="p">)</span><span class="n">Debug</span><span class="p">(</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span><span class="o">.</span><span class="n">logFmt</span><span class="p">(</span><span class="n">DEBUG</span><span class="p">,</span><span class="n">format</span><span class="p">,</span><span class="n">a</span><span class="o">...</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConsoleLogger</span><span class="p">)</span><span class="nf">Info</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">c</span><span class="p">.</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">INFO</span><span class="p">,</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">ConsoleLogger</span><span class="p">)</span><span class="n">Info</span><span class="p">(</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span><span class="o">.</span><span class="n">logFmt</span><span class="p">(</span><span class="n">INFO</span><span class="p">,</span><span class="n">format</span><span class="p">,</span><span class="n">a</span><span class="o">...</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -705,187 +705,187 @@
 </span><span class="lnt">182
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">mylogger</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">mylogger</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;os&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;path&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;path&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;time&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//往文件中写日志
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">FileLogger</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Level</span> <span class="nx">LogLevel</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">FileName</span> <span class="kt">string</span>	<span class="c1">//日志文件保存的文件名
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">FilePath</span> <span class="kt">string</span>	<span class="c1">//日志文件保存的路径
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">MaxFileSize</span> <span class="kt">int64</span> <span class="c1">//每个日志文件的最大值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">FileObj</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>	<span class="c1">//初始化时打开一个文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">ErrFileObj</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>	<span class="c1">//记录错误日志的文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">logChan</span> <span class="kd">chan</span> <span class="o">*</span><span class="nx">logMsg</span>	<span class="c1">//管道，用于存放日志信息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">往文件中写日志</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">logMsg</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">level</span> <span class="nx">LogLevel</span>	<span class="c1">//日志级别
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">msg</span> <span class="kt">string</span>		<span class="c1">//日志信息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">timestamp</span> <span class="kt">string</span> <span class="c1">//时间戳
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//初始化一个Logger结构体
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewFileLogger</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">fileName</span><span class="p">,</span><span class="nx">filePath</span> <span class="kt">string</span><span class="p">,</span><span class="nx">maxFileSize</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">level</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nf">parseLogLevel</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//如果err不为空，则level为零值=0,0对应着UNKNOW
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">f1</span><span class="o">:=</span> <span class="o">&amp;</span><span class="nx">FileLogger</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">Level</span><span class="p">:</span> <span class="nx">level</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">FileName</span><span class="p">:</span><span class="nx">fileName</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">FilePath</span><span class="p">:</span> <span class="nx">filePath</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">MaxFileSize</span><span class="p">:</span> <span class="nx">maxFileSize</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">logChan</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">logMsg</span><span class="p">,</span><span class="mi">50000</span><span class="p">),</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">err1</span><span class="o">:=</span><span class="nx">f1</span><span class="p">.</span><span class="nf">initFile</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err1</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//日志文件都无法打开，直接panic中断程序运行
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nb">panic</span><span class="p">(</span><span class="nx">err1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">f1</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="c1">//实现开关级别,通过对象和参数的比较来执行比设置的级别高的日志消息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">enable</span><span class="p">(</span><span class="nx">loglevel</span> <span class="nx">LogLevel</span><span class="p">)</span><span class="kt">bool</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">loglevel</span><span class="o">&gt;=</span><span class="nx">f</span><span class="p">.</span><span class="nx">Level</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">FileLogger</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Level</span> <span class="n">LogLevel</span>
+</span></span><span class="line"><span class="cl">	<span class="n">FileName</span> <span class="n">string</span>	<span class="o">//</span><span class="err">日志文件保存的文件名</span>
+</span></span><span class="line"><span class="cl">	<span class="n">FilePath</span> <span class="n">string</span>	<span class="o">//</span><span class="err">日志文件保存的路径</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MaxFileSize</span> <span class="n">int64</span> <span class="o">//</span><span class="err">每个日志文件的最大值</span>
+</span></span><span class="line"><span class="cl">	<span class="n">FileObj</span> <span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">File</span>	<span class="o">//</span><span class="err">初始化时打开一个文件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ErrFileObj</span> <span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">File</span>	<span class="o">//</span><span class="err">记录错误日志的文件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">logChan</span> <span class="n">chan</span> <span class="o">*</span><span class="n">logMsg</span>	<span class="o">//</span><span class="err">管道，用于存放日志信息</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//初始化，打开一个文件向内写日志
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">initFile</span><span class="p">()</span> <span class="kt">error</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//拼接文件路径和文件名，然后打开此文件，没有就进行创建
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fullFileName</span><span class="o">:=</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FilePath</span><span class="p">,</span><span class="nx">f</span><span class="p">.</span><span class="nx">FileName</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">fileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="nx">fullFileName</span><span class="p">,</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">,</span><span class="mo">0644</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open log file failed,err:%v&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//专门记录错误的日志
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">errfileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="nx">fullFileName</span><span class="o">+</span><span class="s">&#34;.err&#34;</span><span class="p">,</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">,</span><span class="mo">0644</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open log file failed,err:%v&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">=</span><span class="nx">fileObj</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">=</span><span class="nx">errfileObj</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//开启一个后台goroutine往文件内写日志
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//不能开启多个，因为同一时间不能有多个程序操作同一个文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">go</span> <span class="nx">f</span><span class="p">.</span><span class="nf">writeLogBackground</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//return nil可以实现调用此方法时加if判断来判断是否有错误
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">logMsg</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">level</span> <span class="n">LogLevel</span>	<span class="o">//</span><span class="err">日志级别</span>
+</span></span><span class="line"><span class="cl">	<span class="n">msg</span> <span class="n">string</span>		<span class="o">//</span><span class="err">日志信息</span>
+</span></span><span class="line"><span class="cl">	<span class="n">timestamp</span> <span class="n">string</span> <span class="o">//</span><span class="err">时间戳</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//判断当前文件大小，超过指定值就进行切割，将要写入的文件传进去判断
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">checkSize</span><span class="p">(</span><span class="nx">file</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="kt">bool</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">fileInfo</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">file</span><span class="p">.</span><span class="nf">Stat</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;get file info failed,err:%v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">初始化一个</span><span class="n">Logger结构体</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">NewFileLogger</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">fileName</span><span class="p">,</span><span class="n">filePath</span> <span class="n">string</span><span class="p">,</span><span class="n">maxFileSize</span> <span class="n">int64</span><span class="p">)</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">level</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">parseLogLevel</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">如果</span><span class="n">err不为空</span><span class="err">，则</span><span class="n">level为零值</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="err">对应着</span><span class="n">UNKNOW</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">os</span><span class="o">.</span><span class="n">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//如果当前文件大小大于等于预设时文件的最大值，就应该返回true，进行切割
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="nx">fileInfo</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span><span class="o">&gt;=</span><span class="nx">f</span><span class="p">.</span><span class="nx">MaxFileSize</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f1</span><span class="p">:</span><span class="o">=</span> <span class="o">&amp;</span><span class="n">FileLogger</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">Level</span><span class="p">:</span> <span class="n">level</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">FileName</span><span class="p">:</span><span class="n">fileName</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">FilePath</span><span class="p">:</span> <span class="n">filePath</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MaxFileSize</span><span class="p">:</span> <span class="n">maxFileSize</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="n">logChan</span><span class="p">:</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="o">*</span><span class="n">logMsg</span><span class="p">,</span><span class="mi">50000</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">err1</span><span class="p">:</span><span class="o">=</span><span class="n">f1</span><span class="o">.</span><span class="n">initFile</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err1</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">日志文件都无法打开，直接</span><span class="n">panic中断程序运行</span>
+</span></span><span class="line"><span class="cl">		<span class="n">panic</span><span class="p">(</span><span class="n">err1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">f1</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">实现开关级别</span><span class="p">,</span><span class="err">通过对象和参数的比较来执行比设置的级别高的日志消息</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">enable</span><span class="p">(</span><span class="n">loglevel</span> <span class="n">LogLevel</span><span class="p">)</span><span class="ne">bool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">loglevel</span><span class="o">&gt;=</span><span class="n">f</span><span class="o">.</span><span class="n">Level</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">splitFile</span><span class="p">(</span><span class="nx">file</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span><span class="kt">error</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//此时则需要进行文件切割,如果返回为false就会直接跳过该判断，继续往原文件写内容
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fileInfo</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">file</span><span class="p">.</span><span class="nf">Stat</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open file faile,err:%v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span><span class="nx">err</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">初始化，打开一个文件向内写日志</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">initFile</span><span class="p">()</span> <span class="n">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">拼接文件路径和文件名，然后打开此文件，没有就进行创建</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fullFileName</span><span class="p">:</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">FilePath</span><span class="p">,</span><span class="n">f</span><span class="o">.</span><span class="n">FileName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fileObj</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">OpenFile</span><span class="p">(</span><span class="n">fullFileName</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">O_APPEND</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_CREATE</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="p">,</span><span class="mi">0644</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;open log file failed,err:%v&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//然后rename原文件,fileInfo.Name()可以获取文件名，可以同时适配普通文件和错误文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">logName</span><span class="o">:=</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FilePath</span><span class="p">,</span><span class="nx">fileInfo</span><span class="p">.</span><span class="nf">Name</span><span class="p">())</span><span class="c1">//拿到当前日志的路径，join的拼接是用/来拼接的
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//在重命名时要先关闭当前的日志文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">nowStr</span><span class="o">:=</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;20060102150405&#34;</span><span class="p">)</span><span class="c1">//获取当前时间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">newName</span><span class="o">:=</span><span class="nx">logName</span><span class="o">+</span><span class="s">&#34;.bak&#34;</span><span class="o">+</span><span class="nx">nowStr</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">os</span><span class="p">.</span><span class="nf">Rename</span><span class="p">(</span><span class="nx">logName</span><span class="p">,</span><span class="nx">newName</span><span class="p">)</span><span class="c1">//重命名
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//打开新的文件并赋值给FileObj
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="nx">logName</span><span class="p">,</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">,</span><span class="mo">0644</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open file faild,err:%v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">,</span><span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">专门记录错误的日志</span>
+</span></span><span class="line"><span class="cl">	<span class="n">errfileObj</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">OpenFile</span><span class="p">(</span><span class="n">fullFileName</span><span class="o">+</span><span class="s2">&#34;.err&#34;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">O_APPEND</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_CREATE</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="p">,</span><span class="mi">0644</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;open log file failed,err:%v&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">fileObj</span><span class="p">,</span><span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">FileObj</span><span class="o">=</span><span class="n">fileObj</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">ErrFileObj</span><span class="o">=</span><span class="n">errfileObj</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">开启一个后台</span><span class="n">goroutine往文件内写日志</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">不能开启多个，因为同一时间不能有多个程序操作同一个文件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="n">f</span><span class="o">.</span><span class="n">writeLogBackground</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="k">return</span> <span class="n">nil可以实现调用此方法时加if判断来判断是否有错误</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">nil</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//开携程让日志和业务代码区分开
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">writeLogBackground</span><span class="p">(){</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//用for循环让此函数一直运行等待从管道中取数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//普通日志文件分割
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">f</span><span class="p">.</span><span class="nf">checkSize</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">f</span><span class="p">.</span><span class="nf">splitFile</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open file faild,err:%v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">判断当前文件大小，超过指定值就进行切割，将要写入的文件传进去判断</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">checkSize</span><span class="p">(</span><span class="n">file</span> <span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">File</span><span class="p">)</span> <span class="ne">bool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fileInfo</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">Stat</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;get file info failed,err:%v</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="bp">false</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">如果当前文件大小大于等于预设时文件的最大值，就应该返回</span><span class="bp">true</span><span class="err">，进行切割</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">fileInfo</span><span class="o">.</span><span class="n">Size</span><span class="p">()</span><span class="o">&gt;=</span><span class="n">f</span><span class="o">.</span><span class="n">MaxFileSize</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">splitFile</span><span class="p">(</span><span class="n">file</span> <span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">File</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">File</span><span class="p">,</span><span class="n">error</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">此时则需要进行文件切割</span><span class="p">,</span><span class="err">如果返回为</span><span class="n">false就会直接跳过该判断</span><span class="err">，继续往原文件写内容</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fileInfo</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">Stat</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;open file faile,err:%v</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">nil</span><span class="p">,</span><span class="n">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">然后</span><span class="n">rename原文件</span><span class="p">,</span><span class="n">fileInfo</span><span class="o">.</span><span class="n">Name</span><span class="p">()</span><span class="err">可以获取文件名，可以同时适配普通文件和错误文件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">logName</span><span class="p">:</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">FilePath</span><span class="p">,</span><span class="n">fileInfo</span><span class="o">.</span><span class="n">Name</span><span class="p">())</span><span class="o">//</span><span class="err">拿到当前日志的路径，</span><span class="n">join的拼接是用</span><span class="o">/</span><span class="err">来拼接的</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">在重命名时要先关闭当前的日志文件</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nowStr</span><span class="p">:</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">Format</span><span class="p">(</span><span class="s2">&#34;20060102150405&#34;</span><span class="p">)</span><span class="o">//</span><span class="err">获取当前时间</span>
+</span></span><span class="line"><span class="cl">	<span class="n">file</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">newName</span><span class="p">:</span><span class="o">=</span><span class="n">logName</span><span class="o">+</span><span class="s2">&#34;.bak&#34;</span><span class="o">+</span><span class="n">nowStr</span>
+</span></span><span class="line"><span class="cl">	<span class="n">os</span><span class="o">.</span><span class="n">Rename</span><span class="p">(</span><span class="n">logName</span><span class="p">,</span><span class="n">newName</span><span class="p">)</span><span class="o">//</span><span class="err">重命名</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">打开新的文件并赋值给</span><span class="n">FileObj</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fileObj</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">OpenFile</span><span class="p">(</span><span class="n">logName</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">O_APPEND</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_CREATE</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="p">,</span><span class="mi">0644</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;open file faild,err:%v</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">FileObj</span><span class="p">,</span><span class="n">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">fileObj</span><span class="p">,</span><span class="n">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">开携程让日志和业务代码区分开</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">writeLogBackground</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">用</span><span class="n">for循环让此函数一直运行等待从管道中取数据</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">普通日志文件分割</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">checkSize</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">FileObj</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fileObj</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">splitFile</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">FileObj</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;open file faild,err:%v</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">			<span class="k">return</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">=</span><span class="nx">fileObj</span>
+</span></span><span class="line"><span class="cl">		<span class="n">f</span><span class="o">.</span><span class="n">FileObj</span><span class="o">=</span><span class="n">fileObj</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="k">select</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//如果无法从logChan中取出数据，就一直阻塞在此处
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">case</span> <span class="nx">logtmp</span><span class="o">:=&lt;-</span><span class="nx">f</span><span class="p">.</span><span class="nx">logChan</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">logInfo</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;[%s] [%s] %s\n&#34;</span><span class="p">,</span><span class="nx">logtmp</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">,</span><span class="nf">getLogString</span><span class="p">(</span><span class="nx">logtmp</span><span class="p">.</span><span class="nx">level</span><span class="p">),</span><span class="nx">logtmp</span><span class="p">.</span><span class="nx">msg</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">,</span><span class="nx">logInfo</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">			<span class="c1">//错误日志文件分割
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">if</span> <span class="nx">logtmp</span><span class="p">.</span><span class="nx">level</span><span class="o">&gt;=</span><span class="nx">INFO</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="nx">f</span><span class="p">.</span><span class="nf">checkSize</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">					<span class="nx">errfileObj</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">f</span><span class="p">.</span><span class="nf">splitFile</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">					<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">						<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;open file faild,err:%v&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">如果无法从</span><span class="n">logChan中取出数据</span><span class="err">，就一直阻塞在此处</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="n">logtmp</span><span class="p">:</span><span class="o">=&lt;-</span><span class="n">f</span><span class="o">.</span><span class="n">logChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="n">logInfo</span><span class="p">:</span><span class="o">=</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s2">&#34;[</span><span class="si">%s</span><span class="s2">] [</span><span class="si">%s</span><span class="s2">] </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">logtmp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span><span class="n">getLogString</span><span class="p">(</span><span class="n">logtmp</span><span class="o">.</span><span class="n">level</span><span class="p">),</span><span class="n">logtmp</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Fprintf</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">FileObj</span><span class="p">,</span><span class="n">logInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">错误日志文件分割</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">logtmp</span><span class="o">.</span><span class="n">level</span><span class="o">&gt;=</span><span class="n">INFO</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">checkSize</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">ErrFileObj</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">					<span class="n">errfileObj</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">splitFile</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">ErrFileObj</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">					<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">						<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;open file faild,err:%v&#34;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">						<span class="k">return</span>
 </span></span><span class="line"><span class="cl">					<span class="p">}</span>
-</span></span><span class="line"><span class="cl">					<span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">=</span><span class="nx">errfileObj</span>
+</span></span><span class="line"><span class="cl">					<span class="n">f</span><span class="o">.</span><span class="n">ErrFileObj</span><span class="o">=</span><span class="n">errfileObj</span>
 </span></span><span class="line"><span class="cl">				<span class="p">}</span>
-</span></span><span class="line"><span class="cl">				<span class="c1">//如果要记录的日志等级（输入的参数）大于等于INFO级别，则还要在err日志文件中再记录一遍
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">,</span><span class="nx">logInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span><span class="err">如果要记录的日志等级（输入的参数）大于等于</span><span class="n">INFO级别</span><span class="err">，则还要在</span><span class="n">err日志文件中再记录一遍</span>
+</span></span><span class="line"><span class="cl">				<span class="n">fmt</span><span class="o">.</span><span class="n">Fprintf</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">ErrFileObj</span><span class="p">,</span><span class="n">logInfo</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//可以通过可变参数（参照fmt.Printf函数）实现格式化输出,实现传变量进字符串
-</span></span></span><span class="line"><span class="cl"><span class="c1">//Sprintf返回一个格式化好的字符串
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">lv</span> <span class="nx">LogLevel</span><span class="p">,</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">f</span><span class="p">.</span><span class="nf">enable</span><span class="p">(</span><span class="nx">lv</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//设置日志时间格式
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">var</span> <span class="nx">timeInit</span> <span class="p">=</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">msg</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//先把日志发到通道中
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">logtmp</span><span class="o">:=&amp;</span><span class="nx">logMsg</span><span class="p">{</span><span class="nx">level</span><span class="p">:</span> <span class="nx">lv</span><span class="p">,</span><span class="nx">msg</span><span class="p">:</span><span class="nx">msg</span><span class="p">,</span><span class="nx">timestamp</span><span class="p">:</span> <span class="nx">timeInit</span><span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//通过select监听管道，避免极端情况下通道阻塞影响业务代码的运行
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//写的进去和写不进去都直接跳过，然后继续执行代码
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">select</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="nx">f</span><span class="p">.</span><span class="nx">logChan</span><span class="o">&lt;-</span><span class="nx">logtmp</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">可以通过可变参数（参照</span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf函数</span><span class="err">）实现格式化输出</span><span class="p">,</span><span class="err">实现传变量进字符串</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="n">Sprintf返回一个格式化好的字符串</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">logFmt</span><span class="p">(</span><span class="n">lv</span> <span class="n">LogLevel</span><span class="p">,</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">lv</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">设置日志时间格式</span>
+</span></span><span class="line"><span class="cl">		<span class="k">var</span> <span class="n">timeInit</span> <span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">Format</span><span class="p">(</span><span class="s2">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">msg</span><span class="p">:</span><span class="o">=</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="n">format</span><span class="p">,</span><span class="n">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">先把日志发到通道中</span>
+</span></span><span class="line"><span class="cl">		<span class="n">logtmp</span><span class="p">:</span><span class="o">=&amp;</span><span class="n">logMsg</span><span class="p">{</span><span class="n">level</span><span class="p">:</span> <span class="n">lv</span><span class="p">,</span><span class="n">msg</span><span class="p">:</span><span class="n">msg</span><span class="p">,</span><span class="n">timestamp</span><span class="p">:</span> <span class="n">timeInit</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">通过</span><span class="n">select监听管道</span><span class="err">，避免极端情况下通道阻塞影响业务代码的运行</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">写的进去和写不进去都直接跳过，然后继续执行代码</span>
+</span></span><span class="line"><span class="cl">		<span class="n">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="n">f</span><span class="o">.</span><span class="n">logChan</span><span class="o">&lt;-</span><span class="n">logtmp</span><span class="p">:</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		<span class="k">default</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//如果写不进去就进行跳过，保证业务代码正常运行，但是此时日志写不进去（极端情况）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">如果写不进去就进行跳过，保证业务代码正常运行，但是此时日志写不进去（极端情况）</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">Debug</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">DEBUG</span><span class="p">,</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">Debug</span><span class="p">(</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">logFmt</span><span class="p">(</span><span class="n">DEBUG</span><span class="p">,</span><span class="n">format</span><span class="p">,</span><span class="n">a</span><span class="o">...</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">Info</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{}){</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nf">logFmt</span><span class="p">(</span><span class="nx">INFO</span><span class="p">,</span><span class="nx">format</span><span class="p">,</span><span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">Info</span><span class="p">(</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{}){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">logFmt</span><span class="p">(</span><span class="n">INFO</span><span class="p">,</span><span class="n">format</span><span class="p">,</span><span class="n">a</span><span class="o">...</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//在用完后记得关闭文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">FileLogger</span><span class="p">)</span><span class="nf">Close</span><span class="p">(){</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nx">FileObj</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">f</span><span class="p">.</span><span class="nx">ErrFileObj</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">在用完后记得关闭文件</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FileLogger</span><span class="p">)</span><span class="n">Close</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">FileObj</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">ErrFileObj</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -926,35 +926,35 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">main</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;mylogger&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;mylogger&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;time&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">logger</span> <span class="nx">mylogger</span><span class="p">.</span><span class="nx">Logger</span>
+</span></span><span class="line"><span class="cl"><span class="k">var</span> <span class="n">logger</span> <span class="n">mylogger</span><span class="o">.</span><span class="n">Logger</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//这里的参数表示会输出大于等于debug等级的日志
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//可以在consolelogger.go中设置大于则输出到终端，小于则输出到文件中
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//输出到终端
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">logger</span> <span class="p">=</span> <span class="nx">mylogger</span><span class="p">.</span><span class="nf">NewConsoleLogger</span><span class="p">(</span><span class="s">&#34;debug&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span><span class="o">:=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="p">&lt;</span><span class="mi">2</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;我是一条debug消息&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">id</span><span class="o">:=</span><span class="mi">10010</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">name</span><span class="o">:=</span><span class="s">&#34;张三&#34;</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;我是一条info消息，来自%d-%s&#34;</span><span class="p">,</span><span class="nx">id</span><span class="p">,</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">这里的参数表示会输出大于等于</span><span class="n">debug等级的日志</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">可以在</span><span class="n">consolelogger</span><span class="o">.</span><span class="n">go中设置大于则输出到终端</span><span class="err">，小于则输出到文件中</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">输出到终端</span>
+</span></span><span class="line"><span class="cl">	<span class="n">logger</span> <span class="o">=</span> <span class="n">mylogger</span><span class="o">.</span><span class="n">NewConsoleLogger</span><span class="p">(</span><span class="s2">&#34;debug&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span><span class="p">:</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">logger</span><span class="o">.</span><span class="n">Debug</span><span class="p">(</span><span class="s2">&#34;我是一条debug消息&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">id</span><span class="p">:</span><span class="o">=</span><span class="mi">10010</span>
+</span></span><span class="line"><span class="cl">		<span class="n">name</span><span class="p">:</span><span class="o">=</span><span class="s2">&#34;张三&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">logger</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s2">&#34;我是一条info消息，来自</span><span class="si">%d</span><span class="s2">-</span><span class="si">%s</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">id</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">//输出到文件中
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">logger</span><span class="p">=</span><span class="nx">mylogger</span><span class="p">.</span><span class="nf">NewFileLogger</span><span class="p">(</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02&#34;</span><span class="p">),</span><span class="s">&#34;./&#34;</span><span class="p">,</span><span class="mi">10</span><span class="o">*</span><span class="mi">1024</span><span class="p">)</span><span class="c1">//for {
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//如果消息级别为0表示是错误的等级
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">for</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">logger</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;我是一条debug消息&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">id</span><span class="o">:=</span><span class="mi">10010</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">name</span><span class="o">:=</span><span class="s">&#34;张三&#34;</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;我是一条info消息，来自%d-%s&#34;</span><span class="p">,</span><span class="nx">id</span><span class="p">,</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">输出到文件中</span>
+</span></span><span class="line"><span class="cl">	<span class="n">logger</span><span class="o">=</span><span class="n">mylogger</span><span class="o">.</span><span class="n">NewFileLogger</span><span class="p">(</span><span class="s2">&#34;info&#34;</span><span class="p">,</span><span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">Format</span><span class="p">(</span><span class="s2">&#34;2006-01-02&#34;</span><span class="p">),</span><span class="s2">&#34;./&#34;</span><span class="p">,</span><span class="mi">10</span><span class="o">*</span><span class="mi">1024</span><span class="p">)</span><span class="o">//</span><span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">如果消息级别为</span><span class="mi">0</span><span class="err">表示是错误的等级</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">logger</span><span class="o">.</span><span class="n">Debug</span><span class="p">(</span><span class="s2">&#34;我是一条debug消息&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">id</span><span class="p">:</span><span class="o">=</span><span class="mi">10010</span>
+</span></span><span class="line"><span class="cl">		<span class="n">name</span><span class="p">:</span><span class="o">=</span><span class="s2">&#34;张三&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">logger</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s2">&#34;我是一条info消息，来自</span><span class="si">%d</span><span class="s2">-</span><span class="si">%s</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">id</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="p">}</span>

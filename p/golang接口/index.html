@@ -270,10 +270,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	s1 := stu{name: &#34;学生&#34;}
-</span></span><span class="line"><span class="cl">	var s sayer
-</span></span><span class="line"><span class="cl">	s = s1
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;%T&#34;, s)
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="n">s1</span> <span class="p">:</span><span class="o">=</span> <span class="n">stu</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="s2">&#34;学生&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">s</span> <span class="n">sayer</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s</span> <span class="o">=</span> <span class="n">s1</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;%T&#34;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>接口它自己不会存值，它的类型取决于给了它什么值，给什么值就是什么类型，接口类型定义时分配了一个动态类型和一个动态值，类型和值都为nil，然后将其他类型变量赋值给接口类型就是将值和值的类型赋值给接口，<strong>这样子就可以实现接口可以存任意类型的值。</strong></p>
@@ -326,36 +326,36 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//定义一个接口类型，里面只有方法声明
-</span></span><span class="line"><span class="cl">type sayer interface {
-</span></span><span class="line"><span class="cl">	say()
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义一个接口类型，里面只有方法声明</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">sayer</span> <span class="n">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">say</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//定义一个学生的结构体和方法
-</span></span><span class="line"><span class="cl">type stu struct {
-</span></span><span class="line"><span class="cl">	name string
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func (s *stu) say() {
-</span></span><span class="line"><span class="cl">	fmt.Println(s.name, &#34;say hi  ttt&#34;)
-</span></span><span class="line"><span class="cl">	s.name = &#34;王五&#34;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义一个学生的结构体和方法</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">stu</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">stu</span><span class="p">)</span> <span class="n">say</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&#34;say hi  ttt&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&#34;王五&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">type tea struct {
-</span></span><span class="line"><span class="cl">	name string
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func (t *tea) say() {
-</span></span><span class="line"><span class="cl">	fmt.Println(t.name, &#34;say hi&#34;)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">tea</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">tea</span><span class="p">)</span> <span class="n">say</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&#34;say hi&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func toSay(s sayer) {
-</span></span><span class="line"><span class="cl">	s.say()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">toSay</span><span class="p">(</span><span class="n">s</span> <span class="n">sayer</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s</span><span class="o">.</span><span class="n">say</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	s1 := stu{name: &#34;学生&#34;}
-</span></span><span class="line"><span class="cl">	toSay(&amp;s1)
-</span></span><span class="line"><span class="cl">	fmt.Println(s1)
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s1</span> <span class="p">:</span><span class="o">=</span> <span class="n">stu</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="s2">&#34;学生&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">toSay</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>关于接口需要注意的是：<strong>只有当有两个或两个以上的具体类型必须以相同的方式进行处理时才需要定义接口，不要为了写接口而定义接口，那样只会增加不必要的抽象，导致不必要的运行时损耗。</strong></p>
@@ -436,48 +436,48 @@
 </span><span class="lnt">42
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//定义接口类型
-</span></span><span class="line"><span class="cl">type Hunmaner interface {
-</span></span><span class="line"><span class="cl">	sayhi()
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">//定义学生结构体类型
-</span></span><span class="line"><span class="cl">type student struct {
-</span></span><span class="line"><span class="cl">	name string
-</span></span><span class="line"><span class="cl">	id   int
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">//定义学生方法
-</span></span><span class="line"><span class="cl">func (student) sayhi() {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;student say hi&#34;)
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">//定义老师结构体类型
-</span></span><span class="line"><span class="cl">type teacher struct {
-</span></span><span class="line"><span class="cl">	name  string
-</span></span><span class="line"><span class="cl">	addre string
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">//定义老师方法
-</span></span><span class="line"><span class="cl">func (teacher) sayhi() {
-</span></span><span class="line"><span class="cl">	fmt.Println(&#34;teacher say hi&#34;)
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义接口类型</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Hunmaner</span> <span class="n">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">sayhi</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义学生结构体类型</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">student</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">id</span>   <span class="ne">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义学生方法</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">student</span><span class="p">)</span> <span class="n">sayhi</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;student say hi&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义老师结构体类型</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">teacher</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span>  <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="n">addre</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">定义老师方法</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="p">(</span><span class="n">teacher</span><span class="p">)</span> <span class="n">sayhi</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;teacher say hi&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">//实现多态，定义一个接口的方法，方法参数为接口类型，将其他接收者类型的实参传进去就可以实现调用不同方法
-</span></span><span class="line"><span class="cl">func whoSayhi(i Hunmaner){
-</span></span><span class="line"><span class="cl">	i.sayhi()
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">实现多态，定义一个接口的方法，方法参数为接口类型，将其他接收者类型的实参传进去就可以实现调用不同方法</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">whoSayhi</span><span class="p">(</span><span class="n">i</span> <span class="n">Hunmaner</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="o">.</span><span class="n">sayhi</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	//i等于学生结构体，i就可以调用学生的方法
-</span></span><span class="line"><span class="cl">	var i Hunmaner
-</span></span><span class="line"><span class="cl">	i = student{name: &#34;mike&#34;}
-</span></span><span class="line"><span class="cl">	i.sayhi()
-</span></span><span class="line"><span class="cl">	//输出学生方法中的语句
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="n">i等于学生结构体</span><span class="err">，</span><span class="n">i就可以调用学生的方法</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">i</span> <span class="n">Hunmaner</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span> <span class="o">=</span> <span class="n">student</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="s2">&#34;mike&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="o">.</span><span class="n">sayhi</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">输出学生方法中的语句</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	//通过接口实现不同的方法
-</span></span><span class="line"><span class="cl">	whoSayhi(student{name: &#34;mike&#34;})
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">通过接口实现不同的方法</span>
+</span></span><span class="line"><span class="cl">	<span class="n">whoSayhi</span><span class="p">(</span><span class="n">student</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="s2">&#34;mike&#34;</span><span class="p">})</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	i = teacher{name: &#34;laoshi&#34;}
-</span></span><span class="line"><span class="cl">	i.sayhi()
-</span></span><span class="line"><span class="cl">	//输出老师方法中的语句
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">i</span> <span class="o">=</span> <span class="n">teacher</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="s2">&#34;laoshi&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="o">.</span><span class="n">sayhi</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">输出老师方法中的语句</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>也可以通过切片同时实现多种接收者的同名的方法</strong></p>
@@ -633,30 +633,30 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func reflectValue(x interface{}) {
-</span></span><span class="line"><span class="cl">	v := reflect.ValueOf(x)
-</span></span><span class="line"><span class="cl">	k := v.Kind()	//这个kind是获取值的类型种类
-</span></span><span class="line"><span class="cl">	switch k {
-</span></span><span class="line"><span class="cl">	case reflect.Int64:
-</span></span><span class="line"><span class="cl">		// v.Int()从反射中获取整型的原始值，然后通过int64()强制类型转换
-</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;type is int64, value is %d\n&#34;, int64(v.Int()))
-</span></span><span class="line"><span class="cl">	case reflect.Float32:
-</span></span><span class="line"><span class="cl">		// v.Float()从反射中获取浮点型的原始值，然后通过float32()强制类型转换
-</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;type is float32, value is %f\n&#34;, float32(v.Float()))
-</span></span><span class="line"><span class="cl">	case reflect.Float64:
-</span></span><span class="line"><span class="cl">		// v.Float()从反射中获取浮点型的原始值，然后通过float64()强制类型转换
-</span></span><span class="line"><span class="cl">		fmt.Printf(&#34;type is float64, value is %f\n&#34;, float64(v.Float()))
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl">	var a float32 = 3.14
-</span></span><span class="line"><span class="cl">	var b int64 = 100
-</span></span><span class="line"><span class="cl">	reflectValue(a) // type is float32, value is 3.140000
-</span></span><span class="line"><span class="cl">	reflectValue(b) // type is int64, value is 100
-</span></span><span class="line"><span class="cl">	// 将int类型的原始值转换为reflect.Value类型
-</span></span><span class="line"><span class="cl">	c := reflect.ValueOf(10)
-</span></span><span class="line"><span class="cl">	fmt.Printf(&#34;type c :%T\n&#34;, c) // type c :reflect.Value
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">reflectValue</span><span class="p">(</span><span class="n">x</span> <span class="n">interface</span><span class="p">{})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">v</span> <span class="p">:</span><span class="o">=</span> <span class="n">reflect</span><span class="o">.</span><span class="n">ValueOf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">k</span> <span class="p">:</span><span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">Kind</span><span class="p">()</span>	<span class="o">//</span><span class="err">这个</span><span class="n">kind是获取值的类型种类</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="n">k</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Int64</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="n">v</span><span class="o">.</span><span class="n">Int</span><span class="p">()</span><span class="err">从反射中获取整型的原始值，然后通过</span><span class="n">int64</span><span class="p">()</span><span class="err">强制类型转换</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;type is int64, value is </span><span class="si">%d</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">int64</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">Int</span><span class="p">()))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Float32</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="n">v</span><span class="o">.</span><span class="n">Float</span><span class="p">()</span><span class="err">从反射中获取浮点型的原始值，然后通过</span><span class="n">float32</span><span class="p">()</span><span class="err">强制类型转换</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;type is float32, value is </span><span class="si">%f</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">float32</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">Float</span><span class="p">()))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Float64</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="n">v</span><span class="o">.</span><span class="n">Float</span><span class="p">()</span><span class="err">从反射中获取浮点型的原始值，然后通过</span><span class="n">float64</span><span class="p">()</span><span class="err">强制类型转换</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;type is float64, value is </span><span class="si">%f</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">float64</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">Float</span><span class="p">()))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">a</span> <span class="n">float32</span> <span class="o">=</span> <span class="mf">3.14</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">b</span> <span class="n">int64</span> <span class="o">=</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl">	<span class="n">reflectValue</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">//</span> <span class="n">type</span> <span class="n">is</span> <span class="n">float32</span><span class="p">,</span> <span class="n">value</span> <span class="n">is</span> <span class="mf">3.140000</span>
+</span></span><span class="line"><span class="cl">	<span class="n">reflectValue</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">//</span> <span class="n">type</span> <span class="n">is</span> <span class="n">int64</span><span class="p">,</span> <span class="n">value</span> <span class="n">is</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">将</span><span class="n">int类型的原始值转换为reflect</span><span class="o">.</span><span class="n">Value类型</span>
+</span></span><span class="line"><span class="cl">	<span class="n">c</span> <span class="p">:</span><span class="o">=</span> <span class="n">reflect</span><span class="o">.</span><span class="n">ValueOf</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;type c :%T</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="n">type</span> <span class="n">c</span> <span class="p">:</span><span class="n">reflect</span><span class="o">.</span><span class="n">Value</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>ValueOf没有int64、int32之类的，它只有int、float等</p>
@@ -817,156 +817,156 @@
 </span><span class="lnt">151
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">main</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;errors&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;io/ioutil&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;reflect&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;strconv&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="s">&#34;strings&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;errors&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;io/ioutil&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;reflect&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;strconv&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;strings&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MysqlConfig</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Address</span>  <span class="kt">string</span> <span class="s">`ini:&#34;address&#34;`</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Port</span>     <span class="kt">int</span>    <span class="s">`ini:&#34;port&#34;`</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Username</span> <span class="kt">string</span> <span class="s">`ini:&#34;username&#34;`</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Password</span> <span class="kt">string</span> <span class="s">`ini:&#34;password&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">MysqlConfig</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Address</span>  <span class="n">string</span> <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;address&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Port</span>     <span class="ne">int</span>    <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;port&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Username</span> <span class="n">string</span> <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;username&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Password</span> <span class="n">string</span> <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;password&#34;</span><span class="err">`</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">RedisConfig</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Host</span>     <span class="kt">string</span> <span class="s">`ini:&#34;host&#34;`</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Port</span>     <span class="kt">int</span>    <span class="s">`ini:&#34;port&#34;`</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Password</span> <span class="kt">string</span> <span class="s">`ini:&#34;password&#34;`</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Database</span> <span class="kt">uint8</span>  <span class="s">`ini:&#34;database&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">RedisConfig</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Host</span>     <span class="n">string</span> <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;host&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Port</span>     <span class="ne">int</span>    <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;port&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Password</span> <span class="n">string</span> <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;password&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Database</span> <span class="n">uint8</span>  <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;database&#34;</span><span class="err">`</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">//嵌套结构体，用于关联配置文件和结构体
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">MysqlConfig</span> <span class="s">`ini:&#34;mysql&#34;`</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">RedisConfig</span> <span class="s">`ini:&#34;redis&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="err">嵌套结构体，用于关联配置文件和结构体</span>
+</span></span><span class="line"><span class="cl"><span class="n">type</span> <span class="n">Config</span> <span class="n">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MysqlConfig</span> <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;mysql&#34;</span><span class="err">`</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RedisConfig</span> <span class="err">`</span><span class="n">ini</span><span class="p">:</span><span class="s2">&#34;redis&#34;</span><span class="err">`</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">loadIni</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//1.参数的校验
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//1.1 传进来的data参数必须是指针类型（因为需要在函数中对其赋值，不使用指针就是修改的副本）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Ptr</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">err</span> <span class="o">:=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;传入的参数不是指针&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">loadIni</span><span class="p">(</span><span class="n">b</span> <span class="p">[]</span><span class="n">byte</span><span class="p">,</span> <span class="n">data</span> <span class="n">interface</span><span class="p">{})</span> <span class="n">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">1.</span><span class="err">参数的校验</span>
+</span></span><span class="line"><span class="cl">	<span class="n">t</span> <span class="p">:</span><span class="o">=</span> <span class="n">reflect</span><span class="o">.</span><span class="n">TypeOf</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">1.1</span> <span class="err">传进来的</span><span class="n">data参数必须是指针类型</span><span class="err">（因为需要在函数中对其赋值，不使用指针就是修改的副本）</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Ptr</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s2">&#34;传入的参数不是指针&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//1.2 传进来的data参数必须是结构体类型指针（因为配置文件中各种键值对需要赋值给结构体字段）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Struct</span> <span class="p">{</span> <span class="c1">//Elem()方法可以由对应的指针函数获取到相应的值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">err</span> <span class="o">:=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;传入的参数不是结构体指针&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">1.2</span> <span class="err">传进来的</span><span class="n">data参数必须是结构体类型指针</span><span class="err">（因为配置文件中各种键值对需要赋值给结构体字段）</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">Elem</span><span class="p">()</span><span class="o">.</span><span class="n">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Struct</span> <span class="p">{</span> <span class="o">//</span><span class="n">Elem</span><span class="p">()</span><span class="err">方法可以由对应的指针函数获取到相应的值</span>
+</span></span><span class="line"><span class="cl">		<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s2">&#34;传入的参数不是结构体指针&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">structName</span> <span class="kt">string</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//2.一行一行的读数据,先将传进来的字节切片以换行切成字符串切片，windows中换行是\r\n
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">lineStr</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="s">&#34;\r\n&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">line</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">lineStr</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//先去掉首尾空格
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">line</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//如果是空行就跳过
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">structName</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="mf">2.</span><span class="err">一行一行的读数据</span><span class="p">,</span><span class="err">先将传进来的字节切片以换行切成字符串切片，</span><span class="n">windows中换行是</span>\<span class="n">r</span>\<span class="n">n</span>
+</span></span><span class="line"><span class="cl">	<span class="n">lineStr</span> <span class="p">:</span><span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">Split</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="s2">&#34;</span><span class="se">\r\n</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">line</span> <span class="p">:</span><span class="o">=</span> <span class="nb">range</span> <span class="n">lineStr</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">先去掉首尾空格</span>
+</span></span><span class="line"><span class="cl">		<span class="n">line</span> <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">TrimSpace</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">如果是空行就跳过</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="k">continue</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 如果是注释就跳过，首字母是#或者;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;#&#34;</span><span class="p">)</span> <span class="o">||</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;;&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="err">如果是注释就跳过，首字母是</span><span class="c1">#或者;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">strings</span><span class="o">.</span><span class="n">HasPrefix</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s2">&#34;#&#34;</span><span class="p">)</span> <span class="o">||</span> <span class="n">strings</span><span class="o">.</span><span class="n">HasPrefix</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s2">&#34;;&#34;</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="k">continue</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">//加判断避免以 ] 开头
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;]&#34;</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">err</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;节点定义错误，line:%d&#34;</span><span class="p">,</span> <span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span><span class="err">加判断避免以</span> <span class="p">]</span> <span class="err">开头</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">strings</span><span class="o">.</span><span class="n">HasPrefix</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s2">&#34;]&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s2">&#34;节点定义错误，line:</span><span class="si">%d</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 如果是[开头就表示是节(section)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;[&#34;</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;]&#39;</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">err</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;节点定义错误，line:%d&#34;</span><span class="p">,</span> <span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="err">如果是</span><span class="p">[</span><span class="err">开头就表示是节</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">strings</span><span class="o">.</span><span class="n">HasPrefix</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s2">&#34;[&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="n">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;]&#39;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s2">&#34;节点定义错误，line:</span><span class="si">%d</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
-</span></span><span class="line"><span class="cl">			<span class="c1">//先切出不包含[]的内容，然后去空格，最好统计长度为0则表示节点中全是空格或者未写
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">sectionName</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">sectionName</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">err</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;节点定义错误，line:%d&#34;</span><span class="p">,</span> <span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">先切出不包含</span><span class="p">[]</span><span class="err">的内容，然后去空格，最好统计长度为</span><span class="mi">0</span><span class="err">则表示节点中全是空格或者未写</span>
+</span></span><span class="line"><span class="cl">			<span class="n">sectionName</span> <span class="p">:</span><span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">TrimSpace</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="n">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">sectionName</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s2">&#34;节点定义错误，line:</span><span class="si">%d</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
-</span></span><span class="line"><span class="cl">			<span class="c1">//根据字符串sectionName去data里面根据反射找到对应的结构体,NumField()返回对应结构体的字段个数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">NumField</span><span class="p">();</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">filed</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">Field</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="c1">//找到对应的结构体
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="k">if</span> <span class="nx">sectionName</span> <span class="o">==</span><span class="nx">filed</span><span class="p">.</span><span class="nx">Tag</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;ini&#34;</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">					<span class="nx">structName</span><span class="p">=</span><span class="nx">filed</span><span class="p">.</span><span class="nx">Name</span>	<span class="c1">//filed.Name指对应结构体名
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">根据字符串</span><span class="n">sectionName去data里面根据反射找到对应的结构体</span><span class="p">,</span><span class="n">NumField</span><span class="p">()</span><span class="err">返回对应结构体的字段个数</span>
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Elem</span><span class="p">()</span><span class="o">.</span><span class="n">NumField</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">filed</span> <span class="p">:</span><span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Elem</span><span class="p">()</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">//</span><span class="err">找到对应的结构体</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="n">sectionName</span> <span class="o">==</span><span class="n">filed</span><span class="o">.</span><span class="n">Tag</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s2">&#34;ini&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="n">structName</span><span class="o">=</span><span class="n">filed</span><span class="o">.</span><span class="n">Name</span>	<span class="o">//</span><span class="n">filed</span><span class="o">.</span><span class="n">Name指对应结构体名</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="c1">// 不是节点才是需要的键值对
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">//	1.1 以等号分隔这一行，等号左边是key，右边是value
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">//如果不包含=，行首或者行位是=就抛出错误
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Index</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span><span class="s">&#34;=&#34;</span><span class="p">)</span> <span class="o">==-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span><span class="s">&#34;=&#34;</span><span class="p">)</span><span class="o">||</span><span class="nx">strings</span><span class="p">.</span><span class="nf">HasSuffix</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span><span class="s">&#34;=&#34;</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">err</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;第%d行语法错误&#34;</span><span class="p">,</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span> <span class="err">不是节点才是需要的键值对</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span>	<span class="mf">1.1</span> <span class="err">以等号分隔这一行，等号左边是</span><span class="n">key</span><span class="err">，右边是</span><span class="n">value</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="err">如果不包含</span><span class="o">=</span><span class="err">，行首或者行位是</span><span class="o">=</span><span class="err">就抛出错误</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">strings</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="s2">&#34;=&#34;</span><span class="p">)</span> <span class="o">==-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">strings</span><span class="o">.</span><span class="n">HasPrefix</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="s2">&#34;=&#34;</span><span class="p">)</span><span class="o">||</span><span class="n">strings</span><span class="o">.</span><span class="n">HasSuffix</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="s2">&#34;=&#34;</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">				<span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s2">&#34;第</span><span class="si">%d</span><span class="s2">行语法错误&#34;</span><span class="p">,</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">idx</span><span class="o">:=</span><span class="nx">strings</span><span class="p">.</span><span class="nf">Index</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span><span class="s">&#34;=&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">key</span><span class="o">:=</span><span class="nx">line</span><span class="p">[:</span><span class="nx">idx</span><span class="p">]</span>			<span class="c1">//ini中的key
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">value</span><span class="o">:=</span><span class="nx">line</span><span class="p">[</span><span class="nx">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>		<span class="c1">//ini中的value
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">//  1.2 根据structName去data里面把对应的嵌套结构体取出来
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">v</span> <span class="o">:=</span><span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">sValue</span><span class="o">:=</span><span class="nx">v</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">FieldByName</span><span class="p">(</span><span class="nx">structName</span><span class="p">)</span>	<span class="c1">//拿到嵌套结构体中的子结构体值信息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">sType</span><span class="o">:=</span><span class="nx">sValue</span><span class="p">.</span><span class="nf">Type</span><span class="p">()</span>						<span class="c1">//拿到嵌套结构体中的子结构体累心信息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">if</span> <span class="nx">sValue</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span><span class="o">!=</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Struct</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">err</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;%s不是一个结构体&#34;</span><span class="p">,</span><span class="nx">structName</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">			<span class="n">idx</span><span class="p">:</span><span class="o">=</span><span class="n">strings</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="s2">&#34;=&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">key</span><span class="p">:</span><span class="o">=</span><span class="n">line</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span>			<span class="o">//</span><span class="n">ini中的key</span>
+</span></span><span class="line"><span class="cl">			<span class="n">value</span><span class="p">:</span><span class="o">=</span><span class="n">line</span><span class="p">[</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>		<span class="o">//</span><span class="n">ini中的value</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span>  <span class="mf">1.2</span> <span class="err">根据</span><span class="n">structName去data里面把对应的嵌套结构体取出来</span>
+</span></span><span class="line"><span class="cl">			<span class="n">v</span> <span class="p">:</span><span class="o">=</span><span class="n">reflect</span><span class="o">.</span><span class="n">ValueOf</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">sValue</span><span class="p">:</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">Elem</span><span class="p">()</span><span class="o">.</span><span class="n">FieldByName</span><span class="p">(</span><span class="n">structName</span><span class="p">)</span>	<span class="o">//</span><span class="err">拿到嵌套结构体中的子结构体值信息</span>
+</span></span><span class="line"><span class="cl">			<span class="n">sType</span><span class="p">:</span><span class="o">=</span><span class="n">sValue</span><span class="o">.</span><span class="n">Type</span><span class="p">()</span>						<span class="o">//</span><span class="err">拿到嵌套结构体中的子结构体累心信息</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">sValue</span><span class="o">.</span><span class="n">Kind</span><span class="p">()</span><span class="o">!=</span><span class="n">reflect</span><span class="o">.</span><span class="n">Struct</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s2">&#34;</span><span class="si">%s</span><span class="s2">不是一个结构体&#34;</span><span class="p">,</span><span class="n">structName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
-</span></span><span class="line"><span class="cl">			<span class="kd">var</span> <span class="nx">filedName</span> <span class="kt">string</span>
-</span></span><span class="line"><span class="cl">			<span class="kd">var</span> <span class="nx">filedType</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">StructField</span>
-</span></span><span class="line"><span class="cl">			<span class="c1">// 1.3 遍历嵌套结构体的每一个字段，判断tag是否等于key
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">for</span> <span class="nx">i</span><span class="o">:=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="p">&lt;</span><span class="nx">sValue</span><span class="p">.</span><span class="nf">NumField</span><span class="p">();</span><span class="nx">i</span><span class="o">++</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">filed</span><span class="o">:=</span><span class="nx">sType</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>	<span class="c1">//找到对应子结构体的成员
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="nx">filedType</span><span class="p">=</span><span class="nx">filed</span>			<span class="c1">//tag是存储在类型信息中的
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="c1">//将结构体ini的字段和配置文件中的字段进行比较，相等则赋值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="k">if</span> <span class="nx">filed</span><span class="p">.</span><span class="nx">Tag</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;ini&#34;</span><span class="p">)</span><span class="o">==</span><span class="nx">key</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">					<span class="nx">filedName</span><span class="p">=</span><span class="nx">filed</span><span class="p">.</span><span class="nx">Name</span>	<span class="c1">//filed.Name返回结构体的成员名
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>					<span class="k">break</span>
+</span></span><span class="line"><span class="cl">			<span class="k">var</span> <span class="n">filedName</span> <span class="n">string</span>
+</span></span><span class="line"><span class="cl">			<span class="k">var</span> <span class="n">filedType</span> <span class="n">reflect</span><span class="o">.</span><span class="n">StructField</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span> <span class="mf">1.3</span> <span class="err">遍历嵌套结构体的每一个字段，判断</span><span class="n">tag是否等于key</span>
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="n">i</span><span class="p">:</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">sValue</span><span class="o">.</span><span class="n">NumField</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">filed</span><span class="p">:</span><span class="o">=</span><span class="n">sType</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>	<span class="o">//</span><span class="err">找到对应子结构体的成员</span>
+</span></span><span class="line"><span class="cl">				<span class="n">filedType</span><span class="o">=</span><span class="n">filed</span>			<span class="o">//</span><span class="n">tag是存储在类型信息中的</span>
+</span></span><span class="line"><span class="cl">				<span class="o">//</span><span class="err">将结构体</span><span class="n">ini的字段和配置文件中的字段进行比较</span><span class="err">，相等则赋值</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="n">filed</span><span class="o">.</span><span class="n">Tag</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s2">&#34;ini&#34;</span><span class="p">)</span><span class="o">==</span><span class="n">key</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="n">filedName</span><span class="o">=</span><span class="n">filed</span><span class="o">.</span><span class="n">Name</span>	<span class="o">//</span><span class="n">filed</span><span class="o">.</span><span class="n">Name返回结构体的成员名</span>
+</span></span><span class="line"><span class="cl">					<span class="k">break</span>
 </span></span><span class="line"><span class="cl">				<span class="p">}</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
-</span></span><span class="line"><span class="cl">			<span class="c1">//for循环过后如果filedName为0则表示在结构体中没找到这个字段，直接跳过
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">filedName</span><span class="p">)</span> <span class="o">==</span><span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span><span class="n">for循环过后如果filedName为0则表示在结构体中没找到这个字段</span><span class="err">，直接跳过</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">filedName</span><span class="p">)</span> <span class="o">==</span><span class="mi">0</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">				<span class="k">continue</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
-</span></span><span class="line"><span class="cl">			<span class="c1">// 1.4 根据filedName取出这个字段并赋值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">filedObj</span><span class="o">:=</span><span class="nx">sValue</span><span class="p">.</span><span class="nf">FieldByName</span><span class="p">(</span><span class="nx">filedName</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">			<span class="k">switch</span> <span class="nx">filedType</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">String</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">filedObj</span><span class="p">.</span><span class="nf">SetString</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Int</span><span class="p">,</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Int8</span><span class="p">,</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Int16</span><span class="p">,</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Int32</span><span class="p">,</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Int64</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">valueInt</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseInt</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">64</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">					<span class="nx">err</span><span class="p">=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;int转换失败,line:%d&#34;</span><span class="p">,</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">					<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">			<span class="o">//</span> <span class="mf">1.4</span> <span class="err">根据</span><span class="n">filedName取出这个字段并赋值</span>
+</span></span><span class="line"><span class="cl">			<span class="n">filedObj</span><span class="p">:</span><span class="o">=</span><span class="n">sValue</span><span class="o">.</span><span class="n">FieldByName</span><span class="p">(</span><span class="n">filedName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">switch</span> <span class="n">filedType</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Kind</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">String</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="n">filedObj</span><span class="o">.</span><span class="n">SetString</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span><span class="n">reflect</span><span class="o">.</span><span class="n">Int8</span><span class="p">,</span><span class="n">reflect</span><span class="o">.</span><span class="n">Int16</span><span class="p">,</span><span class="n">reflect</span><span class="o">.</span><span class="n">Int32</span><span class="p">,</span><span class="n">reflect</span><span class="o">.</span><span class="n">Int64</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="n">valueInt</span><span class="p">,</span><span class="n">err</span><span class="p">:</span><span class="o">=</span><span class="n">strconv</span><span class="o">.</span><span class="n">ParseInt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="n">err</span><span class="o">!=</span><span class="n">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="n">err</span><span class="o">=</span><span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s2">&#34;int转换失败,line:</span><span class="si">%d</span><span class="s2">&#34;</span><span class="p">,</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">					<span class="k">return</span> <span class="n">err</span>
 </span></span><span class="line"><span class="cl">				<span class="p">}</span>
-</span></span><span class="line"><span class="cl">				<span class="nx">filedObj</span><span class="p">.</span><span class="nf">SetInt</span><span class="p">(</span><span class="nx">valueInt</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="n">filedObj</span><span class="o">.</span><span class="n">SetInt</span><span class="p">(</span><span class="n">valueInt</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">			<span class="p">}</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">nil</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">cfg</span> <span class="nx">Config</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//使用ReadFile可以直接将文件内容全部读取出来，然后存进变量。
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//用os.open()来一行行的读取会让程序运行时文件一直处于打开状态
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">buf</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadFile</span><span class="p">(</span><span class="s">&#34;./config.ini&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;read file faild,err:%v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">cfg</span> <span class="n">Config</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">使用</span><span class="n">ReadFile可以直接将文件内容全部读取出来</span><span class="err">，然后存进变量。</span>
+</span></span><span class="line"><span class="cl">	<span class="o">//</span><span class="err">用</span><span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">()</span><span class="err">来一行行的读取会让程序运行时文件一直处于打开状态</span>
+</span></span><span class="line"><span class="cl">	<span class="n">buf</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadFile</span><span class="p">(</span><span class="s2">&#34;./config.ini&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;read file faild,err:%v</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">		<span class="k">return</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">err</span> <span class="p">=</span> <span class="nf">loadIni</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">cfg</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;loadIni file faild,err:%v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">err</span> <span class="o">=</span> <span class="n">loadIni</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cfg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s2">&#34;loadIni file faild,err:%v</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">		<span class="k">return</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
