@@ -186,22 +186,28 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#api文件">api文件</a></li>
-    <li><a href="#proto文件">proto文件</a></li>
-    <li><a href="#model文件">model文件</a></li>
-    <li><a href="#dockerfile文件">dockerFile文件</a></li>
-    <li><a href="#k8s的yaml文件">k8s的yaml文件</a></li>
-  </ol>
-
-  <ol>
-    <li><a href="#初始化">初始化</a></li>
-    <li><a href="#事务">事务</a></li>
-    <li><a href="#日志">日志</a></li>
-    <li><a href="#携程">携程</a></li>
-    <li><a href="#连接rpc">连接rpc</a></li>
-    <li><a href="#rpc拦截器">rpc拦截器</a></li>
-    <li><a href="#传参校验">传参校验</a></li>
-    <li><a href="#生成模板">生成模板</a></li>
+    <li><a href="#安装依赖">安装依赖</a></li>
+    <li><a href="#生成">生成</a>
+      <ol>
+        <li><a href="#api文件">api文件</a></li>
+        <li><a href="#proto文件">proto文件</a></li>
+        <li><a href="#model文件">model文件</a></li>
+        <li><a href="#dockerfile文件">dockerFile文件</a></li>
+        <li><a href="#k8s的yaml文件">k8s的yaml文件</a></li>
+      </ol>
+    </li>
+    <li><a href="#操作集">操作集</a>
+      <ol>
+        <li><a href="#初始化">初始化</a></li>
+        <li><a href="#事务">事务</a></li>
+        <li><a href="#日志">日志</a></li>
+        <li><a href="#携程">携程</a></li>
+        <li><a href="#连接rpc">连接rpc</a></li>
+        <li><a href="#rpc拦截器">rpc拦截器</a></li>
+        <li><a href="#传参校验">传参校验</a></li>
+        <li><a href="#生成模板">生成模板</a></li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>
@@ -267,7 +273,7 @@
     <section class="article-content">
     
     
-    <h1 id="安装依赖">安装依赖</h1>
+    <h2 id="安装依赖">安装依赖</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -304,8 +310,8 @@
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">https://go-zero.dev/docs/tutorials
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h1 id="生成">生成</h1>
-<h2 id="api文件">api文件</h2>
+</div><h2 id="生成">生成</h2>
+<h3 id="api文件">api文件</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -431,7 +437,7 @@
 </div>
 </div><p>含义是生成go的api，api文件地址是当前的 *.api，生成地址是上一级，命令风格是驼峰goZero，如果是 <code>gozero</code>，z小写则意味着生成的结构体都是纯小写命名</p>
 <p>在 .api 文件中设置的中间件是局部中间件，如果要设置全局中间件则需要在main函数中通过 <code>server.Use(middleware.NewMiddleware().Handle)</code> 来设置，执行流程是先执行全局中间件然后再是局部中间件</p>
-<h2 id="proto文件">proto文件</h2>
+<h3 id="proto文件">proto文件</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -507,7 +513,7 @@
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">protoc -I ./ --go_out=paths=source_relative:. --go-grpc_out=paths=source_relative:. test1.proto
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="model文件">model文件</h2>
+</div><h3 id="model文件">model文件</h3>
 <p>直接输入命令:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -568,7 +574,7 @@
 </span></span><span class="line"><span class="cl">goctl model mysql datasource -url<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">username</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">passwd</span><span class="si">}</span><span class="s2">@tcp(</span><span class="si">${</span><span class="nv">host</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">port</span><span class="si">}</span><span class="s2">)/</span><span class="si">${</span><span class="nv">dbname</span><span class="si">}</span><span class="s2">&#34;</span> -table<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">tables</span><span class="si">}</span><span class="s2">&#34;</span>  -dir<span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">modeldir</span><span class="si">}</span><span class="s2">&#34;</span> --style<span class="o">=</span>goZero
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="dockerfile文件">dockerFile文件</h2>
+</div><h3 id="dockerfile文件">dockerFile文件</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -578,7 +584,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>基于user.go 生成dockerFile文件，user.go中有main函数</p>
-<h2 id="k8s的yaml文件">k8s的yaml文件</h2>
+<h3 id="k8s的yaml文件">k8s的yaml文件</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -587,8 +593,8 @@
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">goctl kube deploy -name user-api -namespace zerodemo -image user-api:v1.0 -o user-api.yaml -port 1001
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h1 id="操作集">操作集</h1>
-<h2 id="初始化">初始化</h2>
+</div><h2 id="操作集">操作集</h2>
+<h3 id="初始化">初始化</h3>
 <p>如果要操作DB或者要调用远端grpc函数或者增加中间件首先在 yaml文件中配置好，并需要在conf和svc中进行初始化</p>
 <p>config文件夹 config.go:</p>
 <div class="highlight"><div class="chroma">
@@ -650,7 +656,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>main函数会调用new来初始化这些对象，随后在会话中通过接受者的svcCtx来调用这些对象方法</p>
-<h2 id="事务">事务</h2>
+<h3 id="事务">事务</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -682,7 +688,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果要操作事务，一定要用一个会话来进行操作，即连接是 <code>sqlx.Session</code> 而不是 <code>sqlx.SqlConn</code></p>
-<h2 id="日志">日志</h2>
+<h3 id="日志">日志</h3>
 <p>在开发环境中，日志使用go-zero的logx包打印信息，如果使用Path来保存日志，需要关注的就是slow.log和error.log，slow关注慢查询，error是灾难型错误</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -710,7 +716,7 @@
 </span></span><span class="line"><span class="cl">  Encoding: plain
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="携程">携程</h2>
+</div><h3 id="携程">携程</h3>
 <p>如果使用 <code>go func(){}</code> 来起一个携程，有时会忘记对它进行recover操作，因此可以使用 <code>threading.GoSafe</code> 的方式来安全的启动一个携程，它底层本身也只是对携程进行一个封装，附带了一个当前函数区间的recover，避免panic没有被捕获，也可以自己对goroutinue进行封装</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -758,7 +764,7 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="连接rpc">连接rpc</h2>
+</div><h3 id="连接rpc">连接rpc</h3>
 <p>通常上层连接底层需要先在配置文件中配置，并在config对象中定义和后续初始化</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -834,7 +840,7 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="rpc拦截器">rpc拦截器</h2>
+</div><h3 id="rpc拦截器">rpc拦截器</h3>
 <p>它的作用和中间件比较类似，所有的请求在进入内部方法之前都会先经过拦截器，不过没有next之类的方法</p>
 <p>rpc通过在main函数中使用 <code>s.AddUnaryInterceptors()</code> 来进行拦截</p>
 <div class="highlight"><div class="chroma">
@@ -935,7 +941,7 @@
 </span></span><span class="line"><span class="cl">	}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="传参校验">传参校验</h2>
+</div><h3 id="传参校验">传参校验</h3>
 <p>go-zero自带的校验能力较弱，推荐使用第三方校验库，如 <code>https://github.com/go-playground/validator</code></p>
 <p>如果使用第三方库校验，就需要在 .api 文件中添加它的tag校验语句</p>
 <div class="highlight"><div class="chroma">
@@ -974,7 +980,7 @@
 </span></span><span class="line"><span class="cl">	if err != nil {
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="生成模板">生成模板</h2>
+</div><h3 id="生成模板">生成模板</h3>
 <p>如果go-zero默认的模板不适合自己的项目，可以修改模板文件，让其匹配自身的项目</p>
 <p>通过 <code>goctl template init</code> 会在家目录下的 <code>.goctl</code> 下生成对应版本的模板文件，之后使用goctl 生成代码时就会使用此目录的模板，就可以通过修改家目录下的模板文件修改生成的代码内容，如果不init则是使用默认模板</p>
 <p>不过这种方法只适合个人开发，如果是团队开发还是建议提交到git，让所有人都能通过这个模板生成一样的架构文件，避免混乱。成员可以clone下模板项目，然后在生成代码时通过 <code>--home=模板文件夹地址</code> 来指定使用哪个模板生成go-zero代码</p>
