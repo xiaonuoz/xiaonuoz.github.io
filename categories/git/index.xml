@@ -198,6 +198,10 @@
 &lt;li&gt;找空架子项目：go-gin starter/go boilerplate   找相应技术的空脚架&lt;/li&gt;
 &lt;li&gt;找技术教程：go tutorial   找相应教程&lt;/li&gt;
 &lt;/ul&gt;
+&lt;h2 id=&#34;命令&#34;&gt;命令：&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;git fetch --prune&lt;/code&gt; : 从远端获取最新的分支信息并清理不再存在于远程的本地分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git branch -d branch_name&lt;/code&gt; : 删除本地分支&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push origin --delete branch_name&lt;/code&gt; : 删除远端分支&lt;/p&gt;
 </description>
         </item>
         
