@@ -15,6 +15,9 @@
 <meta name="twitter:description" content="gorm介绍 安装 1 go get -u github.com/jinzhu/gorm 连接数据库 连接不同的数据库都需要导入对应数据的驱动程序，GORM已经贴心的包装了一些驱动程序，只需要按如下方式导入">
     <link rel="shortcut icon" href="/favicon.ico" />
 
+  
+
+
     </head>
     <body class="
     article-page
@@ -138,6 +141,25 @@
         
 
         <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://xiaonuoz.github.io/" selected>中文</option>
+                        
+                    </select>
+                </li>
+            
             
             
                 <li id="dark-mode-toggle">
@@ -333,7 +355,7 @@
     <header class="article-category">
         
             <a href="/categories/golang/" >
-                golang
+                Golang
             </a>
         
     </header>
@@ -1573,7 +1595,7 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;amount &gt; ?&#34;</span><span class="p">,</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Table</span><span class="p">(</span><span class="s">&#34;orders&#34;</span><span class="p">).</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;AVG(amount)&#34;</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;state = ?&#34;</span><span class="p">,</span> <span class="s">&#34;paid&#34;</span><span class="p">).</span><span class="nf">SubQuery</span><span class="p">()).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">orders</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;amount &gt; ?&#34;</span><span class="p">,</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Table</span><span class="p">(</span><span class="s">&#34;orders&#34;</span><span class="p">).</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;AVG(amount)&#34;</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;state = ?&#34;</span><span class="p">,</span> <span class="s">&#34;paid&#34;</span><span class="p">)).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">orders</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM &#34;orders&#34;  WHERE &#34;orders&#34;.&#34;deleted_at&#34; IS NULL AND (amount &gt; (SELECT AVG(amount) FROM &#34;orders&#34;  WHERE (state = &#39;paid&#39;)));
 </span></span></span></code></pre></td></tr></table>
 </div>
@@ -2502,7 +2524,7 @@
         
             2022 - 
         
-        2023 笑傩
+        2024 笑傩
     </section>
     
     <section class="powerby">

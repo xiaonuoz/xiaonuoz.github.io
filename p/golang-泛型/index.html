@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数再指明这些类型。ーー换句话说，在编写某些代码或数据'>
+<title>golang 泛型</title>
+
+<link rel='canonical' href='https://xiaonuoz.github.io/p/golang-%E6%B3%9B%E5%9E%8B/'>
+
+<link rel="stylesheet" href="/scss/style.min.5470349c9ee04f592bc7c1dcd2e028072cd1dec2a37467ccfd4c5ecaf180dcaa.css"><meta property='og:title' content='golang 泛型'>
+<meta property='og:description' content='泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数再指明这些类型。ーー换句话说，在编写某些代码或数据'>
+<meta property='og:url' content='https://xiaonuoz.github.io/p/golang-%E6%B3%9B%E5%9E%8B/'>
+<meta property='og:site_name' content='笑傩'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-05-10T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-05-10T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="golang 泛型">
+<meta name="twitter:description" content="泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数再指明这些类型。ーー换句话说，在编写某些代码或数据">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu89d70501dbd1e038dcbf309839bfe7a9_213951_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">笑傩</a></h1>
+            <h2 class="site-description">永远不要高估自己~</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonuoz'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://xiaonuoz.github.io/" selected>中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#泛型的作用">泛型的作用</a></li>
+    <li><a href="#语法">语法</a>
+      <ol>
+        <li><a href="#实例化">实例化</a></li>
+        <li><a href="#类型参数的使用">类型参数的使用</a></li>
+        <li><a href="#类型约束">类型约束</a></li>
+        <li><a href="#类型集">类型集</a>
+          <ol>
+            <li><a href="#any-接口">any 接口</a></li>
+          </ol>
+        </li>
+        <li><a href="#类型推断">类型推断</a>
+          <ol>
+            <li><a href="#函数参数类型推断">函数参数类型推断</a></li>
+            <li><a href="#约束类型推断">约束类型推断</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#使用场景">使用场景</a>
+      <ol>
+        <li><a href="#可以使用的场景">可以使用的场景</a>
+          <ol>
+            <li><a href="#使用语言定义的容器类型时-mapslice和channel">使用语言定义的容器类型时 (map、slice和channel)</a></li>
+            <li><a href="#通用数据结构-二叉树链表">通用数据结构 (二叉树、链表)</a></li>
+            <li><a href="#泛型优先选择函数而不是方法">泛型优先选择函数而不是方法</a></li>
+            <li><a href="#实现通用方法">实现通用方法</a></li>
+          </ol>
+        </li>
+        <li><a href="#不能使用的场景">不能使用的场景</a>
+          <ol>
+            <li><a href="#不要用泛型替换接口类型考虑可读性">不要用泛型替换接口类型（考虑可读性)</a></li>
+            <li><a href="#如果方法实现不同不要使用类型参数-考虑重复代码问题">如果方法实现不同，不要使用类型参数 （考虑重复代码问题)</a></li>
+            <li><a href="#在适当的地方使用反射">在适当的地方使用反射</a></li>
+          </ol>
+        </li>
+        <li><a href="#简单的指导方针">简单的指导方针</a></li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/golang-%E6%B3%9B%E5%9E%8B/">golang 泛型</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 10, 2024</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数再指明这些类型。ーー换句话说，在编写某些代码或数据结构时，在声明的时候先不提供值的类型（或提供一个可能的类型范围），而在实例化 new时才确定它的类型。使用泛型可以编写出适用于一组类型中的任何一种的函数和类型。</p>
+<h2 id="泛型的作用">泛型的作用</h2>
+<p>假设我们需要实现一个反转切片的功能：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">reverse</span><span class="p">(</span><span class="nx">s</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">l</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">e</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">e</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">r</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nf">reverse</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}))</span>  <span class="c1">// [4 3 2 1]
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>它可以很好的实现这个功能，但是它只能传入int切片类型，如果是float64切片类型就需要重新写一个逻辑一模一样，只有参数和返回值类型不同的函数。如果要传入更多不同类型就需要实现相对于的函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">reverseFloat64Slice</span><span class="p">(</span><span class="nx">s</span> <span class="p">[]</span><span class="kt">float64</span><span class="p">)</span> <span class="p">[]</span><span class="kt">float64</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">l</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">float64</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">e</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">e</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">r</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>一遍遍的写相同逻辑的代码是低效的，实际上这个反转切片的函数并不需要知道切片中元素的类型，但为了适用不同的类型我们把一段代码重复了很多遍。</p>
+<p>在Go1.18之前我们可以尝试使用反射去解决上述问题，但是使用反射在运行期间获取变量类型会降低代码的执行效率，并且失去了编译期的类型检查，它会导致出现意想不到的panic，同时大量的反射代码也会让程序变得晦涩难懂。</p>
+<p>从Go1.18开始，使用泛型就能够编写出适用所有元素类型的“普适版”<code>reverse</code>函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nx">reverseWithGenerics</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">s</span> <span class="p">[]</span><span class="nx">T</span><span class="p">)</span> <span class="p">[]</span><span class="nx">T</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">l</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">T</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">e</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">e</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">r</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="语法">语法</h2>
+<p>泛型为Go语言添加了三个新的重要特性:</p>
+<ol>
+<li>函数和类型的类型参数。</li>
+<li>将接口类型定义为类型集，包括没有方法的类型。</li>
+<li>类型推断，它允许在调用函数时在许多情况下省略类型参数。</li>
+</ol>
+<p>我们都知道参数有形参和实参区别，而新版中对函数和类型增加了类型参数。类型参数列表看起来像普通的参数列表，只不过它使用方括号（<code>[]</code>）而不是圆括号（<code>()</code>）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 类型形参
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nx">reverseWithGenerics</span><span class="p">[</span><span class="nx">T</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">float64</span><span class="p">,</span> <span class="nx">B</span> <span class="nx">any</span><span class="p">](</span><span class="nx">s</span> <span class="p">[]</span><span class="nx">T</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">B</span><span class="p">)</span> <span class="p">[]</span><span class="nx">T</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 类型实参
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">reverseWithGenerics</span><span class="p">[</span><span class="kt">int</span><span class="p">,</span><span class="kt">string</span><span class="p">]([]</span><span class="kt">int</span><span class="p">{},</span><span class="s">&#34;&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>int | float64</code> 就是类型形参的类型约束</p>
+<h3 id="实例化">实例化</h3>
+<p>借助泛型，我们可以声明一个适用于 一组类型 的 <code>min</code> 函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nx">min</span><span class="p">[</span><span class="nx">T</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">float64</span><span class="p">](</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">T</span><span class="p">)</span> <span class="nx">T</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">a</span> <span class="o">&lt;=</span> <span class="nx">b</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">a</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">b</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>它同时支持 <code>int</code>和 <code>float64</code>两种类型，当调用 <code>min</code>函数时，我们既可以传入 <code>int</code>类型的参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">m1</span> <span class="o">:=</span> <span class="nx">min</span><span class="p">[</span><span class="kt">int</span><span class="p">](</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1">// 1
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>也可以传入 <code>float64</code>类型的参数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">m2</span> <span class="o">:=</span> <span class="nx">min</span><span class="p">[</span><span class="kt">float64</span><span class="p">](</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">)</span>  <span class="c1">// -0.2
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>在调用函数时提供的类型参数称为实例化（ <em>instantiation</em> ），它就是在调用时确定传入函数的参数到底是什么类型。</p>
+<p>类型实例化分两步进行：</p>
+<ol>
+<li>首先，编译器在整个泛型函数或类型中将所有类型形参（type parameters）替换为它们各自的类型实参（type arguments）。</li>
+<li>其次，编译器验证每个类型参数是否满足相应的约束。</li>
+</ol>
+<p>在实例化之后，我们将得到一个非泛型函数（已经确定参数类型），它可以像任何其他函数一样被调用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">fmin</span> <span class="o">:=</span> <span class="nx">min</span><span class="p">[</span><span class="kt">float64</span><span class="p">]</span> <span class="c1">// 类型实例化，编译器生成T=float64的min函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">m2</span> <span class="p">=</span> <span class="nf">fmin</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">)</span>  <span class="c1">// 1.2
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>而如果使用 实例化并调用 的语法时，参数类型是可以省略的，这属于是语法糖，go会根据实际传的参数获取其具体类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">m2</span> <span class="o">:=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">3.14</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>	<span class="c1">// min[float64](3.14, 4)
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="类型参数的使用">类型参数的使用</h3>
+<p>除了函数中支持使用类型参数列表外，类型也可以使用类型参数列表。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Slice</span><span class="p">[</span><span class="nx">T</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">string</span><span class="p">]</span> <span class="p">[]</span><span class="nx">T</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Map</span><span class="p">[</span><span class="nx">K</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">V</span> <span class="kt">float32</span> <span class="p">|</span> <span class="kt">float64</span><span class="p">]</span> <span class="kd">map</span><span class="p">[</span><span class="nx">K</span><span class="p">]</span><span class="nx">V</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Tree</span><span class="p">[</span><span class="nx">T</span> <span class="kd">interface</span><span class="p">{}]</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">left</span><span class="p">,</span> <span class="nx">right</span> <span class="o">*</span><span class="nx">Tree</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">value</span>       <span class="nx">T</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span><span class="p">[</span><span class="nx">T</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">float64</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Bance</span> <span class="nx">T</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在上述泛型类型中，<code>T</code>、<code>K</code>、<code>V</code>都属于类型形参，类型形参后面是类型约束，类型实参需要满足对应的类型约束。</p>
+<p>泛型类型可以有方法，例如为上面的 <code>Tree</code>实现一个查找元素的 <code>Lookup</code>方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Tree</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nf">Lookup</span><span class="p">(</span><span class="nx">x</span> <span class="nx">T</span><span class="p">)</span> <span class="o">*</span><span class="nx">Tree</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>而如果要使用泛型类型，就必须先进行实例化，确定其泛型的具体类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">stringTree</span> <span class="nx">Tree</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">user</span> <span class="nx">User</span><span class="p">[</span><span class="kt">float64</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="类型约束">类型约束</h3>
+<p>普通函数中的每个参数都有一个类型; 该类型定义一系列值的集合。比如非泛型函数 <code>minFloat64</code>声明了参数的类型为 <code>float64</code>，那么在函数调用时允许传入的实参就必须是 <code>float64</code>类型的浮点数值。</p>
+<p>类似于参数都有对应的参数类型，类型参数也有一个类型约束。类型约束定义了一个类型集，只有在这个类型集中的类型才能用作类型实参。</p>
+<p><strong>Go语言中的类型约束是接口类型。</strong></p>
+<p>类型约束有两种定义方式：</p>
+<ul>
+<li>类型约束接口可以直接在类型参数列表中使用。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 类型约束字面量，通常外层interface{}可省略
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nx">min</span><span class="p">[</span><span class="nx">T</span> <span class="kd">interface</span><span class="p">{</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">float64</span> <span class="p">}](</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">T</span><span class="p">)</span> <span class="nx">T</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>作为类型约束使用的接口类型可以事先定义并支持复用。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 事先定义好的类型约束类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Value</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="p">|</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nx">min</span><span class="p">[</span><span class="nx">T</span> <span class="nx">Value</span><span class="p">](</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">T</span><span class="p">)</span> <span class="nx">T</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在使用类型约束时，如果省略了外层的 <code>interface{}</code>会引起歧义，那么就不能省略。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">IntPtrSlice</span> <span class="p">[</span><span class="nx">T</span> <span class="o">*</span><span class="kt">int</span><span class="p">]</span> <span class="p">[]</span><span class="nx">T</span>  <span class="c1">// 会产生歧义，被当成T 乘以 int，编译都过不了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">IntPtrSlice</span><span class="p">[</span><span class="nx">T</span> <span class="o">*</span><span class="kt">int</span><span class="p">,]</span> <span class="p">[]</span><span class="nx">T</span>  <span class="c1">// 只有一个类型约束时可以添加`,`消除歧义
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">IntPtrSlice</span><span class="p">[</span><span class="nx">T</span> <span class="kd">interface</span><span class="p">{</span> <span class="o">*</span><span class="kt">int</span> <span class="p">}]</span> <span class="p">[]</span><span class="nx">T</span> <span class="c1">// 使用interface{}包裹
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="类型集">类型集</h3>
+<p>Go1.18开始接口类型的定义发生了改变，由过去的接口类型定义方法集（method set，定义有哪些方法）变成了接口类型定义类型集（type set，即可以定义方法又可以进行类型约束，但是不能在一个interface中定义类型约束同时又定义方法，因为类型约束和接口是两个不同的概念，可以分两个接口，一个定义方法一个类型约束即可）。</p>
+<p>把接口类型当做类型集相较于方法集有一个优势: 我们可以显式地向集合添加类型，从而以新的方式控制类型集。</p>
+<p>Go语言扩展了接口类型的语法，让我们能够向接口中添加类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">V</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="p">|</span> <span class="kt">string</span> <span class="p">|</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>一个接口不仅可以嵌入其他接口，还可以嵌入任何类型、类型的联合或共享相同底层类型的无限类型集合。</p>
+<p>当用作类型约束时，由接口定义的类型集可以精确地指定允许作为相应类型参数的类型。</p>
+<ul>
+<li>
+<p><code>|</code> 符号</p>
+<p><code>T1 | T2</code> 表示类型约束为T1和T2这两个类型的并集（OR），例如下面的 <code>Integer</code>类型表示可以是 <code>Signed</code>和 <code>Unsigned</code>类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Integer</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Signed</span> <span class="p">|</span> <span class="nx">Unsigned</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>~</code> 符号</p>
+<p><code>~T</code> 表示所有底层类型是T的类型，例如 <code>~string</code>表示所有底层类型是 <code>string</code>的类型集合。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Slice</span><span class="p">[</span><span class="nx">T</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">int32</span><span class="p">]</span> <span class="p">[]</span><span class="nx">T</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MyInt</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">a</span> <span class="nx">Slice</span><span class="p">[</span><span class="nx">MyInt</span><span class="p">]</span> <span class="c1">// 错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// MyInt底层类型是int，但其本身并不是int，所以不能用于Slice[T int | int32]的实例化。
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 可以使用 ~int 的写法，表示所有以int为底层类型的类型都可以用于实例化。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Slice</span><span class="p">[</span><span class="nx">T</span> <span class="p">~</span><span class="kt">int</span> <span class="p">|</span> <span class="p">~</span><span class="kt">int32</span><span class="p">]</span> <span class="p">[]</span><span class="nx">T</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MyInt</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">a</span> <span class="nx">Slice</span><span class="p">[</span><span class="nx">MyInt</span><span class="p">]</span> <span class="c1">// 正确
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注意：</strong> <code>~</code>符号后面只能是基本类型。要注意的是切片也是基础类型，如果非要使用结构体之类的复合类型就需要设置成切片</p>
+</li>
+</ul>
+<p>接口作为类型集是一种强大的新机制，是使类型约束能够生效的关键。</p>
+<h4 id="any-接口">any 接口</h4>
+<p>由于 <code>interface{}</code> 的定义发生了变更，Go 1.18提供了新的等价关键词any。且Go官方推荐所有使用空接口的地方都使用any替换。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// src/builtin/builtin.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">any</span> <span class="p">=</span> <span class="kd">interface</span><span class="p">{}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Go 1.18内置了comparable约束，它表示所有 可以用 != 和 == 进行对比的类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// comparable is an interface that is implemented by all comparable types
+</span></span></span><span class="line"><span class="cl"><span class="c1">// (booleans, numbers, strings, pointers, channels, arrays of comparable types,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// structs whose fields are all comparable types).
+</span></span></span><span class="line"><span class="cl"><span class="c1">// The comparable interface may only be used as a type parameter constraint,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// not as the type of a variable.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">comparable</span> <span class="kd">interface</span><span class="p">{</span> <span class="nx">comparable</span> <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://pkg.go.dev/golang.org/x/exp/constraints"  target="_blank" rel="noopener"
+    >https://pkg.go.dev/golang.org/x/exp/constraints</a> 包提供了一些常用类型。</p>
+<h3 id="类型推断">类型推断</h3>
+<h4 id="函数参数类型推断">函数参数类型推断</h4>
+<p>对于类型参数，需要传递类型参数，这可能导致代码冗长。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nx">min</span><span class="p">[</span><span class="nx">T</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">float64</span><span class="p">](</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">T</span><span class="p">)</span> <span class="nx">T</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>类型形参 <code>T</code>用于指定 <code>a</code>和 <code>b</code>的类型。我们可以使用显式类型实参调用它：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">m</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="cl"><span class="nx">m</span> <span class="p">=</span> <span class="nx">min</span><span class="p">[</span><span class="kt">float64</span><span class="p">](</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="c1">// 显式指定类型实参
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>在许多情况下，编译器可以从普通参数推断 <code>T</code> 的类型实参。这使得代码更短，同时保持清晰。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">m</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="cl"><span class="nx">m</span> <span class="p">=</span> <span class="nb">min</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="c1">// 无需指定类型实参
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这种从实参的类型推断出函数的类型实参的推断称为函数实参类型推断。函数实参类型推断只适用于函数参数中使用的类型参数，而不适用于仅在函数返回值结果中或仅在函数体中使用的类型参数。例如，它不适用于像 <code>MakeT [ T any ]() T</code> 这样的函数，因为它只使用 <code>T</code> 表示结果，这种就必须在调用时指定T的具体类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nx">Test</span><span class="p">[</span><span class="nx">T</span> <span class="kt">int</span> <span class="p">|</span> <span class="kt">float32</span><span class="p">]()</span> <span class="nx">T</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">T</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">m</span> <span class="o">:=</span> <span class="nx">Test</span><span class="p">[</span><span class="kt">float32</span><span class="p">]()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="约束类型推断">约束类型推断</h4>
+<p>Go 语言支持另一种类型推断，即 <em>约束类型推断</em> 。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Scale 返回切片中每个元素都乘c的副本切片
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nx">Scale</span><span class="p">[</span><span class="nx">E</span> <span class="nx">constraints</span><span class="p">.</span><span class="nx">Integer</span><span class="p">](</span><span class="nx">s</span> <span class="p">[]</span><span class="nx">E</span><span class="p">,</span> <span class="nx">c</span> <span class="nx">E</span><span class="p">)</span> <span class="p">[]</span><span class="nx">E</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">E</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">v</span> <span class="o">*</span> <span class="nx">c</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">r</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这是一个泛型函数，它适用于任何整数类型的切片。</p>
+<p>假设我们有一个多维坐标的 <code>Point</code> 类型，其中每个 <code>Point</code> 是一个给出点坐标的整数列表。这种类型通常会实现一些业务方法，这里假设它有一个 <code>String</code>方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Point</span> <span class="p">[]</span><span class="kt">int32</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">Point</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">b</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于一个 <code>Point</code>其实就是一个整数切片，我们可以使用前面编写的 <code>Scale</code>函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ScaleAndPrint</span><span class="p">(</span><span class="nx">p</span> <span class="nx">Point</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span> <span class="o">:=</span> <span class="nf">Scale</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span> <span class="c1">// 编译失败
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>不幸的是，这代码会编译失败，输出 <code>r.String undefined (type []int32 has no field or method String</code>的错误。</p>
+<p>原因是 <code>Scale</code>函数返回类型为 <code>[]E</code>的值，其中 <code>E</code>是参数切片的元素类型。使用 <code>Point</code>类型的值调用 <code>Scale</code>（其基础类型为[]int32）时，我们返回的是 <code>[]int32</code>类型的值，而不是 <code>Point</code>类型。<code>[]int32</code> 并没有 <code>String()</code> 方法。</p>
+<p>为了解决这个问题，我们必须更改 <code>Scale</code> 函数，以便为切片类型使用类型参数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nx">Scale</span><span class="p">[</span><span class="nx">S</span> <span class="p">~[]</span><span class="nx">E</span><span class="p">,</span> <span class="nx">E</span> <span class="nx">constraints</span><span class="p">.</span><span class="nx">Integer</span><span class="p">](</span><span class="nx">s</span> <span class="nx">S</span><span class="p">,</span> <span class="nx">c</span> <span class="nx">E</span><span class="p">)</span> <span class="nx">S</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">v</span> <span class="o">*</span> <span class="nx">c</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">r</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>引入了一个新的类型参数 <code>S</code>，它是切片参数的类型。我们对它进行了约束，使得基础类型是 <code>S</code>而不是 <code>[]E</code>，函数返回的结果类型现在是 <code>S</code>。由于 <code>E</code>被约束为整数，因此效果与之前相同：第一个参数必须是某个整数类型的切片。对函数体的唯一更改是，现在我们在调用 <code>make</code>时传递 <code>S</code>，而不是 <code>[]E</code>。</p>
+<p>现在这个 <code>Scale</code>函数，不仅支持传入普通整数切片参数，也支持传入 <code>Point</code>类型参数。</p>
+<p>这样将p作为S传入时就不会强转成 <code>[]int32</code>切片类型，因为在泛型定义中已经表示了  <code>S ~[]E </code>，而定义是 <code>type Point []int32</code>。将其改成显式类型参数就能一目了然，<code>Scale[Point,int32](p,2)</code>，S就是Point所以不会发生强转，返回值也直接就是S 即Point。</p>
+<p><code>Scale</code> 函数有两个类型参数——<code>S</code> 和 <code>E</code>。在不传递任何类型参数的 <code>Scale(p, 2)</code> 调用中，函数参数类型推断让编译器推断 <code>S</code> 的类型参数是 <code>Point</code>。但是这个函数也有一个类型参数 <code>E</code>，它是乘法因子 <code>c</code> 的类型。相应的函数参数是 <code>2</code>，因为 <code>2</code>是一个非类型化的常量，函数参数类型推断不能推断出 <code>E</code> 的正确类型(它可以推断出 <code>2</code>的默认类型是 <code>int</code>，而这是错误的，因为Point 的基础类型是 <code>[]int32</code>)。相反，编译器推断  <code>E</code> 的类型参数 就是 切片的元素类型 的过程称为 <strong>约束类型推断</strong> 。</p>
+<p>约束类型推断 就是从 类型参数 的约束来推导其他类型参数。当一个类型参数 具有 另一个类型参数定义的约束，而其中一个类型参数已知其具体类型时，约束类型推断 就可以 以此推断出另一个类型参数的具体类型。</p>
+<p>通常的情况是，当一个约束 对某种类型使用 <em>~type</em> 形式时，该类型是使用其他类型参数编写的。我们在 <code>Scale</code> 的例子中看到了这一点。<code>S</code> 是 <code>~[]E</code>，后面跟着一个用另一个类型参数写的类型 <code>[]E</code>。如果我们知道了 <code>S</code> 的类型实参，我们就可以推断出 <code>E</code>的类型实参。<code>S</code> 是一个切片类型，而 <code>E</code>是该切片的元素类型。</p>
+<h2 id="使用场景">使用场景</h2>
+<h3 id="可以使用的场景">可以使用的场景</h3>
+<h4 id="使用语言定义的容器类型时-mapslice和channel">使用语言定义的容器类型时 (map、slice和channel)</h4>
+<p>当我们编写的是操作 Go 语言定义的特殊容器类型（slice、map和chennel）的函数。如果函数 具有包含这些容器类型的参数，并且函数的代码并不关心元素的类型，那么使用泛型可能是有用的。</p>
+<p>比如返回任何类型map中所有的key：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">MapKeys</span> <span class="err">返回</span><span class="n">m中所有key组成的切片</span>
+</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">MapKeys</span><span class="p">[</span><span class="n">Key</span> <span class="n">comparable</span><span class="p">,</span> <span class="n">Val</span> <span class="n">any</span><span class="p">](</span><span class="n">m</span> <span class="n">map</span><span class="p">[</span><span class="n">Key</span><span class="p">]</span><span class="n">Val</span><span class="p">)</span> <span class="p">[]</span><span class="n">Key</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">s</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="n">Key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">len</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">k</span> <span class="p">:</span><span class="o">=</span> <span class="nb">range</span> <span class="n">m</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">s</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">s</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这段代码并不关注 map 中键的类型，也根本没有使用 map 值类型。它适用于任何map类型。</p>
+<p>在引入泛型之前，想要实现类似功能通常是使用反射，但是使用反射实现通常是复杂的，并且在编译期间不会进行静态类型检查，在运行时通常速度也更慢。</p>
+<h4 id="通用数据结构-二叉树链表">通用数据结构 (二叉树、链表)</h4>
+<p>另一个适用场景就是用于通用数据结构。通用数据结构类似于slice或map，但不是内置在语言中的，例如链表或二叉树。</p>
+<p>之前需要这种数据结构通常采用两种方法：使用特定的元素类型编写数据结构，或者使用接口类型。用泛型替换特定的元素类型可以生成更通用的数据结构，该数据结构可以在程序的其他部分或其他程序中使用。用泛型替换接口类型可以更有效地存储数据，节省内存资源；它还允许代码避免类型断言，并在构建时进行完全的类型检查。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Tree is a binary tree.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Tree</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">cmp</span>  <span class="kd">func</span><span class="p">(</span><span class="nx">T</span><span class="p">,</span> <span class="nx">T</span><span class="p">)</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">root</span> <span class="o">*</span><span class="nx">node</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// A node in a Tree.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">node</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">left</span><span class="p">,</span> <span class="nx">right</span>  <span class="o">*</span><span class="nx">node</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">val</span>          <span class="nx">T</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// find returns a pointer to the node containing val,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// or, if val is not present, a pointer to where it
+</span></span></span><span class="line"><span class="cl"><span class="c1">// would be placed if added.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bt</span> <span class="o">*</span><span class="nx">Tree</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nf">find</span><span class="p">(</span><span class="nx">val</span> <span class="nx">T</span><span class="p">)</span> <span class="o">**</span><span class="nx">node</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">pl</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">bt</span><span class="p">.</span><span class="nx">root</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="o">*</span><span class="nx">pl</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">switch</span> <span class="nx">cmp</span> <span class="o">:=</span> <span class="nx">bt</span><span class="p">.</span><span class="nf">cmp</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="p">(</span><span class="o">*</span><span class="nx">pl</span><span class="p">).</span><span class="nx">val</span><span class="p">);</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nx">cmp</span> <span class="p">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">pl</span> <span class="p">=</span> <span class="o">&amp;</span><span class="p">(</span><span class="o">*</span><span class="nx">pl</span><span class="p">).</span><span class="nx">left</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nx">cmp</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">pl</span> <span class="p">=</span> <span class="o">&amp;</span><span class="p">(</span><span class="o">*</span><span class="nx">pl</span><span class="p">).</span><span class="nx">right</span>
+</span></span><span class="line"><span class="cl">        <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nx">pl</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">pl</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Insert inserts val into bt if not already there,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// and reports whether it was inserted.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bt</span> <span class="o">*</span><span class="nx">Tree</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nf">Insert</span><span class="p">(</span><span class="nx">val</span> <span class="nx">T</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">pl</span> <span class="o">:=</span> <span class="nx">bt</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">*</span><span class="nx">pl</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="nx">pl</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">node</span><span class="p">[</span><span class="nx">T</span><span class="p">]{</span><span class="nx">val</span><span class="p">:</span> <span class="nx">val</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>树中的每个节点都包含类型参数 T 的值。实例化树时，确定了具体类型的值将直接存储在节点中。它们不会再被存储为接口类型。</p>
+<p>这是对泛型的合理使用，因为 Tree 数据结构(包括方法中的代码)在很大程度上与元素类型 T 无关。</p>
+<p>Tree数据结构需要知道如何比较元素类型T的值；它为此使用在 Tree结构体中传入的比较函数cmp。除此之外，type参数根本不重要。</p>
+<h4 id="泛型优先选择函数而不是方法">泛型优先选择函数而不是方法</h4>
+<p>Tree 示例说明了另一个一般原则：当你需要比较函数之类的东西时，最好使用函数而不是方法。</p>
+<p>如果使用方法的形式，那么实例化此泛型时，其具体类型都需要实现对应的方法，如果Tree的T是int类型就必须要定义自己的整数类型，并编写自己的比较方法。而作为函数用结构体成员的方式进行传递就灵活且容易的多。</p>
+<h4 id="实现通用方法">实现通用方法</h4>
+<p>泛型可能有用的另一种情况是，不同类型需要实现某些公共方法，而不同类型其方法的实现逻辑看起来都是相同的。</p>
+<p>比如标准库的 <code>sort.Interface</code>，它要求类型实现三个方法: <code>Len</code>、 <code>Swap</code> 和 <code>Less</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// SliceFn 为T类型切片实现 sort.Interface
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">SliceFn</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">sli</span>  <span class="p">[]</span><span class="nx">T</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">less</span> <span class="kd">func</span><span class="p">(</span><span class="nx">T</span><span class="p">,</span> <span class="nx">T</span><span class="p">)</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">SliceFn</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">sli</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">SliceFn</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nf">Swap</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">sli</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">s</span><span class="p">.</span><span class="nx">sli</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">sli</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">s</span><span class="p">.</span><span class="nx">sli</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">SliceFn</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nf">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">s</span><span class="p">.</span><span class="nf">less</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">sli</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">s</span><span class="p">.</span><span class="nx">sli</span><span class="p">[</span><span class="nx">j</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>对于任意切片类型，<code>Len</code> 和 <code>Swap</code> 方法完全相同。<code>Less</code> 方法需要进行比较，因此将less作为结构体成员传递进去，而SliceFn已经实现了 <code>sort.Interface</code>的三个方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">sort</span><span class="p">.</span><span class="nf">Sort</span><span class="p">(</span><span class="nx">SliceFn</span><span class="p">[</span><span class="kt">int</span><span class="p">]{</span><span class="nx">sli</span><span class="p">:</span> <span class="nx">sli</span><span class="p">,</span><span class="nx">less</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i1</span><span class="p">,</span> <span class="nx">i2</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">i1</span><span class="p">&lt;</span><span class="nx">i2</span>
+</span></span><span class="line"><span class="cl"><span class="p">}})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这类似于标准库函数 <code>sort.Slice</code>，但比较函数是使用值而不是切片索引 (用到了反射) 编写的。</p>
+<p>对这类代码使用泛型是合适的，因为所有切片类型的方法看起来完全相同。</p>
+<h3 id="不能使用的场景">不能使用的场景</h3>
+<h4 id="不要用泛型替换接口类型考虑可读性">不要用泛型替换接口类型（考虑可读性)</h4>
+<p>众所周知，Go有接口类型。接口类型允许一种通用编程。而泛型和接口是互补的关系。</p>
+<p>例如，广泛使用的 <code>io.Reader</code>接口提供了一种通用机制，用于从任何包含信息（例如文件）或生成信息（例如随机数生成器）的值中读取数据。如果对某个类型的值所做的一切就是调用该值的方法，请使用接口类型，而不是类型参数。<code>io.Reader</code>易于阅读、高效且有效。不需要使用类型参数，通过调用read方法从值中读取数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ReadSome</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nx">ReadSome</span><span class="p">[</span><span class="nx">T</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">](</span><span class="nx">r</span> <span class="nx">T</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接口省略type参数使函数更容易编写，更容易读取，并且执行时间可能相同。</p>
+<p>Go 1.18 中泛型的实现在许多情况下会将类型为类型参数的值视为类型为接口类型的值。这意味着使用类型参数通常不会比使用接口类型更快。因此，不要仅仅为了速度而从接口类型更改为类型参数，因为它可能不会运行得更快。更多的是要去考虑重复代码的问题。</p>
+<h4 id="如果方法实现不同不要使用类型参数-考虑重复代码问题">如果方法实现不同，不要使用类型参数 （考虑重复代码问题)</h4>
+<p>在决定是使用类型参数还是接口类型时，请考虑方法的实现。前面我们说过，如果方法的实现对于所有类型都相同，则可以使用类型参数。相反，如果每种类型的实现都不同，则使用接口类型并编写不同的方法实现，不要使用类型参数。</p>
+<p>就像 <code> io.Reader</code>接口，如果使用泛型就会发现很多对象的read方法逻辑都是不同的，甚至其他方法也有所不同，它不像  <code>sort.Interface</code> 一样有逻辑相同的方法，这会导致每次实例化时都需要用结构体成员的方式传递多个同名不同逻辑的函数，如果实例化相同类型，反而会多出许多重复代码，而接口则只需要在定义结构体时一次性写好需要实现的方法即可。</p>
+<h4 id="在适当的地方使用反射">在适当的地方使用反射</h4>
+<p>Go具有运行时反射。反射允许一种通用编程，因为它允许你编写适用于任何类型的代码。</p>
+<p>如果某些操作不能实现接口的所有方法（不能使用接口类型），并且每个类型的操作都不同（不能使用类型参数），请使用反射。</p>
+<p>encoding/json包就是一个例子。我们不能要求代码中的每个类型都有MarshalJSON方法，所以不能使用接口类型。但对不同类型的编码又不相同，因此我们不应该使用类型参数。相反，该包使用反射。代码不简单，但它有效。</p>
+<h3 id="简单的指导方针">简单的指导方针</h3>
+<p>如果发现自己多次编写了完全相同的代码，而副本之间的唯一区别是代码使用了不同的类型，请考虑是否可以使用类型参数。</p>
+<p><strong>换句话说，除非注意到将要多次编写完全相同的代码，那么就应该避免使用类型参数。为单个类型设置泛型是得不偿失的行为。</strong></p>
+<h2 id="总结">总结</h2>
+<p>总之，如果你发现自己多次编写完全相同的代码，而这些代码之间的唯一区别就是使用的类型不同，这个时候你就应该考虑是否可以使用类型参数。</p>
+<p>泛型和接口类型之间并不是替代关系，而是相辅相成的关系。泛型的引入是为了配合接口的使用，让我们能够编写更加类型安全的Go代码，并能有效地减少重复代码。</p>
+<p>换句话说，将方法转换为函数要比将方法添加到类型中简单得多。因此，对于通用数据类型，最好使用函数作为结构体成员而不是编写需要的方法进行约束。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2024 笑傩
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300&family=Noto+Serif+SC:wght@300&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+
+    </body>
+</html>
